@@ -1,10 +1,13 @@
-"use client";
+import { LoginButton } from "@/features/layout/auth/LoginButton";
+import { UserProfile } from "@/features/layout/auth/UserProfile";
+import { getAuthSession } from "@/lib/auth";
 
-export default function Home() {
+export default async function Home() {
+  const session = await getAuthSession();
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <h1 className="text-2xl font-extrabold">Hello project genesis</h1>
-      <span>😂</span>
-    </main>
+    <div>
+      <h1>Home</h1>
+      {session?.user ? <UserProfile /> : <LoginButton />}
+    </div>
   );
 }
