@@ -69,6 +69,7 @@ model Scenario {
 model Character {
   id          String   @id @default(cuid())
   name        String
+  pj          Boolean
 
   age         Int?
   image       String?
