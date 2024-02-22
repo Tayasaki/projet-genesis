@@ -2,214 +2,184 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+	provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+	provider = "sqlite"
+	url      = env("DATABASE_URL")
 }
 
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?  
-  access_token       String?  
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?
-  session_state      String?
+	id                 String  @id @default(cuid())
+	userId             String
+	type               String
+	provider           String
+	providerAccountId  String
+	refresh_token      String?  
+	access_token       String?  
+	expires_at         Int?
+	token_type         String?
+	scope              String?
+	id_token           String?
+	session_state      String?
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+	user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([provider, providerAccountId])
+	@@unique([provider, providerAccountId])
 }
 
 model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+	id           String   @id @default(cuid())
+	sessionToken String   @unique
+	userId       String
+	expires      DateTime
+	user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
+	identifier String
+	token      String   @unique
+	expires    DateTime
 
-  @@unique([identifier, token])
+	@@unique([identifier, token])
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
-  Scenario      Scenario[]
+	id            String    @id @default(cuid())
+	name          String?
+	email         String?   @unique
+	emailVerified DateTime?
+	image         String?
+	accounts      Account[]
+	sessions      Session[]
+	Scenario      Scenario[]
 }
 
 model Scenario {
-  id          String   @id @default(cuid())
-  name        String
-  universe    String
-  description String?
-  userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  Character   Character[]
+	id          String   @id @default(cuid())
+	name        String
+	universe    String
+	description String?
+	userId      String
+	user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+	Character   Character[]
 }
 
 model Character {
-  id          String   @id @default(cuid())
-  name        String
-  pj          Boolean
+	id          String   @id @default(cuid())
+	name        String
+	pj          Boolean
 
-  age         Int?
-  image       String?
-  origin      String?
-  role        String?
-  injury      String?
-  extra       String?
+	age         Int?
+	image       String?
+	origin      String?
+	role        String?
+	injury      String?
+	extra       String?
 
-  skills      SkillSetCharacter[]
-  inventory   Inventory[]
+	weapon      Weapon[]
+	skillSet    CharacterSkill[]
+	scneario    Scenario[]
+	strength    Strength[]
+	weakness    Weakness[]
 
-  scenarioId  String
-  Scenario    Scenario @relation(fields: [scenarioId], references: [id], onDelete: Cascade)
+	fortuneId   String?
+	Fortune     Fortune? @relation(fields: [fortuneId], references: [id], onDelete: SetNull)
 
-  fortuneId   String
-  Fortune     Fortune  @relation(fields: [fortuneId], references: [id], onDelete: Cascade)
+	alignmentId String?
+	Alignment   Alignment? @relation(fields: [alignmentId], references: [id], onDelete: SetNull)
 
-  alignmentId String
-  Alignment   Alignment @relation(fields: [alignmentId], references: [id], onDelete: Cascade)
-
-  tempermentId String
-  Temperment   Temperment @relation(fields: [tempermentId], references: [id], onDelete: Cascade)
-
-  strengthId  String
-  Strength    Strength @relation(fields: [strengthId], references: [id], onDelete: Cascade)
-
-  weaknessId  String
-  Weakness    Weakness @relation(fields: [weaknessId], references: [id], onDelete: Cascade)
-}
-
-model Fortune {
-  id          String   @id @default(cuid())
-  name        String
-  description String?
-  Character   Character[]
-}
-
-model Alignment {
-  id          String   @id @default(cuid())
-  name        String
-  description String?
-  Character   Character[]
-}
-
-model Temperment {
-  id          String   @id @default(cuid())
-  name        String
-  description String?
-  Character   Character[]
-}
-
-model Strength {
-  id          String   @id @default(cuid())
-  name        String
-  Character   Character[]
-}
-
-model Weakness {
-  id          String   @id @default(cuid())
-  name        String
-  Character   Character[]
+	tempermentId String?
+	Temperment   Temperment? @relation(fields: [tempermentId], references: [id], onDelete: SetNull)
 }
 
 model CharacterSkill {
-  id          String   @id @default(cuid())
-  name        String
-  SkillSet    SkillSetCharacter[]
+	id          String   @id @default(cuid())
+	name        String	@unique
+	character   Character[]
 }
 
-model SkillSetCharacter {
-  characterId String
-  skillId     String
-  Character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
-  CharacterSkill CharacterSkill @relation(fields: [skillId], references: [id], onDelete: Cascade)
-  @@id([characterId, skillId])
+model Fortune {
+	id          String   @id @default(cuid())
+	name        String	@unique
+	description String?
+	character   Character[]
 }
 
-model Inventory {
-  characterId String
-  weaponId    String
-  Character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
-  Weapon      Weapon    @relation(fields: [weaponId], references: [id], onDelete: Cascade)
-  @@id([characterId, weaponId])
+model Alignment {
+	id          String   @id @default(cuid())
+	name        String	@unique
+	description String?
+	character   Character[]
+}
+
+model Temperment {
+	id          String   @id @default(cuid())
+	name        String	@unique
+	description String?
+	character   Character[]
+}
+
+model Strength {
+	id          String   @id @default(cuid())
+	name        String	@unique
+	character   Character[]
+}
+
+model Weakness {
+	id          String   @id @default(cuid())
+	name        String	@unique
+	character   Character[]
 }
 
 model Weapon {
-  id          String   @id @default(cuid())
-  name        String
-  melee       Boolean
-  description String?
-  Inventory   Inventory[]
-  WeaponSkill SkillSetWeapon[]
+	id          String   @id @default(cuid())
+	name        String
+	melee       Boolean
+	description String?
+	character   Character[]
+	weaponSkill WeaponSkill[]
 
-  damageId    String
-  Damage      Damage @relation(fields: [damageId], references: [id], onDelete: Cascade)
+	damageId    String
+	Damage      Damage @relation(fields: [damageId], references: [id], onDelete: Cascade)
 
-  weightId    String
-  Weight      Weight @relation(fields: [weightId], references: [id], onDelete: Cascade)
+	weightId    String
+	Weight      Weight @relation(fields: [weightId], references: [id], onDelete: Cascade)
 
-  rangeId     String
-  Range       Range @relation(fields: [rangeId], references: [id], onDelete: Cascade)
+	rangeId     String
+	Range       Range @relation(fields: [rangeId], references: [id], onDelete: Cascade)
 
-  ammoId      String?
-  Ammo        Ammo? @relation(fields: [ammoId], references: [id], onDelete: Cascade)
-}
-
-model Damage {
-  id          String   @id @default(cuid())
-  name        String
-  Weapon      Weapon[]
-}
-
-model Weight {
-  id          String   @id @default(cuid())
-  name        String
-  Weapon      Weapon[]
-}
-
-model Ammo {
-  id          String   @id @default(cuid())
-  name        String
-  Weapon      Weapon[]
-}
-
-model Range {
-  id          String   @id @default(cuid())
-  name        String
-  Weapon      Weapon[]
+	ammoId      String?
+	Ammo        Ammo? @relation(fields: [ammoId], references: [id], onDelete: Cascade)
 }
 
 model WeaponSkill {
-  id          String   @id @default(cuid())
-  name        String
-  SkillSet    SkillSetWeapon[]
+	id          String   @id @default(cuid())
+	name        String	@unique
+	weapon 		Weapon[]
 }
 
-model SkillSetWeapon {
-  weaponId String
-  skillId  String
-  Weapon   Weapon @relation(fields: [weaponId], references: [id], onDelete: Cascade)
-  WeaponSkill WeaponSkill @relation(fields: [skillId], references: [id], onDelete: Cascade)
-  @@id([weaponId, skillId])
+model Damage {
+	id          String   @id @default(cuid())
+	name        String	@unique
+	weapon      Weapon[]
+}
+
+model Weight {
+	id          String   @id @default(cuid())
+	name        String 	@unique
+	weapon      Weapon[]
+}
+
+model Ammo {
+	id          String   @id @default(cuid())
+	name        String 	@unique
+	weapon      Weapon[]
+}
+
+model Range {
+	id          String   @id @default(cuid())
+	name        String 	@unique
+	weapon      Weapon[]
 }
