@@ -1,9 +1,9 @@
 import { createStrength } from "@/app/manage/createStrength.action";
 import { toast } from "sonner";
 import { z } from "zod";
-import AutoForm, { AutoFormSubmit } from "../ui/auto-form";
+import AutoForm, { AutoFormSubmit } from "../../ui/auto-form";
 
-export const StrengthForm = ({ userId }: { userId: string }) => {
+export const StrengthForm = () => {
   const formStrengthSchema = z.object({
     name: z.string().max(50).describe("Nom du la force"),
   });
@@ -27,9 +27,7 @@ export const StrengthForm = ({ userId }: { userId: string }) => {
         toast.success("Force créé avec succès");
       }}
     >
-      <AutoFormSubmit isLoggedIn={userId ? true : false}>
-        Créer la force
-      </AutoFormSubmit>
+      <AutoFormSubmit>Créer la force</AutoFormSubmit>
     </AutoForm>
   );
 };

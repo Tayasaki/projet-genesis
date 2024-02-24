@@ -2,9 +2,9 @@
 import { createTemperment } from "@/app/manage/createTemperment.action";
 import { toast } from "sonner";
 import { z } from "zod";
-import AutoForm, { AutoFormSubmit } from "../ui/auto-form";
+import AutoForm, { AutoFormSubmit } from "../../ui/auto-form";
 
-export const TempermentForm = ({ userId }: { userId: string }) => {
+export const TempermentForm = () => {
   const formTempermentSchema = z.object({
     name: z.string().max(50).describe("Nom du tempérament"),
     description: z
@@ -34,9 +34,7 @@ export const TempermentForm = ({ userId }: { userId: string }) => {
         toast.success("Tempérament créé avec succès");
       }}
     >
-      <AutoFormSubmit isLoggedIn={userId ? true : false}>
-        Créer le tempérament
-      </AutoFormSubmit>
+      <AutoFormSubmit>Créer le tempérament</AutoFormSubmit>
     </AutoForm>
   );
 };

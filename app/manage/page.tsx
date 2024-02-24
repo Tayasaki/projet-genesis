@@ -1,11 +1,11 @@
 import { TabsManagement } from "@/features/layout/management/TabsManagement";
 import { getAuthSession } from "@/lib/auth";
-import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { redirect } from "next/navigation";
 
 export default async function Manage() {
   const session = await getAuthSession();
-  if (!session?.user.id) notFound();
+  if (!session?.user.id) redirect("/login");
 
   const temperment = await prisma.temperment.findMany();
   const weakness = await prisma.weakness.findMany();
@@ -49,7 +49,7 @@ export default async function Manage() {
           </ul>
         </div>
       </div>
-      <TabsManagement userId={session.user.id} />
+      <TabsManagement />
     </div>
   );
 }

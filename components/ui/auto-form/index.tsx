@@ -19,15 +19,13 @@ import {
 export function AutoFormSubmit({
   children,
   className,
-  isLoggedIn,
 }: {
   children?: React.ReactNode;
   className?: string;
-  isLoggedIn?: boolean;
 }) {
   return (
-    <Button disabled={!isLoggedIn} type="submit" className={className}>
-      {isLoggedIn ? children ?? "Submit" : "Connectez-vous pour continuer"}
+    <Button type="submit" className={className}>
+      {children ?? "Submit"}
     </Button>
   );
 }

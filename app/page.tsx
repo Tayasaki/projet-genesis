@@ -1,5 +1,5 @@
 import { ScenarioForm } from "@/components/form/ScenarioForm";
-import { LoginButton } from "@/features/layout/auth/LoginButton";
+import { LoginButton } from "@/features/layout/auth/LoginButtons";
 import { UserProfile } from "@/features/layout/auth/UserProfile";
 import { ScenarioList } from "@/features/layout/scenario/ScenarioList";
 import { getAuthSession } from "@/lib/auth";

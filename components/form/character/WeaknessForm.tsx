@@ -2,9 +2,9 @@ import { createWeakness } from "@/app/manage/createWeakness.action";
 import { deleteWeakness } from "@/app/manage/deleteWeakness.action";
 import { toast } from "sonner";
 import { z } from "zod";
-import AutoForm, { AutoFormSubmit } from "../ui/auto-form";
+import AutoForm, { AutoFormSubmit } from "../../ui/auto-form";
 
-export const WeaknessForm = ({ userId }: { userId: string }) => {
+export const WeaknessForm = () => {
   const formWeaknessSchema = z.object({
     name: z.string().max(50).describe("Nom de la faiblesse"),
   });
@@ -38,9 +38,7 @@ export const WeaknessForm = ({ userId }: { userId: string }) => {
         });
       }}
     >
-      <AutoFormSubmit isLoggedIn={userId ? true : false}>
-        Créer la faiblesse
-      </AutoFormSubmit>
+      <AutoFormSubmit>Créer la faiblesse</AutoFormSubmit>
     </AutoForm>
   );
 };

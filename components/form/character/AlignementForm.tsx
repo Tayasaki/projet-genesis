@@ -2,9 +2,9 @@
 import { createAlignment } from "@/app/manage/createAlignment.action";
 import { toast } from "sonner";
 import { z } from "zod";
-import AutoForm, { AutoFormSubmit } from "../ui/auto-form";
+import AutoForm, { AutoFormSubmit } from "../../ui/auto-form";
 
-export const AlignementForm = ({ userId }: { userId: string }) => {
+export const AlignementForm = () => {
   const formAlignementSchema = z.object({
     name: z.string().max(50).describe("Nom de l'alignement"),
     description: z
@@ -34,9 +34,7 @@ export const AlignementForm = ({ userId }: { userId: string }) => {
         toast.success("Alignement créé avec succès");
       }}
     >
-      <AutoFormSubmit isLoggedIn={userId ? true : false}>
-        Créer le alignement
-      </AutoFormSubmit>
+      <AutoFormSubmit>Créer le alignement</AutoFormSubmit>
     </AutoForm>
   );
 };

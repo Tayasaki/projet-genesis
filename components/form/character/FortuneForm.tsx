@@ -1,9 +1,9 @@
 import { createFortune } from "@/app/manage/createFortune.action";
 import { toast } from "sonner";
 import { z } from "zod";
-import AutoForm, { AutoFormSubmit } from "../ui/auto-form";
+import AutoForm, { AutoFormSubmit } from "../../ui/auto-form";
 
-export const FortuneForm = ({ userId }: { userId: string }) => {
+export const FortuneForm = () => {
   const formFortuneSchema = z.object({
     name: z.string().max(50).describe("Nom de la richesse"),
     description: z
@@ -33,9 +33,7 @@ export const FortuneForm = ({ userId }: { userId: string }) => {
         toast.success("Richesse créé avec succès");
       }}
     >
-      <AutoFormSubmit isLoggedIn={userId ? true : false}>
-        Créer la fortune
-      </AutoFormSubmit>
+      <AutoFormSubmit>Créer la fortune</AutoFormSubmit>
     </AutoForm>
   );
 };

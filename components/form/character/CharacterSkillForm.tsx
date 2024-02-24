@@ -1,9 +1,9 @@
 import { createCharacterSkill } from "@/app/manage/createCharacterSkill.action";
 import { toast } from "sonner";
 import { z } from "zod";
-import AutoForm, { AutoFormSubmit } from "../ui/auto-form";
+import AutoForm, { AutoFormSubmit } from "../../ui/auto-form";
 
-export const CharacterSkillForm = ({ userId }: { userId: string }) => {
+export const CharacterSkillForm = () => {
   const formCharacterSkillSchema = z.object({
     name: z.string().max(50).describe("Nom de la compétence"),
   });
@@ -27,9 +27,7 @@ export const CharacterSkillForm = ({ userId }: { userId: string }) => {
         toast.success("Compétence créé avec succès");
       }}
     >
-      <AutoFormSubmit isLoggedIn={userId ? true : false}>
-        Créer la compétence
-      </AutoFormSubmit>
+      <AutoFormSubmit>Créer la compétence</AutoFormSubmit>
     </AutoForm>
   );
 };

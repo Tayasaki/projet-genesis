@@ -55,9 +55,7 @@ export const ScenarioForm = ({ userId }: { userId: string | undefined }) => {
         },
       }}
     >
-      <AutoFormSubmit isLoggedIn={userId !== undefined}>
-        Créer mon scénario
-      </AutoFormSubmit>
+      <AutoFormSubmit>Créer mon scénario</AutoFormSubmit>
     </AutoForm>
   );
 };
