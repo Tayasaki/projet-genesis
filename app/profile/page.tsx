@@ -12,8 +12,7 @@ export default async function Profile() {
   });
   return (
     <div>
-      <h1>Profile</h1>
-      <Avatar>
+      <Avatar className="size-56">
         <AvatarImage
           src={`https://api.dicebear.com/7.x/adventurer/svg?seed=${user.name}`}
           alt="Profile picture"
@@ -21,6 +20,7 @@ export default async function Profile() {
         />
         <AvatarFallback>{user.name?.slice(0, 2) ?? ""}</AvatarFallback>
       </Avatar>
+      <p>nom: {user.name}</p>
       <p>email: {user.email}</p>
       <p>email vérifié: {user.emailVerified ? "✅" : "❌"}</p>
       <LogoutButton />

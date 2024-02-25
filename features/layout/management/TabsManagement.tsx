@@ -18,7 +18,7 @@ export const TabsManagement = () => {
     <div>
       <Tabs
         defaultValue="temperment"
-        className="flex flex-col p-4 bg-white rounded-lg shadow-md w-96"
+        className="flex w-96 flex-col rounded-lg bg-white p-4 shadow-md"
       >
         <TabsList>
           <TabsTrigger value="temperment">Tempérament</TabsTrigger>
@@ -50,7 +50,7 @@ export const TabsManagement = () => {
 
       <Tabs
         defaultValue="damage"
-        className="flex flex-col p-4 bg-white rounded-lg shadow-md w-96"
+        className="flex w-96 flex-col rounded-lg bg-white p-4 shadow-md"
       >
         <TabsList>
           <TabsTrigger value="damage">Dégât</TabsTrigger>

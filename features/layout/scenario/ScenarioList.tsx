@@ -1,3 +1,11 @@
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { getAuthSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
@@ -9,15 +17,24 @@ export const ScenarioList = async () => {
     },
   });
   return (
-    <div>
-      <h1>Scenario List</h1>
+    <>
+      <h1 className="text-lg font-bold">Scenario List</h1>
+
       {session?.user && (
-        <ul role="list">
-          {scenario.map((scenario) => (
-            <li key={scenario.id}>{scenario.name}</li>
+        <div className="grid grid-cols-1 gap-4 p-16 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+          {scenario.map((s) => (
+            <Card key={s.id} className="">
+              <CardHeader>
+                <CardTitle>{s.name}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription>{s.description}</CardDescription>
+              </CardContent>
+              <CardFooter>{s.universe}</CardFooter>
+            </Card>
           ))}
-        </ul>
+        </div>
       )}
-    </div>
+    </>
   );
 };

@@ -1,4 +1,6 @@
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
+import { Header } from "@/features/layout/Header";
+import clsx from "clsx";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Toaster } from "sonner";
@@ -18,15 +20,20 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={clsx(inter.className, "h-full bg-background")}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          <main>{children}</main>
-          <Toaster />
+          <div className="flex h-full w-full flex-col">
+            <Header />
+            <main className="m-auto h-full w-full flex-1 py-16">
+              {children}
+            </main>
+            <Toaster />
+          </div>
         </ThemeProvider>
       </body>
     </html>
