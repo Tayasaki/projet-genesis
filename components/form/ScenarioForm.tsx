@@ -15,7 +15,7 @@ const formScenarioSchema = z.object({
     .describe("Description du scénario"),
 });
 
-export const ScenarioForm = ({ userId }: { userId: string | undefined }) => {
+export const ScenarioForm = () => {
   return (
     <AutoForm
       formSchema={formScenarioSchema}

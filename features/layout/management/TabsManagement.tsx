@@ -15,10 +15,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export const TabsManagement = () => {
   return (
-    <div>
+    <div className="flex space-x-2">
       <Tabs
         defaultValue="temperment"
-        className="flex w-96 flex-col rounded-lg bg-white p-4 shadow-md"
+        className="flex max-w-xl flex-col rounded-lg bg-white p-4 shadow-md"
       >
         <TabsList>
           <TabsTrigger value="temperment">Tempérament</TabsTrigger>
@@ -50,7 +50,7 @@ export const TabsManagement = () => {
 
       <Tabs
         defaultValue="damage"
-        className="flex w-96 flex-col rounded-lg bg-white p-4 shadow-md"
+        className="flex max-w-lg flex-col rounded-lg bg-white p-4 shadow-md"
       >
         <TabsList>
           <TabsTrigger value="damage">Dégât</TabsTrigger>

@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/card";
 import { getAuthSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import Link from "next/link";
 
 export const ScenarioList = async () => {
   const session = await getAuthSession();
@@ -21,11 +22,13 @@ export const ScenarioList = async () => {
       <h1 className="text-lg font-bold">Scenario List</h1>
 
       {session?.user && (
-        <div className="grid grid-cols-1 gap-4 p-16 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-          {scenario.map((s) => (
-            <Card key={s.id} className="">
+        <div className="grid grid-cols-4 gap-4">
+          {scenario.map((s, i) => (
+            <Card key={s.id} className="max-w-xs flex-1">
               <CardHeader>
-                <CardTitle>{s.name}</CardTitle>
+                <CardTitle>
+                  <Link href={`/${s.id}`}>{s.name}</Link>
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription>{s.description}</CardDescription>

@@ -29,7 +29,7 @@ export default function RootLayout({
         >
           <div className="flex h-full w-full flex-col">
             <Header />
-            <main className="m-auto h-full w-full flex-1 py-16">
+            <main className="m-auto h-full max-w-5xl flex-1 py-16">
               {children}
             </main>
             <Toaster />
