@@ -1,7 +1,7 @@
 "use client";
 
-import { createDamage } from "@/app/manage/createDamage.action";
 import AutoForm, { AutoFormSubmit } from "@/components/ui/auto-form";
+import { createDamage, deleteDamage } from "@/src/actions/weapon/damage.action";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -32,7 +32,17 @@ export const DamageForm = () => {
           return;
         }
 
-        toast.success("Dégât créé avec succès");
+        toast.success("Dégât créé avec succès", {
+          action: {
+            label: "Annuler",
+            onClick: async () => {
+              await deleteDamage({
+                name: data.name,
+              });
+              toast.success("Dégât supprimé avec succès");
+            },
+          },
+        });
       }}
     >
       <AutoFormSubmit>Créer le dégât</AutoFormSubmit>

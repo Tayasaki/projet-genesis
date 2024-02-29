@@ -5,10 +5,12 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 
+const strengthSchema = z.object({
+  name: z.string().min(1).max(50),
+});
+
 export const createStrength = authenticatedAction(
-  z.object({
-    name: z.string().min(1).max(50),
-  }),
+  strengthSchema,
   async ({ name }) => {
     await prisma.strength.create({
       data: {
@@ -16,5 +18,17 @@ export const createStrength = authenticatedAction(
       },
     });
     revalidatePath("/manage");
-  }
+  },
+);
+
+export const deleteStrength = authenticatedAction(
+  strengthSchema,
+  async ({ name }) => {
+    await prisma.strength.delete({
+      where: {
+        name: name,
+      },
+    });
+    revalidatePath("/manage");
+  },
 );

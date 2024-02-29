@@ -1,5 +1,8 @@
 "use client";
-import { createTemperment } from "@/app/manage/createTemperment.action";
+import {
+  createTemperment,
+  deleteTemperment,
+} from "@/src/actions/weapon/character/temperment.action";
 import { toast } from "sonner";
 import { z } from "zod";
 import AutoForm, { AutoFormSubmit } from "../../ui/auto-form";
@@ -31,7 +34,17 @@ export const TempermentForm = () => {
           return;
         }
 
-        toast.success("Tempérament créé avec succès");
+        toast.success("Tempérament créé avec succès", {
+          action: {
+            label: "Annuler",
+            onClick: async () => {
+              await deleteTemperment({
+                name: data.name,
+              });
+              toast.success("Tempérament supprimé avec succès");
+            },
+          },
+        });
       }}
     >
       <AutoFormSubmit>Créer le tempérament</AutoFormSubmit>

@@ -1,7 +1,7 @@
 "use client";
 
-import { createAmmo } from "@/app/manage/createAmmo.action";
 import AutoForm, { AutoFormSubmit } from "@/components/ui/auto-form";
+import { createAmmo, deleteAmmo } from "@/src/actions/weapon/ammo.action";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -32,7 +32,17 @@ export const AmmoForm = () => {
           return;
         }
 
-        toast.success("Munition créé avec succès");
+        toast.success("Munition créé avec succès", {
+          action: {
+            label: "Annuler",
+            onClick: async () => {
+              await deleteAmmo({
+                name: data.name,
+              });
+              toast.success("Munition supprimée avec succès");
+            },
+          },
+        });
       }}
     >
       <AutoFormSubmit>Créer la munition</AutoFormSubmit>

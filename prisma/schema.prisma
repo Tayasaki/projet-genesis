@@ -63,7 +63,7 @@ model Scenario {
 	description String?
 	userId      String
 	user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-	Character   Character[]
+	character   Character[]
 }
 
 model Character {
@@ -85,13 +85,13 @@ model Character {
 	weakness    Weakness[]
 
 	fortuneId   String?
-	Fortune     Fortune? @relation(fields: [fortuneId], references: [id], onDelete: SetNull)
+	fortune     Fortune? @relation(fields: [fortuneId], references: [id], onDelete: SetNull)
 
 	alignmentId String?
-	Alignment   Alignment? @relation(fields: [alignmentId], references: [id], onDelete: SetNull)
+	alignment   Alignment? @relation(fields: [alignmentId], references: [id], onDelete: SetNull)
 
 	tempermentId String?
-	Temperment   Temperment? @relation(fields: [tempermentId], references: [id], onDelete: SetNull)
+	temperment   Temperment? @relation(fields: [tempermentId], references: [id], onDelete: SetNull)
 }
 
 model CharacterSkill {
@@ -142,16 +142,16 @@ model Weapon {
 	weaponSkill WeaponSkill[]
 
 	damageId    String
-	Damage      Damage @relation(fields: [damageId], references: [id], onDelete: Cascade)
+	damage      Damage @relation(fields: [damageId], references: [id], onDelete: Cascade)
 
 	weightId    String
-	Weight      Weight @relation(fields: [weightId], references: [id], onDelete: Cascade)
+	weight      Weight @relation(fields: [weightId], references: [id], onDelete: Cascade)
 
 	rangeId     String
-	Range       Range @relation(fields: [rangeId], references: [id], onDelete: Cascade)
+	range       Range @relation(fields: [rangeId], references: [id], onDelete: Cascade)
 
 	ammoId      String?
-	Ammo        Ammo? @relation(fields: [ammoId], references: [id], onDelete: Cascade)
+	ammo        Ammo? @relation(fields: [ammoId], references: [id], onDelete: Cascade)
 }
 
 model WeaponSkill {

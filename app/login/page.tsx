@@ -1,9 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { getAuthSession } from "@/lib/auth";
 import {
   LoginDiscordButton,
   LoginGithubButton,
-} from "@/features/layout/auth/LoginButtons";
-import { getAuthSession } from "@/lib/auth";
+} from "@/src/features/layout/auth/LoginButtons";
 import { redirect } from "next/navigation";
 
 export default async function Login() {

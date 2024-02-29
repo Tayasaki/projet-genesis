@@ -1,8 +1,8 @@
 import { ToggleTheme } from "@/components/theme/ToggleTheme";
 import { getAuthSession } from "@/lib/auth";
+import Link from "next/link";
 import { LoginButton } from "./auth/LoginButtons";
 import { UserProfile } from "./auth/UserProfile";
-import Link from "next/link";
 
 export const Header = async () => {
   const session = await getAuthSession();

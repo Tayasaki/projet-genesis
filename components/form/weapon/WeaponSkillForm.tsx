@@ -1,7 +1,10 @@
 "use client";
 
-import { createWeaponSkill } from "@/app/manage/createWeaponSkill.action";
 import AutoForm, { AutoFormSubmit } from "@/components/ui/auto-form";
+import {
+  createWeaponSkill,
+  deleteWeaponSkill,
+} from "@/src/actions/weapon/weaponSkill.action";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -32,7 +35,17 @@ export const WeaponSkillForm = () => {
           return;
         }
 
-        toast.success("Compétence créé avec succès");
+        toast.success("Compétence créé avec succès", {
+          action: {
+            label: "Annuler",
+            onClick: async () => {
+              await deleteWeaponSkill({
+                name: data.name,
+              });
+              toast.success("Compétence supprimée avec succès");
+            },
+          },
+        });
       }}
     >
       <AutoFormSubmit>Créer la compétence</AutoFormSubmit>

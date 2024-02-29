@@ -1,5 +1,5 @@
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
-import { Header } from "@/features/layout/Header";
+import { Header } from "@/src/features/layout/Header";
 import clsx from "clsx";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";

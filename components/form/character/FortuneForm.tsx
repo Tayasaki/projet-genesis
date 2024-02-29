@@ -1,4 +1,7 @@
-import { createFortune } from "@/app/manage/createFortune.action";
+import {
+  createFortune,
+  deleteFortune,
+} from "@/src/actions/weapon/character/fortune.action";
 import { toast } from "sonner";
 import { z } from "zod";
 import AutoForm, { AutoFormSubmit } from "../../ui/auto-form";
@@ -30,7 +33,17 @@ export const FortuneForm = () => {
           return;
         }
 
-        toast.success("Richesse créé avec succès");
+        toast.success("Richesse créé avec succès", {
+          action: {
+            label: "Annuler",
+            onClick: async () => {
+              await deleteFortune({
+                name: data.name,
+              });
+              toast.success("Richesse supprimée avec succès");
+            },
+          },
+        });
       }}
     >
       <AutoFormSubmit>Créer la fortune</AutoFormSubmit>

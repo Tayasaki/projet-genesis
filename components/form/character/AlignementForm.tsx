@@ -1,5 +1,8 @@
 "use client";
-import { createAlignment } from "@/app/manage/createAlignment.action";
+import {
+  createAlignment,
+  deleteAlignment,
+} from "@/src/actions/weapon/character/alignment.action";
 import { toast } from "sonner";
 import { z } from "zod";
 import AutoForm, { AutoFormSubmit } from "../../ui/auto-form";
@@ -31,7 +34,17 @@ export const AlignementForm = () => {
           return;
         }
 
-        toast.success("Alignement créé avec succès");
+        toast.success("Alignement créé avec succès", {
+          action: {
+            label: "Annuler",
+            onClick: async () => {
+              await deleteAlignment({
+                name: data.name,
+              });
+              toast.success("Alignement supprimé avec succès");
+            },
+          },
+        });
       }}
     >
       <AutoFormSubmit>Créer le alignement</AutoFormSubmit>

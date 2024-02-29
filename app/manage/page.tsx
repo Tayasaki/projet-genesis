@@ -1,4 +1,4 @@
-import { TabsManagement } from "@/features/layout/management/TabsManagement";
+import { TabsManagement } from "@/src/features/management/TabsManagement";
 import { getAuthSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";

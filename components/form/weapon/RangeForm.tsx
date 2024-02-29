@@ -1,7 +1,7 @@
 "use client";
 
-import { createRange } from "@/app/manage/createRange.action";
 import AutoForm, { AutoFormSubmit } from "@/components/ui/auto-form";
+import { createRange, deleteRange } from "@/src/actions/weapon/range.action";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -32,7 +32,17 @@ export const RangeForm = () => {
           return;
         }
 
-        toast.success("Porté créé avec succès");
+        toast.success("Porté créé avec succès", {
+          action: {
+            label: "Annuler",
+            onClick: async () => {
+              await deleteRange({
+                name: data.name,
+              });
+              toast.success("Porté supprimée avec succès");
+            },
+          },
+        });
       }}
     >
       <AutoFormSubmit>Créer la porté</AutoFormSubmit>

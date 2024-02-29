@@ -1,7 +1,7 @@
 "use client";
 
-import { createWeight } from "@/app/manage/createWeight.action";
 import AutoForm, { AutoFormSubmit } from "@/components/ui/auto-form";
+import { createWeight, deleteWeight } from "@/src/actions/weapon/weight.action";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -32,7 +32,17 @@ export const WeightForm = () => {
           return;
         }
 
-        toast.success("Poids créé avec succès");
+        toast.success("Poids créé avec succès", {
+          action: {
+            label: "Annuler",
+            onClick: async () => {
+              await deleteWeight({
+                name: data.name,
+              });
+              toast.success("Poids supprimé avec succès");
+            },
+          },
+        });
       }}
     >
       <AutoFormSubmit>Créer le poids</AutoFormSubmit>

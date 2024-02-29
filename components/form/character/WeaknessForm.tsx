@@ -1,5 +1,7 @@
-import { createWeakness } from "@/app/manage/createWeakness.action";
-import { deleteWeakness } from "@/app/manage/deleteWeakness.action";
+import {
+  createWeakness,
+  deleteWeakness,
+} from "@/src/actions/weapon/character/weakness.action";
 import { toast } from "sonner";
 import { z } from "zod";
 import AutoForm, { AutoFormSubmit } from "../../ui/auto-form";
@@ -29,10 +31,10 @@ export const WeaknessForm = () => {
           action: {
             label: "Annuler",
             onClick: async () => {
-              const values = await deleteWeakness({
+              await deleteWeakness({
                 name: data.name,
               });
-              toast.success("Faiblesse supprimé avec succès");
+              toast.success("Faiblesse supprimée avec succès");
             },
           },
         });
