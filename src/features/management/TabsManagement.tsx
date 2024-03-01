@@ -18,7 +18,7 @@ export const TabsManagement = () => {
     <div className="flex space-x-2">
       <Tabs
         defaultValue="temperment"
-        className="flex max-w-xl flex-col rounded-lg bg-white p-4 shadow-md"
+        className="flex max-w-xl flex-col rounded-lg p-4 shadow-md dark:border"
       >
         <TabsList>
           <TabsTrigger value="temperment">Tempérament</TabsTrigger>
@@ -50,7 +50,7 @@ export const TabsManagement = () => {
 
       <Tabs
         defaultValue="damage"
-        className="flex max-w-lg flex-col rounded-lg bg-white p-4 shadow-md"
+        className="flex max-w-lg flex-col rounded-lg p-4 shadow-md dark:border"
       >
         <TabsList>
           <TabsTrigger value="damage">Dégât</TabsTrigger>

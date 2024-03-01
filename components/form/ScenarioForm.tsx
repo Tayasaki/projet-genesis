@@ -19,7 +19,7 @@ export const ScenarioForm = () => {
   return (
     <AutoForm
       formSchema={formScenarioSchema}
-      className="flex w-96 flex-col rounded-lg bg-white p-4 shadow-md"
+      className="flex w-96 flex-col rounded-lg bg-white p-4 shadow-md dark:border dark:bg-card"
       onSubmit={async (data) => {
         const values = await createScenario({
           ...data,

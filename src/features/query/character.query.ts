@@ -16,11 +16,7 @@ export const getCharacters = (scenarioId: string) =>
       strength: true,
       weakness: true,
       fortune: true,
-      skillSet: {
-        select: {
-          name: true,
-        },
-      },
+      skillSet: true,
     },
   });
 export type CharacterScenario = Prisma.PromiseReturnType<
