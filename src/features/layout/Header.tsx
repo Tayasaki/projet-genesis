@@ -12,6 +12,11 @@ export const Header = async () => {
         <h1 className="gap-1 text-2xl font-bold">
           <Link href="/">Project Genesis</Link>
         </h1>
+        <span>
+          <Link className="italic" href={"/manage"}>
+            Gestion
+          </Link>
+        </span>
         <div className="flex space-x-2">
           {session?.user ? <UserProfile /> : <LoginButton />}
           <ToggleTheme />
