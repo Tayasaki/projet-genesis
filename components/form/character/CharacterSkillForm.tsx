@@ -5,25 +5,30 @@ import {
 import { toast } from "sonner";
 import { z } from "zod";
 import AutoForm, { AutoFormSubmit } from "../../ui/auto-form";
+import { useState } from "react";
+import { set } from "date-fns";
 
 export const CharacterSkillForm = () => {
-  const formCharacterSkillSchema = z.object({
-    name: z.string().max(50).describe("Nom de la compétence"),
-  });
+  const [isLoading, setIsLoading] = useState(false);
   return (
     <AutoForm
-      formSchema={formCharacterSkillSchema}
+      formSchema={z.object({
+        name: z.string().max(50).describe("Nom de la compétence"),
+      })}
       onSubmit={async (data) => {
+        setIsLoading(true);
         const values = await createCharacterSkill({
           name: data.name,
         });
-        if (values.validationErrors) {
-          toast.error("Veuillez remplir tous les champs");
-          return;
-        }
 
-        if (values.serverError) {
-          toast.error("Vous devez être connecté pour créer une compétence");
+        if (values.validationErrors || values.serverError) {
+          if (values.validationErrors) {
+            toast.error("Veuillez remplir tous les champs");
+          }
+          if (values.serverError) {
+            toast.error("Vous devez être connecté pour créer une compétence");
+          }
+          setIsLoading(false);
           return;
         }
 
@@ -38,9 +43,10 @@ export const CharacterSkillForm = () => {
             },
           },
         });
+        setIsLoading(false);
       }}
     >
-      <AutoFormSubmit>Créer la compétence</AutoFormSubmit>
+      <AutoFormSubmit isLoading={isLoading}>Créer la compétence</AutoFormSubmit>
     </AutoForm>
   );
 };

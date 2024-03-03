@@ -8,7 +8,7 @@ export const Header = async () => {
   const session = await getAuthSession();
   return (
     <header className="fixed top-0 z-20 w-full border-b border-b-accent bg-background">
-      <div className="container m-auto flex flex-row justify-between gap-1 px-6 py-2">
+      <div className="container m-auto flex items-center justify-between gap-1 py-2">
         <h1 className="gap-1 text-2xl font-bold">
           <Link href="/">Project Genesis</Link>
         </h1>

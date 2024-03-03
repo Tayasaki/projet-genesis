@@ -2,10 +2,12 @@
 
 import AutoForm, { AutoFormSubmit } from "@/components/ui/auto-form";
 import { createAmmo, deleteAmmo } from "@/src/actions/weapon/ammo.action";
+import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 
 export const AmmoForm = () => {
+  const [isLoading, setIsLoading] = useState(false);
   return (
     <AutoForm
       formSchema={z.object({
@@ -19,16 +21,19 @@ export const AmmoForm = () => {
         },
       }}
       onSubmit={async (data) => {
+        setIsLoading(true);
         const values = await createAmmo({
           name: data.name,
         });
-        if (values.validationErrors) {
-          toast.error("Veuillez remplir tous les champs");
-          return;
-        }
 
-        if (values.serverError) {
-          toast.error("Vous devez être connecté pour créer une munition");
+        if (values.validationErrors || values.serverError) {
+          if (values.validationErrors) {
+            toast.error("Veuillez remplir tous les champs");
+          }
+          if (values.serverError) {
+            toast.error("Vous devez être connecté pour créer une munition");
+          }
+          setIsLoading(false);
           return;
         }
 
@@ -43,9 +48,10 @@ export const AmmoForm = () => {
             },
           },
         });
+        setIsLoading(false);
       }}
     >
-      <AutoFormSubmit>Créer la munition</AutoFormSubmit>
+      <AutoFormSubmit isLoading={isLoading}>Créer la munition</AutoFormSubmit>
     </AutoForm>
   );
 };

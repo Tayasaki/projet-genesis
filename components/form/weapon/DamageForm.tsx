@@ -2,10 +2,12 @@
 
 import AutoForm, { AutoFormSubmit } from "@/components/ui/auto-form";
 import { createDamage, deleteDamage } from "@/src/actions/weapon/damage.action";
+import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 
 export const DamageForm = () => {
+  const [isLoading, setIsLoading] = useState(false);
   return (
     <AutoForm
       formSchema={z.object({
@@ -19,16 +21,19 @@ export const DamageForm = () => {
         },
       }}
       onSubmit={async (data) => {
+        setIsLoading(true);
         const values = await createDamage({
           name: data.name,
         });
-        if (values.validationErrors) {
-          toast.error("Veuillez remplir tous les champs");
-          return;
-        }
 
-        if (values.serverError) {
-          toast.error("Vous devez être connecté pour créer un dégât");
+        if (values.validationErrors || values.serverError) {
+          if (values.validationErrors) {
+            toast.error("Veuillez remplir tous les champs");
+          }
+          if (values.serverError) {
+            toast.error("Vous devez être connecté pour créer un dégât");
+          }
+          setIsLoading(false);
           return;
         }
 
@@ -43,9 +48,10 @@ export const DamageForm = () => {
             },
           },
         });
+        setIsLoading(false);
       }}
     >
-      <AutoFormSubmit>Créer le dégât</AutoFormSubmit>
+      <AutoFormSubmit isLoading={isLoading}>Créer le dégât</AutoFormSubmit>
     </AutoForm>
   );
 };

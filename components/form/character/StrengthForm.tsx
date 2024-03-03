@@ -5,25 +5,29 @@ import {
 import { toast } from "sonner";
 import { z } from "zod";
 import AutoForm, { AutoFormSubmit } from "../../ui/auto-form";
+import { useState } from "react";
 
 export const StrengthForm = () => {
-  const formStrengthSchema = z.object({
-    name: z.string().max(50).describe("Nom du la force"),
-  });
+  const [isLoading, setIsLoading] = useState(false);
   return (
     <AutoForm
-      formSchema={formStrengthSchema}
+      formSchema={z.object({
+        name: z.string().max(50).describe("Nom du la force"),
+      })}
       onSubmit={async (data) => {
+        setIsLoading(true);
         const values = await createStrength({
           name: data.name,
         });
-        if (values.validationErrors) {
-          toast.error("Veuillez remplir tous les champs");
-          return;
-        }
 
-        if (values.serverError) {
-          toast.error("Vous devez être connecté pour créer une force");
+        if (values.validationErrors || values.serverError) {
+          if (values.validationErrors) {
+            toast.error("Veuillez remplir tous les champs");
+          }
+          if (values.serverError) {
+            toast.error("Vous devez être connecté pour créer une force");
+          }
+          setIsLoading(false);
           return;
         }
 
@@ -38,9 +42,10 @@ export const StrengthForm = () => {
             },
           },
         });
+        setIsLoading(false);
       }}
     >
-      <AutoFormSubmit>Créer la force</AutoFormSubmit>
+      <AutoFormSubmit isLoading={isLoading}>Créer la force</AutoFormSubmit>
     </AutoForm>
   );
 };

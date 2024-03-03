@@ -6,31 +6,36 @@ import {
 import { toast } from "sonner";
 import { z } from "zod";
 import AutoForm, { AutoFormSubmit } from "../../ui/auto-form";
+import { useState } from "react";
+import { set } from "date-fns";
 
 export const AlignementForm = () => {
-  const formAlignementSchema = z.object({
-    name: z.string().max(50).describe("Nom de l'alignement"),
-    description: z
-      .string()
-      .max(200)
-      .optional()
-      .describe("Description de l'alignement"),
-  });
+  const [isLoading, setIsLoading] = useState(false);
   return (
     <AutoForm
-      formSchema={formAlignementSchema}
+      formSchema={z.object({
+        name: z.string().max(50).describe("Nom de l'alignement"),
+        description: z
+          .string()
+          .max(200)
+          .optional()
+          .describe("Description de l'alignement"),
+      })}
       onSubmit={async (data) => {
+        setIsLoading(true);
         const values = await createAlignment({
           name: data.name,
           description: data.description,
         });
-        if (values.validationErrors) {
-          toast.error("Veuillez remplir tous les champs");
-          return;
-        }
 
-        if (values.serverError) {
-          toast.error("Vous devez être connecté pour créer un alignement");
+        if (values.validationErrors || values.serverError) {
+          if (values.validationErrors) {
+            toast.error("Veuillez remplir tous les champs");
+          }
+          if (values.serverError) {
+            toast.error("Vous devez être connecté pour créer un alignement");
+          }
+          setIsLoading(false);
           return;
         }
 
@@ -45,9 +50,10 @@ export const AlignementForm = () => {
             },
           },
         });
+        setIsLoading(false);
       }}
     >
-      <AutoFormSubmit>Créer le alignement</AutoFormSubmit>
+      <AutoFormSubmit isLoading={isLoading}>Créer le alignement</AutoFormSubmit>
     </AutoForm>
   );
 };

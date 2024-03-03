@@ -2,10 +2,12 @@
 
 import AutoForm, { AutoFormSubmit } from "@/components/ui/auto-form";
 import { createWeight, deleteWeight } from "@/src/actions/weapon/weight.action";
+import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 
 export const WeightForm = () => {
+  const [isLoading, setIsLoading] = useState(false);
   return (
     <AutoForm
       formSchema={z.object({
@@ -19,16 +21,19 @@ export const WeightForm = () => {
         },
       }}
       onSubmit={async (data) => {
+        setIsLoading(true);
         const values = await createWeight({
           name: data.name,
         });
-        if (values.validationErrors) {
-          toast.error("Veuillez remplir tous les champs");
-          return;
-        }
 
-        if (values.serverError) {
-          toast.error("Vous devez être connecté pour créer un poids");
+        if (values.validationErrors || values.serverError) {
+          if (values.validationErrors) {
+            toast.error("Veuillez remplir tous les champs");
+          }
+          if (values.serverError) {
+            toast.error("Vous devez être connecté pour créer un poids");
+          }
+          setIsLoading(false);
           return;
         }
 
@@ -43,9 +48,10 @@ export const WeightForm = () => {
             },
           },
         });
+        setIsLoading(false);
       }}
     >
-      <AutoFormSubmit>Créer le poids</AutoFormSubmit>
+      <AutoFormSubmit isLoading={isLoading}>Créer le poids</AutoFormSubmit>
     </AutoForm>
   );
 };

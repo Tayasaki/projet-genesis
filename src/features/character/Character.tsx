@@ -1,5 +1,11 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
 import { CharacterScenario } from "@/src/features/query/character.query";
 import Link from "next/link";
 export const Character = ({ character }: { character: CharacterScenario }) => {
@@ -23,7 +29,14 @@ export const Character = ({ character }: { character: CharacterScenario }) => {
           {character.age}
           {character.injury}
           {character.extra}
-          {character.temperment?.name}
+          <HoverCard>
+            <HoverCardTrigger asChild>
+              <Button variant={"link"}>{character.temperment?.name}</Button>
+            </HoverCardTrigger>
+            <HoverCardContent>
+              {character.temperment?.description}
+            </HoverCardContent>
+          </HoverCard>
           {character.alignment?.name}
           {character.fortune?.name}
           {character.strength.length > 0 && (

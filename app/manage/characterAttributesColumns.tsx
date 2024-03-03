@@ -16,6 +16,31 @@ export const columns: ColumnDef<CharacterAttributes>[] = [
   {
     accessorKey: "type",
     header: "Type",
+    cell: ({ row }) => {
+      const r = row.original;
+      let type = "";
+      switch (r.type) {
+        case "temperment":
+          type = "tempérament";
+          break;
+        case "alignement":
+          type = "alignement";
+          break;
+        case "fortune":
+          type = "fortune";
+          break;
+        case "strength":
+          type = "force";
+          break;
+        case "weakness":
+          type = "faiblesse";
+          break;
+        case "skill":
+          type = "compétence";
+          break;
+      }
+      return <span className="capitalize">{type}</span>;
+    },
   },
   {
     accessorKey: "name",

@@ -5,31 +5,35 @@ import {
 import { toast } from "sonner";
 import { z } from "zod";
 import AutoForm, { AutoFormSubmit } from "../../ui/auto-form";
+import { useState } from "react";
 
 export const FortuneForm = () => {
-  const formFortuneSchema = z.object({
-    name: z.string().max(50).describe("Nom de la richesse"),
-    description: z
-      .string()
-      .max(200)
-      .optional()
-      .describe("Description de la richesse"),
-  });
+  const [isLoading, setIsLoading] = useState(false);
   return (
     <AutoForm
-      formSchema={formFortuneSchema}
+      formSchema={z.object({
+        name: z.string().max(50).describe("Nom de la richesse"),
+        description: z
+          .string()
+          .max(200)
+          .optional()
+          .describe("Description de la richesse"),
+      })}
       onSubmit={async (data) => {
+        setIsLoading(true);
         const values = await createFortune({
           name: data.name,
           description: data.description,
         });
-        if (values.validationErrors) {
-          toast.error("Veuillez remplir tous les champs");
-          return;
-        }
 
-        if (values.serverError) {
-          toast.error("Vous devez être connecté pour créer une richesse");
+        if (values.validationErrors || values.serverError) {
+          if (values.validationErrors) {
+            toast.error("Veuillez remplir tous les champs");
+          }
+          if (values.serverError) {
+            toast.error("Vous devez être connecté pour créer une richesse");
+          }
+          setIsLoading(false);
           return;
         }
 
@@ -44,9 +48,10 @@ export const FortuneForm = () => {
             },
           },
         });
+        setIsLoading(false);
       }}
     >
-      <AutoFormSubmit>Créer la fortune</AutoFormSubmit>
+      <AutoFormSubmit isLoading={isLoading}>Créer la fortune</AutoFormSubmit>
     </AutoForm>
   );
 };

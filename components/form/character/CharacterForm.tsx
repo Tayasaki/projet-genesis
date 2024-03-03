@@ -10,6 +10,7 @@ import {
   Weaknesses,
 } from "@/src/features/query/character.query";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -30,14 +31,24 @@ export const CharacterForm = ({
   fortunes: Fortunes;
   scenarioId: string;
 }) => {
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const tempermentsNames: String[] = temperments.map((t) => t.name);
-  const alignementsNames: String[] = alignements.map((a) => a.name);
-  const fortunesNames: String[] = fortunes.map((f) => f.name);
-  const strengthNames: String[] = strengths.map((s) => s.name);
-  const weaknessNames: String[] = weaknesses.map((w) => w.name);
-  const characterSkillNames: String[] = characterSkills.map((c) => c.name);
+  const tempermentsNames = temperments.map((t) => t.name) as [
+    string,
+    ...string[],
+  ];
+  const alignementsNames = alignements.map((a) => a.name) as [
+    string,
+    ...string[],
+  ];
+  const fortunesNames = fortunes.map((f) => f.name) as [string, ...string[]];
+  const strengthNames = strengths.map((s) => s.name) as [string, ...string[]];
+  const weaknessNames = weaknesses.map((w) => w.name) as [string, ...string[]];
+  const characterSkillNames = characterSkills.map((c) => c.name) as [
+    string,
+    ...string[],
+  ];
 
   const characterFormSchema = z.object({
     name: z.string().max(50).describe("Nom du personnage"),
@@ -47,7 +58,7 @@ export const CharacterForm = ({
     age: z.number().min(1).describe("Age du personnage").optional(),
     injury: z.string().max(100).describe("Blessure").optional(),
     extra: z.string().max(200).describe("Extra").optional(),
-    temperment: z.enum([...tempermentsNames]).describe("Tempérament"),
+    temperment: z.enum(tempermentsNames).describe("Tempérament"),
     alignment: z.enum([...alignementsNames]).describe("Alignement"),
     fortune: z.enum([...fortunesNames]).describe("Richesse"),
     strength: z
@@ -70,6 +81,7 @@ export const CharacterForm = ({
   return (
     <AutoForm
       onSubmit={async (data) => {
+        setIsLoading(true);
         const dataToSend = {
           ...data,
           strength: data.strength.map((s) => s.name),
@@ -79,13 +91,14 @@ export const CharacterForm = ({
         };
         const values = await createCharacter(dataToSend);
 
-        if (values.validationErrors) {
-          toast.error("Veuillez remplir tous les champs");
-          return;
-        }
-
-        if (values.serverError) {
-          toast.error("Vous devez être connecté pour créer un alignement");
+        if (values.validationErrors || values.serverError) {
+          if (values.validationErrors) {
+            toast.error("Veuillez remplir tous les champs");
+          }
+          if (values.serverError) {
+            toast.error("Vous devez être connecté pour créer un personnage");
+          }
+          setIsLoading(false);
           return;
         }
 
@@ -100,7 +113,9 @@ export const CharacterForm = ({
         },
       }}
     >
-      <AutoFormSubmit>Créer votre personnage</AutoFormSubmit>
+      <AutoFormSubmit isLoading={isLoading}>
+        Créer votre personnage
+      </AutoFormSubmit>
     </AutoForm>
   );
 };
