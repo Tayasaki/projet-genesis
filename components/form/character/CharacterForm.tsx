@@ -80,6 +80,8 @@ export const CharacterForm = ({
 
   return (
     <AutoForm
+      formSchema={characterFormSchema}
+      className="w-96 rounded-lg p-4 shadow-md dark:border dark:bg-card"
       onSubmit={async (data) => {
         setIsLoading(true);
         const dataToSend = {
@@ -105,11 +107,39 @@ export const CharacterForm = ({
         toast.success("Personnage créé avec succès");
         router.push(`/${scenarioId}`);
       }}
-      formSchema={characterFormSchema}
-      className="flex w-96 flex-col rounded-lg p-4 shadow-md dark:border dark:bg-card"
       fieldConfig={{
+        name: {
+          inputProps: {
+            placeholder: "Eric Tournlavis",
+          },
+        },
         pj: {
           fieldType: "switch",
+        },
+        origin: {
+          inputProps: {
+            placeholder: "Né dans les montagnes",
+          },
+        },
+        role: {
+          inputProps: {
+            placeholder: "Guerrier",
+          },
+        },
+        age: {
+          inputProps: {
+            placeholder: "25",
+          },
+        },
+        injury: {
+          inputProps: {
+            placeholder: "Blessure à la jambe",
+          },
+        },
+        extra: {
+          inputProps: {
+            placeholder: "Aime les chats",
+          },
         },
       }}
     >

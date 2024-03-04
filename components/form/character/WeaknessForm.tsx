@@ -14,6 +14,13 @@ export const WeaknessForm = () => {
       formSchema={z.object({
         name: z.string().max(50).describe("Nom de la faiblesse"),
       })}
+      fieldConfig={{
+        name: {
+          inputProps: {
+            placeholder: "Faible comme un chaton",
+          },
+        },
+      }}
       onSubmit={async (data) => {
         setIsLoading(true);
         const values = await createWeakness({

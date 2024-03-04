@@ -15,6 +15,13 @@ export const CharacterSkillForm = () => {
       formSchema={z.object({
         name: z.string().max(50).describe("Nom de la compétence"),
       })}
+      fieldConfig={{
+        name: {
+          inputProps: {
+            placeholder: "Agile",
+          },
+        },
+      }}
       onSubmit={async (data) => {
         setIsLoading(true);
         const values = await createCharacterSkill({

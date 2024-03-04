@@ -21,13 +21,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={clsx(inter.className, "h-full bg-background")}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
+      <body className={clsx(inter.className, "h-full bg-background ")}>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <div className="flex h-full w-full flex-col">
             <Header />
             <main className="m-auto h-full max-w-5xl flex-1 py-16">

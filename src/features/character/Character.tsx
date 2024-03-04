@@ -10,7 +10,7 @@ import { CharacterScenario } from "@/src/features/query/character.query";
 import Link from "next/link";
 export const Character = ({ character }: { character: CharacterScenario }) => {
   return (
-    <Card className="max-w-xs flex-1 hover:ring-2 hover:ring-offset-2">
+    <Card className="max-w-md transition hover:scale-110 hover:ring-2 hover:ring-ring hover:ring-offset-2 active:scale-105">
       <Link href={`/personnages/${character.id}`}>
         <CardHeader className="flex flex-row">
           <Avatar>

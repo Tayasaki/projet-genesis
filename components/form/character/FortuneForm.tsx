@@ -19,6 +19,18 @@ export const FortuneForm = () => {
           .optional()
           .describe("Description de la richesse"),
       })}
+      fieldConfig={{
+        name: {
+          inputProps: {
+            placeholder: "Riche comme Crésus",
+          },
+        },
+        description: {
+          inputProps: {
+            placeholder: "Le personnage est riche comme Crésus",
+          },
+        },
+      }}
       onSubmit={async (data) => {
         setIsLoading(true);
         const values = await createFortune({

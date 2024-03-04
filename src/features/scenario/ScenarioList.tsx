@@ -26,7 +26,7 @@ export const ScenarioList = async () => {
           {scenario.map((s) => (
             <Card
               key={s.id}
-              className="max-w-md hover:ring-2 hover:ring-offset-2"
+              className="max-w-md transition hover:scale-110 hover:ring-2 hover:ring-ring hover:ring-offset-2 active:scale-105"
             >
               <Link href={`/${s.id}`}>
                 <CardHeader>

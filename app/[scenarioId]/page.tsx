@@ -31,9 +31,7 @@ export default async function ScenarioManage({
           <h2 className="text-xl">Characters</h2>
           <div className="grid grid-cols-4 gap-4">
             {characters.map((c) => (
-              
-                <Character key={c.id} character={c} />
-              
+              <Character key={c.id} character={c} />
             ))}
           </div>
         </div>
@@ -41,7 +39,7 @@ export default async function ScenarioManage({
         <p>Pas encore de personnage</p>
       )}
       <Link
-        className={cn(buttonVariants({ variant: "default" }))}
+        className={cn("mt-4", buttonVariants({ variant: "default" }))}
         href={`/${params.scenarioId}/generation-personnage`}
       >
         Créer un personnage

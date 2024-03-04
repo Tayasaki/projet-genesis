@@ -21,6 +21,18 @@ export const AlignementForm = () => {
           .optional()
           .describe("Description de l'alignement"),
       })}
+      fieldConfig={{
+        name: {
+          inputProps: {
+            placeholder: "Loyal bon",
+          },
+        },
+        description: {
+          inputProps: {
+            placeholder: "Un personnage loyal bon agit comme un chevalier",
+          },
+        },
+      }}
       onSubmit={async (data) => {
         setIsLoading(true);
         const values = await createAlignment({

@@ -23,7 +23,7 @@ export default async function CharacterGeneration({
   const fortunes = await getFortunes();
 
   return (
-    <div className="">
+    <div className="w-full">
       <h1>Générer votre personnage</h1>
       <CharacterForm
         temperments={temperments}

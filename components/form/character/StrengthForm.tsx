@@ -14,6 +14,13 @@ export const StrengthForm = () => {
       formSchema={z.object({
         name: z.string().max(50).describe("Nom du la force"),
       })}
+      fieldConfig={{
+        name: {
+          inputProps: {
+            placeholder: "Force de l'ours",
+          },
+        },
+      }}
       onSubmit={async (data) => {
         setIsLoading(true);
         const values = await createStrength({

@@ -20,6 +20,19 @@ export const TempermentForm = () => {
           .optional()
           .describe("Description du tempérament"),
       })}
+      fieldConfig={{
+        name: {
+          inputProps: {
+            placeholder: "Colérique",
+          },
+        },
+        description: {
+          inputProps: {
+            placeholder:
+              "Le colérique est une personne qui s'énerve facilement",
+          },
+        },
+      }}
       onSubmit={async (data) => {
         setIsLoading(true);
         const values = await createTemperment({

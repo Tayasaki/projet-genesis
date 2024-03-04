@@ -16,10 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 export const TabsManagement = () => {
   return (
     <div className="flex space-x-2">
-      <Tabs
-        defaultValue="temperment"
-        className="flex max-w-xl flex-col rounded-lg p-4 shadow-md dark:border"
-      >
+      <Tabs defaultValue="temperment">
         <TabsList>
           <TabsTrigger value="temperment">Tempérament</TabsTrigger>
           <TabsTrigger value="alignement">Alignement</TabsTrigger>
@@ -28,6 +25,7 @@ export const TabsManagement = () => {
           <TabsTrigger value="weakness">Faiblesse</TabsTrigger>
           <TabsTrigger value="skills">Compétences</TabsTrigger>
         </TabsList>
+
         <TabsContent value="temperment">
           <TempermentForm />
         </TabsContent>
@@ -48,10 +46,7 @@ export const TabsManagement = () => {
         </TabsContent>
       </Tabs>
 
-      <Tabs
-        defaultValue="damage"
-        className="flex max-w-lg flex-col rounded-lg p-4 shadow-md dark:border"
-      >
+      <Tabs defaultValue="damage">
         <TabsList>
           <TabsTrigger value="damage">Dégât</TabsTrigger>
           <TabsTrigger value="ammo">Munition</TabsTrigger>
