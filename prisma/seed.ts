@@ -47,7 +47,7 @@ const main = async () => {
     await prisma.scenario.update({
       where: { id: scenario.id },
       data: {
-        Character: {
+        character: {
           connect: {
             id: character.id,
           },

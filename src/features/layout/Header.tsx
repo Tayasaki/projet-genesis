@@ -3,6 +3,8 @@ import { getAuthSession } from "@/lib/auth";
 import Link from "next/link";
 import { LoginButton } from "./auth/LoginButtons";
 import { UserProfile } from "./auth/UserProfile";
+import { cn } from "@/lib/utils";
+import { buttonVariants } from "@/components/ui/button";
 
 export const Header = async () => {
   const session = await getAuthSession();
@@ -13,7 +15,10 @@ export const Header = async () => {
           <Link href="/">Project Genesis</Link>
         </h1>
         <span>
-          <Link className="italic" href={"/manage"}>
+          <Link
+            className={cn(buttonVariants({ variant: "link" }))}
+            href={"/manage"}
+          >
             Gestion
           </Link>
         </span>

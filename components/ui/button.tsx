@@ -18,10 +18,13 @@ const buttonVariants = cva(
           "border border-input bg-background hover:bg-accent hover:text-accent-foreground hover:ring-ring",
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
-        discord: "bg-[#7289da] text-white hover:bg-[#677bc4]",
-        github: "bg-[#24292e] text-white hover:bg-[#2f363d]",
+        ghost:
+          "hover:bg-accent hover:text-accent-foreground hover:ring-0 hover:ring-offset-0",
+        link: "text-primary underline-offset-4 hover:underline hover:ring-0 hover:ring-offset-0",
+        discord:
+          "bg-[#7289da] text-white hover:bg-[#677bc4] hover:ring-[#7289da]",
+        github:
+          "bg-[#24292e] text-white hover:bg-[#2f363d] hover:ring-[#24292e]",
       },
       size: {
         default: "h-10 px-4 py-2",
