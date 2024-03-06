@@ -24,11 +24,8 @@ export const ScenarioList = async () => {
       {session?.user && (
         <div className="grid grid-cols-4 gap-4">
           {scenario.map((s) => (
-            <Card
-              key={s.id}
-              className="max-w-md transition hover:scale-110 hover:ring-2 hover:ring-ring hover:ring-offset-2 active:scale-105"
-            >
-              <Link href={`/${s.id}`}>
+            <Link key={s.id} href={`/${s.id}`}>
+              <Card className="max-w-md transition hover:scale-110 hover:ring-2 hover:ring-ring hover:ring-offset-2 active:scale-105">
                 <CardHeader>
                   <CardTitle>{s.name}</CardTitle>
                 </CardHeader>
@@ -36,8 +33,8 @@ export const ScenarioList = async () => {
                   <CardDescription>{s.description}</CardDescription>
                 </CardContent>
                 <CardFooter>{s.universe}</CardFooter>
-              </Link>
-            </Card>
+              </Card>
+            </Link>
           ))}
         </div>
       )}
