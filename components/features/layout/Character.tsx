@@ -6,7 +6,7 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
-import { CharacterScenario } from "@/src/features/query/character.query";
+import { CharacterScenario } from "@/src/query/character.query";
 import Link from "next/link";
 export const Character = ({ character }: { character: CharacterScenario }) => {
   return (

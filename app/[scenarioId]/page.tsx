@@ -1,16 +1,19 @@
-import { prisma } from "@/lib/prisma";
-import { Character } from "@/src/features/character/Character";
-import Link from "next/link";
-import { notFound } from "next/navigation";
-import { getCharacters } from "../../src/features/query/character.query";
-import { cn } from "@/lib/utils";
+import { Character } from "@/components/features/layout/Character";
 import { buttonVariants } from "@/components/ui/button";
+import { getAuthSession } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { cn } from "@/lib/utils";
+import Link from "next/link";
+import { notFound, redirect } from "next/navigation";
+import { getCharacters } from "../../src/query/character.query";
 
 export default async function ScenarioManage({
   params,
 }: {
   params: { scenarioId: string };
 }) {
+  const session = await getAuthSession();
+  if (!session) redirect("/login");
   const scenario = await prisma.scenario.findUnique({
     where: {
       id: params.scenarioId,

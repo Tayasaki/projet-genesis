@@ -2,11 +2,10 @@ import {
   createCharacterSkill,
   deleteCharacterSkill,
 } from "@/src/actions/weapon/character/characterSkill.action";
+import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 import AutoForm, { AutoFormSubmit } from "../../ui/auto-form";
-import { useState } from "react";
-import { set } from "date-fns";
 
 export const CharacterSkillForm = () => {
   const [isLoading, setIsLoading] = useState(false);

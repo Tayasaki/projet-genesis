@@ -1,5 +1,5 @@
+import { TabsManagement } from "@/components/features/layout/TabsManagement";
 import { getAuthSession } from "@/lib/auth";
-import { TabsManagement } from "@/src/features/management/TabsManagement";
 import {
   getAlignments,
   getCharacterSkills,
@@ -7,14 +7,14 @@ import {
   getStrengths,
   getTemperments,
   getWeaknesses,
-} from "@/src/features/query/character.query";
+} from "@/src/query/character.query";
 import {
   getAmmos,
   getDamages,
   getRanges,
   getWeaponSkill,
   getWeights,
-} from "@/src/features/query/weapon.query";
+} from "@/src/query/weapon.query";
 import { redirect } from "next/navigation";
 import { columns as characterColumns } from "./characterAttributesColumns";
 import { DataTable } from "./data-table";

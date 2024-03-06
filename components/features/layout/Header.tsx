@@ -1,10 +1,10 @@
-import { ToggleTheme } from "@/components/theme/ToggleTheme";
+import { ToggleTheme } from "@/components/features/theme/ToggleTheme";
+import { buttonVariants } from "@/components/ui/button";
 import { getAuthSession } from "@/lib/auth";
+import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { LoginButton } from "./auth/LoginButtons";
 import { UserProfile } from "./auth/UserProfile";
-import { cn } from "@/lib/utils";
-import { buttonVariants } from "@/components/ui/button";
 
 export const Header = async () => {
   const session = await getAuthSession();

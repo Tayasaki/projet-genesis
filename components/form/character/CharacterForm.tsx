@@ -8,7 +8,7 @@ import {
   Strengths,
   Temperments,
   Weaknesses,
-} from "@/src/features/query/character.query";
+} from "@/src/query/character.query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";

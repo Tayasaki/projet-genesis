@@ -1,7 +1,7 @@
+import { LogoutButton } from "@/components/features/layout/auth/LogoutButton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getAuthSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { LogoutButton } from "@/src/features/layout/auth/LogoutButton";
 import { redirect } from "next/navigation";
 
 export default async function Profile() {
