@@ -22,9 +22,9 @@ export const ScenarioList = async () => {
       <h1 className="text-lg font-bold">Scenario List</h1>
 
       {session?.user && (
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
           {scenario.map((s) => (
-            <Link key={s.id} href={`/${s.id}`}>
+            <Link key={s.id} href={`/${s.id}`} className="h-auto">
               <Card className="max-w-md transition hover:scale-110 hover:ring-2 hover:ring-ring hover:ring-offset-2 active:scale-105">
                 <CardHeader>
                   <CardTitle>{s.name}</CardTitle>
