@@ -1,7 +1,7 @@
 import {
   createWeakness,
   deleteWeakness,
-} from "@/src/actions/weapon/character/weakness.action";
+} from "@/src/actions/character/weakness.action";
 import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";

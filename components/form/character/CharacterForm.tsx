@@ -1,6 +1,6 @@
 "use client";
 import AutoForm, { AutoFormSubmit } from "@/components/ui/auto-form";
-import { createCharacter } from "@/src/actions/weapon/character/character.action";
+import { createCharacter } from "@/src/actions/character/character.action";
 import {
   Alignments,
   CharacterSkills,
@@ -105,7 +105,7 @@ export const CharacterForm = ({
         }
 
         toast.success("Personnage créé avec succès");
-        router.push(`/${scenarioId}`);
+        router.push(`/${scenarioId}/personnages`);
       }}
       fieldConfig={{
         name: {

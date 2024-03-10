@@ -2,7 +2,7 @@
 import {
   createTemperment,
   deleteTemperment,
-} from "@/src/actions/weapon/character/temperment.action";
+} from "@/src/actions/character/temperment.action";
 import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";

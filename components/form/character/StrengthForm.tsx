@@ -1,11 +1,11 @@
 import {
   createStrength,
   deleteStrength,
-} from "@/src/actions/weapon/character/strength.action";
+} from "@/src/actions/character/strength.action";
+import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 import AutoForm, { AutoFormSubmit } from "../../ui/auto-form";
-import { useState } from "react";
 
 export const StrengthForm = () => {
   const [isLoading, setIsLoading] = useState(false);

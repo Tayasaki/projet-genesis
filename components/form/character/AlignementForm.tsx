@@ -2,12 +2,11 @@
 import {
   createAlignment,
   deleteAlignment,
-} from "@/src/actions/weapon/character/alignment.action";
+} from "@/src/actions/character/alignment.action";
+import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 import AutoForm, { AutoFormSubmit } from "../../ui/auto-form";
-import { useState } from "react";
-import { set } from "date-fns";
 
 export const AlignementForm = () => {
   const [isLoading, setIsLoading] = useState(false);

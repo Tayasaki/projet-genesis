@@ -23,7 +23,7 @@ export function AutoFormSubmit({
 }: {
   children?: React.ReactNode;
   className?: string;
-  isLoading?: boolean;
+  isLoading: boolean;
 }) {
   return (
     <Button isLoading={isLoading} type="submit" className={className}>

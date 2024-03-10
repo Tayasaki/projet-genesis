@@ -44,12 +44,12 @@ export const createCharacter = authenticatedAction(
     const character = await prisma.character.create({
       data: {
         name: name,
-        pj: pj ? pj : false,
-        origin: origin ? origin : null,
-        role: role ? role : null,
-        age: age ? age : null,
-        injury: injury ? injury : null,
-        extra: extra ? extra : null,
+        pj: pj ?? false,
+        origin: origin ?? null,
+        role: role ?? null,
+        age: age ?? null,
+        injury: injury ?? null,
+        extra: extra ?? null,
         scneario: {
           connect: {
             id: scenarioId,

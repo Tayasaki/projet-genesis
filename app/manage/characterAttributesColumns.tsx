@@ -1,12 +1,12 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { deleteAlignment } from "@/src/actions/weapon/character/alignment.action";
-import { deleteCharacterSkill } from "@/src/actions/weapon/character/characterSkill.action";
-import { deleteFortune } from "@/src/actions/weapon/character/fortune.action";
-import { deleteStrength } from "@/src/actions/weapon/character/strength.action";
-import { deleteTemperment } from "@/src/actions/weapon/character/temperment.action";
-import { deleteWeakness } from "@/src/actions/weapon/character/weakness.action";
+import { deleteAlignment } from "@/src/actions/character/alignment.action";
+import { deleteCharacterSkill } from "@/src/actions/character/characterSkill.action";
+import { deleteFortune } from "@/src/actions/character/fortune.action";
+import { deleteStrength } from "@/src/actions/character/strength.action";
+import { deleteTemperment } from "@/src/actions/character/temperment.action";
+import { deleteWeakness } from "@/src/actions/character/weakness.action";
 import { ColumnDef } from "@tanstack/react-table";
 import { XSquare } from "lucide-react";
 import { toast } from "sonner";

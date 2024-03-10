@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { getCharacters } from "../../src/query/character.query";
+import { getCharacters } from "../../../src/query/character.query";
 
 export default async function ScenarioManage({
   params,

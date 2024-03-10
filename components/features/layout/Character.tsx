@@ -1,3 +1,4 @@
+"use client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,16 +9,20 @@ import {
 } from "@/components/ui/hover-card";
 import { CharacterScenario } from "@/src/query/character.query";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 export const Character = ({ character }: { character: CharacterScenario }) => {
+  const pathname = usePathname();
   return (
     <Card className="max-w-md transition hover:scale-110 hover:ring-2 hover:ring-ring hover:ring-offset-2 active:scale-105">
-      <Link href={`/personnages/${character.id}`}>
+      <Link href={`${pathname}/${character.id}`}>
         <CardHeader className="flex flex-row">
           <Avatar>
             {character.image ? (
               <AvatarImage src={character.image} alt={"Image du personnage"} />
             ) : (
-              <AvatarFallback>{character.name[0]}</AvatarFallback>
+              <AvatarFallback>
+                {character.name.slice(0, 2).toUpperCase()}
+              </AvatarFallback>
             )}
           </Avatar>
           <CardTitle>{character.name}</CardTitle>

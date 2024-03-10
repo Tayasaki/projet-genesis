@@ -1,7 +1,7 @@
 import {
   createCharacterSkill,
   deleteCharacterSkill,
-} from "@/src/actions/weapon/character/characterSkill.action";
+} from "@/src/actions/character/characterSkill.action";
 import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";

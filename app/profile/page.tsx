@@ -18,7 +18,7 @@ export default async function Profile() {
           alt="Profile picture"
           className="bg-slate-200"
         />
-        <AvatarFallback>{user.name?.slice(0, 2) ?? ""}</AvatarFallback>
+        <AvatarFallback>{user.name?.slice(0, 2) ?? "AA"}</AvatarFallback>
       </Avatar>
       <p>nom: {user.name}</p>
       <p>email: {user.email}</p>

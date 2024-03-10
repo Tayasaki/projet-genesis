@@ -1,11 +1,11 @@
 import {
   createFortune,
   deleteFortune,
-} from "@/src/actions/weapon/character/fortune.action";
+} from "@/src/actions/character/fortune.action";
+import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 import AutoForm, { AutoFormSubmit } from "../../ui/auto-form";
-import { useState } from "react";
 
 export const FortuneForm = () => {
   const [isLoading, setIsLoading] = useState(false);
