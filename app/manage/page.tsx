@@ -1,4 +1,5 @@
 import { TabsManagement } from "@/components/features/layout/TabsManagement";
+import { WeaponForm } from "@/components/form/weapon/WeaponForm";
 import { getAuthSession } from "@/lib/auth";
 import {
   getAlignments,
@@ -13,12 +14,14 @@ import {
   getDamages,
   getRanges,
   getWeaponSkill,
+  getWeapons,
   getWeights,
 } from "@/src/query/weapon.query";
 import { redirect } from "next/navigation";
-import { columns as characterColumns } from "./characterAttributesColumns";
+import { columns as characterAttributesColumns } from "./characterAttributesColumns";
 import { DataTable } from "./data-table";
-import { columns as weaponColumns } from "./weaponAttributesColumns";
+import { columns as weaponAttributesColumns } from "./weaponAttributesColumns";
+import { columns as weaponColumns } from "./weaponColumns";
 
 export type CharacterAttributes = {
   id: string;
@@ -39,6 +42,7 @@ export default async function Manage() {
 
   const characterAttributes: CharacterAttributes[] = [];
   const weaponAttributes: WeaponAttributes[] = [];
+  const weapons = await getWeapons();
   const temperments = await getTemperments();
   const alignements = await getAlignments();
   const fortunes = await getFortunes();
@@ -75,12 +79,23 @@ export default async function Manage() {
   weaponSkill.flatMap((w) => weaponAttributes.push({ ...w, type: "skill" }));
 
   return (
-    <div className="w-full">
+    <div className="w-full space-y-3">
       <div className="flex w-full flex-col">
-        <DataTable columns={characterColumns} data={characterAttributes} />
-        <DataTable columns={weaponColumns} data={weaponAttributes} />
+        <DataTable
+          columns={characterAttributesColumns}
+          data={characterAttributes}
+        />
+        <DataTable columns={weaponAttributesColumns} data={weaponAttributes} />
+        <DataTable columns={weaponColumns} data={weapons} />
       </div>
       <TabsManagement />
+      <WeaponForm
+        ammos={ammo}
+        damages={damage}
+        ranges={range}
+        weights={weight}
+        skills={weaponSkill}
+      />
     </div>
   );
 }

@@ -59,20 +59,20 @@ export const CharacterForm = ({
     injury: z.string().max(100).describe("Blessure").optional(),
     extra: z.string().max(200).describe("Extra").optional(),
     temperment: z.enum(tempermentsNames).describe("Tempérament"),
-    alignment: z.enum([...alignementsNames]).describe("Alignement"),
-    fortune: z.enum([...fortunesNames]).describe("Richesse"),
+    alignment: z.enum(alignementsNames).describe("Alignement"),
+    fortune: z.enum(fortunesNames).describe("Richesse"),
     strength: z
-      .array(z.object({ name: z.enum([...strengthNames]).describe("Force") }))
+      .array(z.object({ name: z.enum(strengthNames).describe("Force").optional() }))
       .describe("Force"),
     weakness: z
       .array(
-        z.object({ name: z.enum([...weaknessNames]).describe("Faiblesse") }),
+        z.object({ name: z.enum(weaknessNames).describe("Faiblesse").optional() }),
       )
       .describe("Faiblesse"),
     skillSet: z
       .array(
         z.object({
-          name: z.enum([...characterSkillNames]).describe("Compétence"),
+          name: z.enum(characterSkillNames).describe("Compétence").optional(),
         }),
       )
       .describe("Compétences"),

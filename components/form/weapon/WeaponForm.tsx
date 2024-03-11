@@ -1,4 +1,7 @@
+"use client";
+
 import AutoForm, { AutoFormSubmit } from "@/components/ui/auto-form";
+import { DependencyType } from "@/components/ui/auto-form/types";
 import { createWeapon } from "@/src/actions/weapon/weapon.action";
 import {
   Ammos,
@@ -39,11 +42,17 @@ export const WeaponForm = ({
       .max(200)
       .describe("Description de l'arme")
       .optional(),
-    ammo: z.enum(ammoNames).optional(),
-    weight: z.enum(weightNames),
-    range: z.enum(rangeNames),
-    damage: z.enum(damageNames),
-    skillSet: z.array(z.object({ name: z.enum(skillNames) })).optional(),
+    ammo: z.enum(ammoNames).describe("Munition de l'arme").optional(),
+    weight: z.enum(weightNames).describe("Poids de l'arme"),
+    range: z.enum(rangeNames).describe("Portée de l'arme"),
+    damage: z.enum(damageNames).describe("Dégât de l'arme"),
+    skillSet: z
+      .array(
+        z.object({
+          name: z.enum(skillNames).describe("Compétence").optional(),
+        }),
+      )
+      .describe("Compétences"),
   });
   return (
     <AutoForm
@@ -75,8 +84,16 @@ export const WeaponForm = ({
           fieldType: "switch",
         },
       }}
+      dependencies={[
+        {
+          sourceField: "melee",
+          targetField: "ammo",
+          type: DependencyType.HIDES,
+          when: (melee) => melee,
+        },
+      ]}
     >
-      <AutoFormSubmit isLoading={isLoading} />
+      <AutoFormSubmit isLoading={isLoading}>Créer l&apos;arme</AutoFormSubmit>
     </AutoForm>
   );
 };

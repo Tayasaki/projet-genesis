@@ -13,7 +13,7 @@ const weaponSchema = z.object({
   weight: z.string(),
   range: z.string(),
   damage: z.string(),
-  skillSet: z.array(z.string()).optional(),
+  skillSet: z.array(z.string().optional()),
 });
 
 export const createWeapon = authenticatedAction(
@@ -28,13 +28,14 @@ export const createWeapon = authenticatedAction(
     damage,
     skillSet,
   }) => {
+    skillSet = skillSet.filter((s) => s);
     await prisma.weapon.create({
       data: {
         name: name,
         description: description,
         melee: melee ?? false,
         ammo: {
-          connect: { name: ammo },
+          connect: melee ? undefined : ammo ? { name: ammo } : undefined,
         },
         weight: {
           connect: { name: weight },
@@ -46,10 +47,18 @@ export const createWeapon = authenticatedAction(
           connect: { name: damage },
         },
         weaponSkill: {
-          connect: skillSet?.map((s) => ({ name: s })),
+          connect: skillSet.map((s) => ({ name: s })),
         },
       },
     });
-    revalidatePath("/***********");
+    revalidatePath("/manage");
+  },
+);
+
+export const deleteWeapon = authenticatedAction(
+  z.object({ id: z.string() }),
+  async ({ id }) => {
+    await prisma.weapon.delete({ where: { id } });
+    revalidatePath("/manage");
   },
 );

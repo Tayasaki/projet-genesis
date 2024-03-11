@@ -17,9 +17,9 @@ const characterSchema = z.object({
   temperment: z.string(),
   alignment: z.string(),
   fortune: z.string(),
-  strength: z.array(z.string()),
-  weakness: z.array(z.string()),
-  skillSet: z.array(z.string()),
+  strength: z.array(z.string().optional()),
+  weakness: z.array(z.string().optional()),
+  skillSet: z.array(z.string().optional()),
   scenarioId: z.string(),
 });
 
@@ -41,7 +41,10 @@ export const createCharacter = authenticatedAction(
     skillSet,
     scenarioId,
   }) => {
-    const character = await prisma.character.create({
+    strength = strength.filter((s) => s);
+    weakness = weakness.filter((w) => w);
+    skillSet = skillSet.filter((s) => s);
+    await prisma.character.create({
       data: {
         name: name,
         pj: pj ?? false,
@@ -82,6 +85,5 @@ export const createCharacter = authenticatedAction(
       },
     });
     revalidatePath(`/${scenarioId}`);
-    return character.id;
   },
 );
