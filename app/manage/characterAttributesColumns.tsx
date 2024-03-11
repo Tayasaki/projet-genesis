@@ -51,7 +51,11 @@ export const columns: ColumnDef<CharacterAttributes>[] = [
     header: "Description",
     cell: ({ row }) => {
       const r = row.original;
-      return <span>{r.description ?? "Pas de description"}</span>;
+      return (
+        <span className={!r.description ? "italic" : ""}>
+          {r.description ?? "Pas de description"}
+        </span>
+      );
     },
   },
   {

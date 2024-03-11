@@ -23,7 +23,11 @@ export const columns: ColumnDef<Weapon>[] = [
     accessorKey: "description",
     header: "Description",
     cell: ({ row }) => {
-      return row.original.description || "Pas de description";
+      return (
+        <span className={!row.original.description ? "italic" : ""}>
+          {row.original.description || "Pas de description"}
+        </span>
+      );
     },
   },
   {
