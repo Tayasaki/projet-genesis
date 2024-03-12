@@ -20,6 +20,7 @@ const characterSchema = z.object({
   strength: z.array(z.string().optional()),
   weakness: z.array(z.string().optional()),
   skillSet: z.array(z.string().optional()),
+  weaponSet: z.array(z.string().optional()),
   scenarioId: z.string(),
 });
 
@@ -39,11 +40,13 @@ export const createCharacter = authenticatedAction(
     strength,
     weakness,
     skillSet,
+    weaponSet,
     scenarioId,
   }) => {
     strength = strength.filter((s) => s);
     weakness = weakness.filter((w) => w);
     skillSet = skillSet.filter((s) => s);
+    weaponSet = weaponSet.filter((w) => w);
     await prisma.character.create({
       data: {
         name: name,
@@ -81,6 +84,9 @@ export const createCharacter = authenticatedAction(
         },
         skillSet: {
           connect: skillSet.map((s) => ({ name: s })),
+        },
+        weapon: {
+          connect: weaponSet.map((w) => ({ id: w })),
         },
       },
     });

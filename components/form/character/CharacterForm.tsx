@@ -1,4 +1,5 @@
 "use client";
+
 import AutoForm, { AutoFormSubmit } from "@/components/ui/auto-form";
 import { createCharacter } from "@/src/actions/character/character.action";
 import {
@@ -9,6 +10,7 @@ import {
   Temperments,
   Weaknesses,
 } from "@/src/query/character.query";
+import { Weapon } from "@/src/query/weapon.query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -19,6 +21,7 @@ export const CharacterForm = ({
   strengths,
   weaknesses,
   characterSkills,
+  weapons,
   alignements,
   fortunes,
   scenarioId,
@@ -27,6 +30,7 @@ export const CharacterForm = ({
   strengths: Strengths;
   weaknesses: Weaknesses;
   characterSkills: CharacterSkills;
+  weapons: Weapon[];
   alignements: Alignments;
   fortunes: Fortunes;
   scenarioId: string;
@@ -49,6 +53,7 @@ export const CharacterForm = ({
     string,
     ...string[],
   ];
+  const weaponNames = weapons.map((w) => w.name) as [string, ...string[]];
 
   const characterFormSchema = z.object({
     name: z.string().max(50).describe("Nom du personnage"),
@@ -62,11 +67,15 @@ export const CharacterForm = ({
     alignment: z.enum(alignementsNames).describe("Alignement"),
     fortune: z.enum(fortunesNames).describe("Richesse"),
     strength: z
-      .array(z.object({ name: z.enum(strengthNames).describe("Force").optional() }))
+      .array(
+        z.object({ name: z.enum(strengthNames).describe("Force").optional() }),
+      )
       .describe("Force"),
     weakness: z
       .array(
-        z.object({ name: z.enum(weaknessNames).describe("Faiblesse").optional() }),
+        z.object({
+          name: z.enum(weaknessNames).describe("Faiblesse").optional(),
+        }),
       )
       .describe("Faiblesse"),
     skillSet: z
@@ -76,6 +85,11 @@ export const CharacterForm = ({
         }),
       )
       .describe("Compétences"),
+    weaponSet: z
+      .array(
+        z.object({ name: z.enum(weaponNames).describe("Arme").optional() }),
+      )
+      .describe("Armes"),
   });
 
   return (
@@ -89,6 +103,9 @@ export const CharacterForm = ({
           strength: data.strength.map((s) => s.name),
           weakness: data.weakness.map((w) => w.name),
           skillSet: data.skillSet.map((s) => s.name),
+          weaponSet: data.weaponSet.map((w) => {
+            return weapons.find((weapon) => weapon.name === w.name)?.id;
+          }),
           scenarioId: scenarioId,
         };
         const values = await createCharacter(dataToSend);
@@ -105,7 +122,7 @@ export const CharacterForm = ({
         }
 
         toast.success("Personnage créé avec succès");
-        router.push(`/${scenarioId}/personnages`);
+        router.push(`/${scenarioId}/characters`);
       }}
       fieldConfig={{
         name: {
