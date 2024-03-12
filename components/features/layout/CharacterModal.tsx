@@ -12,7 +12,10 @@ export const CharacterModal = ({
   const router = useRouter();
   const pathname = usePathname();
   return (
-    <Dialog open onOpenChange={() => router.back()}>
+    <Dialog
+      open={pathname === `/characters/${character.id}`}
+      onOpenChange={() => router.back()}
+    >
       <DialogContent>
         <>
           <h1 className="text-4xl font-bold">{character.name}</h1>

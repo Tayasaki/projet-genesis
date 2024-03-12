@@ -43,7 +43,7 @@ export default async function ScenarioManage({
       )}
       <Link
         className={cn("mt-4", buttonVariants({ variant: "default" }))}
-        href={`/${params.scenarioId}/generation-personnage`}
+        href={`/${params.scenarioId}/character-generation`}
       >
         Créer un personnage
       </Link>

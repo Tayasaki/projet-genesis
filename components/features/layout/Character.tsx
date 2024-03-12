@@ -14,7 +14,7 @@ export const Character = ({ character }: { character: CharacterScenario }) => {
   const pathname = usePathname();
   return (
     <Card className="max-w-md transition hover:scale-110 hover:ring-2 hover:ring-ring hover:ring-offset-2 active:scale-105">
-      <Link href={`${pathname}/${character.id}`}>
+      <Link href={`/characters/${character.id}`}>
         <CardHeader className="flex flex-row">
           <Avatar>
             {character.image ? (
