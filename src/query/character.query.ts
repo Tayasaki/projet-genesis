@@ -17,6 +17,7 @@ export const getCharacters = (scenarioId: string) =>
       weakness: true,
       fortune: true,
       skillSet: true,
+      weapon: true,
     },
   });
 

@@ -1,6 +1,5 @@
 "use client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   HoverCard,
@@ -34,16 +33,42 @@ export const Character = ({ character }: { character: CharacterScenario }) => {
           {character.age}
           {character.injury}
           {character.extra}
-          <HoverCard>
-            <HoverCardTrigger asChild>
-              <Button variant={"link"}>{character.temperment?.name}</Button>
-            </HoverCardTrigger>
-            <HoverCardContent>
-              {character.temperment?.description}
-            </HoverCardContent>
-          </HoverCard>
-          {character.alignment?.name}
-          {character.fortune?.name}
+          {character.temperment?.description ? (
+            <HoverCard>
+              <HoverCardTrigger asChild>
+                <p className="underline">{character.temperment?.name}</p>
+              </HoverCardTrigger>
+              <HoverCardContent>
+                {character.temperment?.description}
+              </HoverCardContent>
+            </HoverCard>
+          ) : (
+            character.temperment?.name
+          )}
+          {character.alignment?.description ? (
+            <HoverCard>
+              <HoverCardTrigger asChild>
+                <p className="underline">{character.alignment?.name}</p>
+              </HoverCardTrigger>
+              <HoverCardContent>
+                {character.alignment?.description}
+              </HoverCardContent>
+            </HoverCard>
+          ) : (
+            character.alignment?.name
+          )}
+          {character.fortune?.description ? (
+            <HoverCard>
+              <HoverCardTrigger asChild>
+                <p className="underline">{character.fortune?.name}</p>
+              </HoverCardTrigger>
+              <HoverCardContent>
+                {character.fortune?.description}
+              </HoverCardContent>
+            </HoverCard>
+          ) : (
+            character.fortune?.name
+          )}
           {character.strength.length > 0 && (
             <ul>
               {character.strength.map((s) => (
