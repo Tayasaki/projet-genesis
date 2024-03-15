@@ -20,7 +20,7 @@ export default function Example() {
               href="/"
               className={clsx(buttonVariants({ variant: "default" }))}
             >
-              <Home className="mr-2 h-4 w-4" />
+              <Home className="mr-2 size-4" />
               Go back home
             </Link>
           </div>

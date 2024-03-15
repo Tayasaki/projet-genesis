@@ -12,9 +12,9 @@ export const LogoutButton = () => {
       onClick={() => startTransition(() => signOut())}
     >
       {isPending ? (
-        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+        <Loader2 className="mr-2 size-4 animate-spin" />
       ) : (
-        <LogOut className="mr-2 h-4 w-4" />
+        <LogOut className="mr-2 size-4" />
       )}
       Log out
     </Button>

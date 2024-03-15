@@ -11,7 +11,7 @@ export const UserProfile = async () => {
       href="/profile"
       className={clsx(buttonVariants({ variant: "outline" }))}
     >
-      <User2 className="mr-2 h-4 w-4" />
+      <User2 className="mr-2 size-4" />
       {session?.user.name ?? ""}
     </Link>
   );

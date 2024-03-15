@@ -10,7 +10,7 @@ import { useState } from "react";
 export const LoginButton = () => {
   return (
     <Link href={"/login"} className={clsx(buttonVariants({ variant: "link" }))}>
-      <LogIn className="mr-2 h-4 w-4" />
+      <LogIn className="mr-2 size-4" />
       Log in
     </Link>
   );
@@ -27,10 +27,10 @@ export const LoginGithubButton = () => {
       }}
     >
       {isLoading ? (
-        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+        <Loader2 className="mr-2 size-4 animate-spin" />
       ) : (
         <svg
-          className="mr-2 h-5 w-5"
+          className="mr-2 size-5"
           fill="currentColor"
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -56,7 +56,7 @@ export const LoginDiscordButton = () => {
       }}
     >
       {isLoading ? (
-        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+        <Loader2 className="mr-2 size-4 animate-spin" />
       ) : (
         <svg
           width="24"

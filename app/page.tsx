@@ -1,6 +1,6 @@
+import { ScenarioList } from "@/components/features/layout/ScenarioList";
 import { ScenarioForm } from "@/components/form/ScenarioForm";
 import { getAuthSession } from "@/lib/auth";
-import { ScenarioList } from "@/components/features/layout/ScenarioList";
 import { redirect } from "next/navigation";
 
 export default async function Home() {
