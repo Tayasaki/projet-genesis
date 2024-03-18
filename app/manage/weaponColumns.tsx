@@ -1,5 +1,17 @@
 "use client";
 
+import { DeleteDialog } from "@/components/features/layout/DeleteDialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { deleteWeapon } from "@/src/actions/weapon/weapon.action";
 import { Weapon } from "@/src/query/weapon.query";
@@ -54,15 +66,10 @@ export const columns: ColumnDef<Weapon>[] = [
     header: "Actions",
     cell: ({ row }) => {
       return (
-        <Button
-          onClick={async () => {
-            await deleteWeapon({ id: row.original.id });
-            toast.success("Supprimé");
-          }}
-          variant={"destructive"}
-        >
-          <XSquare />
-        </Button>
+        <DeleteDialog
+          item={row.original.name}
+          deleteItem={() => deleteWeapon({ id: row.original.id })}
+        />
       );
     },
   },

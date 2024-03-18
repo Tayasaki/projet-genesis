@@ -11,6 +11,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { XSquare } from "lucide-react";
 import { toast } from "sonner";
 import { CharacterAttributes } from "./page";
+import { DeleteDialog } from "@/components/features/layout/DeleteDialog";
 
 export const columns: ColumnDef<CharacterAttributes>[] = [
   {
@@ -64,8 +65,9 @@ export const columns: ColumnDef<CharacterAttributes>[] = [
     cell: ({ row }) => {
       const r = row.original;
       return (
-        <Button
-          onClick={async () => {
+        <DeleteDialog
+          item={row.original.name}
+          deleteItem={async () => {
             switch (r.type) {
               case "temperment":
                 await deleteTemperment({ name: r.name });
@@ -86,12 +88,8 @@ export const columns: ColumnDef<CharacterAttributes>[] = [
                 await deleteCharacterSkill({ name: r.name });
                 break;
             }
-            toast.success("Supprimé");
           }}
-          variant={"destructive"}
-        >
-          <XSquare />
-        </Button>
+        />
       );
     },
   },

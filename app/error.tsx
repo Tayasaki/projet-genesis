@@ -1,6 +1,8 @@
 "use client"; // Error components must be Client Components
 
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { AlertTriangle } from "lucide-react";
 import { useEffect } from "react";
 
 export default function Error({
@@ -16,8 +18,12 @@ export default function Error({
   }, [error]);
 
   return (
-    <div>
-      <h2>Something went wrong!</h2>
+    <div className="flex flex-col space-y-6 py-4">
+      <Alert className="">
+        <AlertTriangle size={24} />
+        <AlertTitle>Something went wrong</AlertTitle>
+        <AlertDescription>Please try again</AlertDescription>
+      </Alert>
       <Button
         onClick={
           // Attempt to recover by trying to re-render the segment
