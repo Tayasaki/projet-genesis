@@ -13,5 +13,13 @@ export default async function MyCharacters() {
       },
     },
   });
-  return <></>;
+  return (
+    <>
+      <ul>
+        {characters.map((character) => {
+          return <li key={character.id}>{character.name}</li>;
+        })}
+      </ul>
+    </>
+  );
 }

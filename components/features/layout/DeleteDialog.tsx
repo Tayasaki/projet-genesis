@@ -9,7 +9,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { XCircle, XSquare } from "lucide-react";
+import { XCircle } from "lucide-react";
 import { toast } from "sonner";
 
 export const DeleteDialog = ({
@@ -39,7 +39,7 @@ export const DeleteDialog = ({
         <AlertDialogFooter>
           <AlertDialogCancel>Annuler</AlertDialogCancel>
           <AlertDialogAction
-            className="bg-red-500 text-white hover:bg-red-700"
+            className="bg-red-500 text-white hover:bg-red-700 hover:ring-destructive"
             onClick={async () => {
               deleteItem();
               toast.success("Supprimé");

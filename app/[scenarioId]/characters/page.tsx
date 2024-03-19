@@ -32,7 +32,7 @@ export default async function ScenarioManage({
       {characters.length > 0 ? (
         <div>
           <h2 className="text-xl">Characters</h2>
-          <div className="grid grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
             {characters.map((c) => (
               <Character key={c.id} character={c} />
             ))}

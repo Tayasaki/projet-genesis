@@ -1,15 +1,12 @@
-import { ToggleTheme } from "@/components/features/theme/ToggleTheme";
 import { buttonVariants } from "@/components/ui/button";
-import { getAuthSession } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { LoginButton } from "./auth/LoginButtons";
 import { UserProfile } from "./auth/UserProfile";
 
-export const Header = async () => {
-  const session = await getAuthSession();
+export const Footer = () => {
   return (
-    <header className="fixed top-0 z-20 w-full border-b border-b-accent bg-background">
+    <div className="bottom-0-0 z-20 w-full border-t border-t-accent bg-background">
       <div className="container m-auto flex items-center justify-between gap-1 py-2">
         <h1 className="gap-1 text-2xl font-bold">
           <Link href="/">Project Genesis</Link>
@@ -28,11 +25,7 @@ export const Header = async () => {
             Mes personnages
           </Link>
         </span>
-        <div className="flex space-x-2">
-          {session?.user ? <UserProfile /> : <LoginButton />}
-          <ToggleTheme />
-        </div>
       </div>
-    </header>
+    </div>
   );
 };
