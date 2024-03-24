@@ -8,9 +8,7 @@ import {
 } from "@/components/ui/hover-card";
 import { CharacterScenario } from "@/src/query/character.query";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 export const Character = ({ character }: { character: CharacterScenario }) => {
-  const pathname = usePathname();
   return (
     <Card className="max-w-md transition hover:scale-110 hover:ring-2 hover:ring-ring hover:ring-offset-2 active:scale-105">
       <Link href={`/characters/${character.id}`}>

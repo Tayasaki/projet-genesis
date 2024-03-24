@@ -1,23 +1,9 @@
 "use client";
 
 import { DeleteDialog } from "@/components/features/layout/DeleteDialog";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
 import { deleteWeapon } from "@/src/actions/weapon/weapon.action";
 import { Weapon } from "@/src/query/weapon.query";
 import { ColumnDef } from "@tanstack/react-table";
-import { XSquare } from "lucide-react";
-import { toast } from "sonner";
 
 export const columns: ColumnDef<Weapon>[] = [
   {

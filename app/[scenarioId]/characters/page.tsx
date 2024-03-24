@@ -24,14 +24,26 @@ export default async function ScenarioManage({
   const characters = await getCharacters(params.scenarioId);
 
   return (
-    <div>
-      <h1 className="text-3xl">
-        {scenario.name} ({scenario.universe})
-      </h1>
-      <span>{scenario.description}</span>
+    <div className="h-full">
+      <div className="mb-6">
+        <h1 className="mb-8 text-3xl font-bold">
+          {scenario.name} ({scenario.universe})
+        </h1>
+        <span className=" italic text-muted-foreground">
+          {scenario.description}
+        </span>
+      </div>
       {characters.length > 0 ? (
         <div>
-          <h2 className="text-xl">Characters</h2>
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-2xl font-semibold">Personnages</h2>
+            <Link
+              className={cn("mt-4", buttonVariants({ variant: "default" }))}
+              href={`/${params.scenarioId}/character-generation`}
+            >
+              Créer un personnage
+            </Link>
+          </div>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
             {characters.map((c) => (
               <Character key={c.id} character={c} />
@@ -41,12 +53,6 @@ export default async function ScenarioManage({
       ) : (
         <p>Pas encore de personnage</p>
       )}
-      <Link
-        className={cn("mt-4", buttonVariants({ variant: "default" }))}
-        href={`/${params.scenarioId}/character-generation`}
-      >
-        Créer un personnage
-      </Link>
     </div>
   );
 }

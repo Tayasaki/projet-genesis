@@ -1,16 +1,13 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { DeleteDialog } from "@/components/features/layout/DeleteDialog";
 import { deleteAmmo } from "@/src/actions/weapon/ammo.action";
 import { deleteDamage } from "@/src/actions/weapon/damage.action";
 import { deleteRange } from "@/src/actions/weapon/range.action";
 import { deleteWeaponSkill } from "@/src/actions/weapon/weaponSkill.action";
 import { deleteWeight } from "@/src/actions/weapon/weight.action";
 import { ColumnDef } from "@tanstack/react-table";
-import { XSquare } from "lucide-react";
-import { toast } from "sonner";
 import { CharacterAttributes } from "./page";
-import { DeleteDialog } from "@/components/features/layout/DeleteDialog";
 
 export const columns: ColumnDef<CharacterAttributes>[] = [
   {
