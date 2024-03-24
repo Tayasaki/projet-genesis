@@ -1,6 +1,24 @@
 import { getAuthSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
+
+type Props = {
+  params: { characterId: string };
+};
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const character = await prisma.character.findUniqueOrThrow({
+    where: { id: params.characterId },
+    select: { name: true },
+  });
+
+  return {
+    title: "Projet Genesis - " + character.name,
+    description:
+      "Création de scénarios pour jeux de rôle | Générateur de fiche de personnage",
+  };
+}
 
 export default async function CharacterPage({
   params,

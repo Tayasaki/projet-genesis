@@ -2,7 +2,14 @@ import { LogoutButton } from "@/components/features/layout/auth/LogoutButton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getAuthSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { Metadata } from "next";
 import { redirect } from "next/navigation";
+
+export const metadata: Metadata = {
+  title: "Projet Genesis - Profil",
+  description:
+    "Création de scénarios pour jeux de rôle | Générateur de fiche de personnage",
+};
 
 export default async function Profile() {
   const session = await getAuthSession();
@@ -10,6 +17,7 @@ export default async function Profile() {
   const user = await prisma.user.findUniqueOrThrow({
     where: { id: session?.user.id },
   });
+
   return (
     <div>
       <Avatar className="size-56">

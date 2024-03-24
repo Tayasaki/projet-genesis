@@ -9,7 +9,14 @@ import {
   getWeaknesses,
 } from "@/src/query/character.query";
 import { getWeapons } from "@/src/query/weapon.query";
+import { Metadata } from "next";
 import { redirect } from "next/navigation";
+
+export const metadata: Metadata = {
+  title: "Projet Genesis - Générer votre personnage",
+  description:
+    "Création de scénarios pour jeux de rôle | Générateur de fiche de personnage",
+};
 
 export default async function CharacterGeneration({
   params,

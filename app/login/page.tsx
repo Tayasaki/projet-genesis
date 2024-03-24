@@ -4,7 +4,14 @@ import {
 } from "@/components/features/layout/auth/LoginButtons";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getAuthSession } from "@/lib/auth";
+import { Metadata } from "next";
 import { redirect } from "next/navigation";
+
+export const metadata: Metadata = {
+  title: "Projet Genesis - Login",
+  description:
+    "Création de scénarios pour jeux de rôle | Générateur de fiche de personnage",
+};
 
 export default async function Login() {
   const session = await getAuthSession();

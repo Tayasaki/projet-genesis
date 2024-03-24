@@ -22,6 +22,7 @@ import { columns as characterAttributesColumns } from "./characterAttributesColu
 import { DataTable } from "./data-table";
 import { columns as weaponAttributesColumns } from "./weaponAttributesColumns";
 import { columns as weaponColumns } from "./weaponColumns";
+import { Metadata } from "next";
 
 export type CharacterAttributes = {
   id: string;
@@ -34,6 +35,12 @@ export type WeaponAttributes = {
   id: string;
   name: string;
   type: string;
+};
+
+export const metadata: Metadata = {
+  title: "Projet Genesis - Armes | Attributs",
+  description:
+    "Création de scénarios pour jeux de rôle | Générateur de fiche de personnage",
 };
 
 export default async function Manage() {

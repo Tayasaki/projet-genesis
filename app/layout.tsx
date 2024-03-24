@@ -1,3 +1,4 @@
+import { Footer } from "@/components/features/layout/Footer";
 import { Header } from "@/components/features/layout/Header";
 import { ThemeProvider } from "@/components/features/theme/ThemeProvider";
 import clsx from "clsx";
@@ -5,7 +6,6 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Toaster } from "sonner";
 import "./globals.css";
-import { Footer } from "@/components/features/layout/Footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={clsx(inter.className, "h-full bg-background ")}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <div className="flex size-full flex-col">
