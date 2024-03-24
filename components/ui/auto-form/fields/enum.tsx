@@ -6,11 +6,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Dices } from "lucide-react";
 import * as z from "zod";
+import { Button } from "../../button";
 import AutoFormLabel from "../common/label";
 import AutoFormTooltip from "../common/tooltip";
 import { AutoFormInputComponentProps } from "../types";
 import { getBaseSchema } from "../utils";
+import { RandomButton } from "../../randomButton";
 
 export default function AutoFormEnum({
   label,
@@ -59,6 +62,11 @@ export default function AutoFormEnum({
       </FormControl>
       <AutoFormTooltip fieldConfigItem={fieldConfigItem} />
       <FormMessage />
+      <RandomButton
+        randomize={() => {
+          field.onChange(values[Math.floor(Math.random() * values.length)][0]);
+        }}
+      />
     </FormItem>
   );
 }

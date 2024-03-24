@@ -1,6 +1,7 @@
 "use client";
 
 import AutoForm, { AutoFormSubmit } from "@/components/ui/auto-form";
+import { RandomButton } from "@/components/ui/randomButton";
 import { createCharacter } from "@/src/actions/character/character.action";
 import {
   Alignments,
@@ -36,6 +37,9 @@ export const CharacterForm = ({
   scenarioId: string;
 }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [values, setValues] = useState<
+    Partial<z.infer<typeof characterFormSchema>>
+  >({});
   const router = useRouter();
 
   const tempermentsNames = temperments.map((t) => t.name) as [
@@ -94,8 +98,9 @@ export const CharacterForm = ({
 
   return (
     <AutoForm
+      values={values}
       formSchema={characterFormSchema}
-      className="w-96 rounded-lg p-4 shadow-md dark:border dark:bg-card"
+      className="w-96 rounded-lg p-4 shadow-md dark:border"
       onSubmit={async (data) => {
         setIsLoading(true);
         const dataToSend = {
@@ -144,6 +149,19 @@ export const CharacterForm = ({
           },
         },
         age: {
+          renderParent: ({ children }) => (
+            <div className="space-y-2">
+              {children}
+              <RandomButton
+                randomize={() => {
+                  setValues({
+                    ...values,
+                    age: Math.floor(Math.random() * 100),
+                  });
+                }}
+              />
+            </div>
+          ),
           inputProps: {
             placeholder: "25",
           },
