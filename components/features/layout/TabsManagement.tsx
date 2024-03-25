@@ -16,60 +16,70 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 export const TabsManagement = () => {
   return (
     <div className="flex space-x-2">
-      <Tabs defaultValue="temperment">
-        <TabsList>
-          <TabsTrigger value="temperment">Tempérament</TabsTrigger>
-          <TabsTrigger value="alignement">Alignement</TabsTrigger>
-          <TabsTrigger value="fortune">Richesse</TabsTrigger>
-          <TabsTrigger value="strenght">Force</TabsTrigger>
-          <TabsTrigger value="weakness">Faiblesse</TabsTrigger>
-          <TabsTrigger value="skills">Compétences</TabsTrigger>
-        </TabsList>
+      <div>
+        <h3 className="mb-3 text-xl dark:text-primary">
+          Attributs de personnage
+        </h3>
+        <Tabs defaultValue="temperment">
+          <TabsList>
+            <TabsTrigger value="temperment">Tempérament</TabsTrigger>
+            <TabsTrigger value="alignement">Alignement</TabsTrigger>
+            <TabsTrigger value="fortune">Richesse</TabsTrigger>
+            <TabsTrigger value="strenght">Force</TabsTrigger>
+            <TabsTrigger value="weakness">Faiblesse</TabsTrigger>
+            <TabsTrigger value="skills">Compétences</TabsTrigger>
+          </TabsList>
 
-        <TabsContent value="temperment">
-          <TempermentForm />
-        </TabsContent>
-        <TabsContent value="alignement">
-          <AlignementForm />
-        </TabsContent>
-        <TabsContent value="fortune">
-          <FortuneForm />
-        </TabsContent>
-        <TabsContent value="strenght">
-          <StrengthForm />
-        </TabsContent>
-        <TabsContent value="weakness">
-          <WeaknessForm />
-        </TabsContent>
-        <TabsContent value="skills">
-          <CharacterSkillForm />
-        </TabsContent>
-      </Tabs>
+          <TabsContent value="temperment">
+            <TempermentForm />
+          </TabsContent>
+          <TabsContent value="alignement">
+            <AlignementForm />
+          </TabsContent>
+          <TabsContent value="fortune">
+            <FortuneForm />
+          </TabsContent>
+          <TabsContent value="strenght">
+            <StrengthForm />
+          </TabsContent>
+          <TabsContent value="weakness">
+            <WeaknessForm />
+          </TabsContent>
+          <TabsContent value="skills">
+            <CharacterSkillForm />
+          </TabsContent>
+        </Tabs>
+      </div>
 
-      <Tabs defaultValue="damage">
-        <TabsList>
-          <TabsTrigger value="damage">Dégât</TabsTrigger>
-          <TabsTrigger value="ammo">Munition</TabsTrigger>
-          <TabsTrigger value="range">Porté</TabsTrigger>
-          <TabsTrigger value="Weight">Poids</TabsTrigger>
-          <TabsTrigger value="skills">Compétences</TabsTrigger>
-        </TabsList>
-        <TabsContent value="damage">
-          <DamageForm />
-        </TabsContent>
-        <TabsContent value="ammo">
-          <AmmoForm />
-        </TabsContent>
-        <TabsContent value="range">
-          <RangeForm />
-        </TabsContent>
-        <TabsContent value="Weight">
-          <WeightForm />
-        </TabsContent>
-        <TabsContent value="skills">
-          <WeaponSkillForm />
-        </TabsContent>
-      </Tabs>
+      <div>
+        <h3 className="mb-3 text-xl dark:text-primary">
+          Attributs d&apos;arme
+        </h3>
+        <Tabs defaultValue="damage">
+          <TabsList>
+            <TabsTrigger value="damage">Dégât</TabsTrigger>
+            <TabsTrigger value="ammo">Munition</TabsTrigger>
+            <TabsTrigger value="range">Porté</TabsTrigger>
+            <TabsTrigger value="Weight">Poids</TabsTrigger>
+            <TabsTrigger value="skills">Compétences</TabsTrigger>
+          </TabsList>
+          <TabsContent value="damage">
+            <DamageForm />
+          </TabsContent>
+          <TabsContent value="ammo">
+            <AmmoForm />
+          </TabsContent>
+          <TabsContent value="range">
+            <RangeForm />
+          </TabsContent>
+          <TabsContent value="Weight">
+            <WeightForm />
+          </TabsContent>
+          <TabsContent value="skills">
+            <WeaponSkillForm />
+          </TabsContent>
+        </Tabs>
+      </div>
     </div>
   );
 };

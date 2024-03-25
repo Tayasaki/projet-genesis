@@ -23,6 +23,7 @@ import { DataTable } from "./data-table";
 import { columns as weaponAttributesColumns } from "./weaponAttributesColumns";
 import { columns as weaponColumns } from "./weaponColumns";
 import { Metadata } from "next";
+import { Separator } from "@/components/ui/separator";
 
 export type CharacterAttributes = {
   id: string;
@@ -86,16 +87,25 @@ export default async function Manage() {
   weaponSkill.flatMap((w) => weaponAttributes.push({ ...w, type: "skill" }));
 
   return (
-    <div className="w-full space-y-3">
-      <div className="flex w-full flex-col">
+    <div className="space-y-4">
+      <div className="flex flex-col">
         <DataTable
           columns={characterAttributesColumns}
           data={characterAttributes}
+          title="Attributs de personnage"
         />
-        <DataTable columns={weaponAttributesColumns} data={weaponAttributes} />
-        <DataTable columns={weaponColumns} data={weapons} />
+        <Separator />
+        <DataTable
+          columns={weaponAttributesColumns}
+          data={weaponAttributes}
+          title="Attributs d'arme"
+        />
+        <Separator />
+        <DataTable columns={weaponColumns} data={weapons} title="Armes" />
       </div>
-      <TabsManagement />
+      <h2 className="text-2xl font-semibold underline underline-offset-8 dark:text-primary">
+        Créer votre arme
+      </h2>
       <WeaponForm
         ammos={ammo}
         damages={damage}
@@ -103,6 +113,8 @@ export default async function Manage() {
         weights={weight}
         skills={weaponSkill}
       />
+      <Separator />
+      <TabsManagement />
     </div>
   );
 }

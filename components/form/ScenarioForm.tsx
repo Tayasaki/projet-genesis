@@ -21,7 +21,6 @@ export const ScenarioForm = () => {
   return (
     <AutoForm
       formSchema={formScenarioSchema}
-      className="flex w-96 flex-col rounded-lg p-4 shadow-md dark:border dark:bg-card"
       onSubmit={async (data) => {
         setIsLoading(true);
         const values = await createScenario({
@@ -55,8 +54,10 @@ export const ScenarioForm = () => {
         },
         description: {
           inputProps: {
-            placeholder: "blablabla...",
+            placeholder:
+              "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Alias culpa vel quam doloremque, soluta iste quis reiciendis? Quisquam, eum, dolores fuga iste est, aspernatur odit id magnam delectus dicta vel!",
           },
+          fieldType: "textarea",
         },
       }}
     >

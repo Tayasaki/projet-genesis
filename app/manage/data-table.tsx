@@ -11,6 +11,7 @@ import {
 } from "@tanstack/react-table";
 
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -20,16 +21,17 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useState } from "react";
-import { Input } from "@/components/ui/input";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  title: string;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  title,
 }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const table = useReactTable({
@@ -46,6 +48,9 @@ export function DataTable<TData, TValue>({
 
   return (
     <div>
+      <h3 className="text-2xl font-semibold underline underline-offset-8 dark:text-primary">
+        {title}
+      </h3>
       <div className="flex items-center py-4">
         <Input
           placeholder="Recherche..."

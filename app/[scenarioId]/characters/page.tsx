@@ -2,10 +2,10 @@ import { Character } from "@/components/features/layout/Character";
 import { buttonVariants } from "@/components/ui/button";
 import { getAuthSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getCharacters } from "../../../src/query/character.query";
+import { ArrowRight } from "lucide-react";
 
 export default async function ScenarioManage({
   params,
@@ -38,10 +38,11 @@ export default async function ScenarioManage({
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-2xl font-semibold">Personnages</h2>
             <Link
-              className={cn("mt-4", buttonVariants({ variant: "default" }))}
+              className={buttonVariants({ variant: "link" })}
               href={`/${params.scenarioId}/character-generation`}
             >
               Créer un personnage
+              <ArrowRight className="ml-2" size={16} />
             </Link>
           </div>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">

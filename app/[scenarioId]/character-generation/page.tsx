@@ -1,4 +1,5 @@
 import { CharacterForm } from "@/components/form/character/CharacterForm";
+import { WeaponForm } from "@/components/form/weapon/WeaponForm";
 import { getAuthSession } from "@/lib/auth";
 import {
   getAlignments,
@@ -35,7 +36,7 @@ export default async function CharacterGeneration({
   const weapons = await getWeapons();
 
   return (
-    <div className="w-full">
+    <div className="-mx-96">
       <h1>Générer votre personnage</h1>
       <CharacterForm
         temperments={temperments}

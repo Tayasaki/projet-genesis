@@ -71,7 +71,7 @@ function AutoForm<SchemaType extends ZodObjectOrWrapped>({
   }
 
   return (
-    <div className="w-full">
+    <div>
       <Form {...form}>
         <form
           onSubmit={(e) => {
@@ -86,7 +86,7 @@ function AutoForm<SchemaType extends ZodObjectOrWrapped>({
               onParsedValuesChange?.(parsedValues.data);
             }
           }}
-          className={cn("space-y-5", className)}
+          className={cn("w-full space-y-5 rounded-md border p-4", className)}
         >
           <AutoFormObject
             schema={objectFormSchema}

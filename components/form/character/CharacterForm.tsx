@@ -100,7 +100,6 @@ export const CharacterForm = ({
     <AutoForm
       values={values}
       formSchema={characterFormSchema}
-      className="w-96 rounded-lg p-4 shadow-md dark:border"
       onSubmit={async (data) => {
         setIsLoading(true);
         const dataToSend = {
