@@ -6,6 +6,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import {
   HoverCard,
@@ -14,6 +15,8 @@ import {
 } from "@/components/ui/hover-card";
 import { CharacterScenario } from "@/src/query/character.query";
 import { AccordionContent } from "@radix-ui/react-accordion";
+import { PenLine } from "lucide-react";
+import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
 export const CharacterModal = ({
@@ -41,50 +44,65 @@ export const CharacterModal = ({
           </Avatar>
           <h1 className="text-4xl font-bold">{character.name}</h1>
           <p className="text-lg">{character.pj ? "🧔" : "🤖"}</p>
+          <Button variant={"outline"} onClick={() => router.refresh()}>
+            <PenLine size={16} className="mr-2" />
+            Editer
+          </Button>
         </div>
-
-        <p>{character.age} ans</p>
-        <p>{character.origin}</p>
-        <p>{character.role}</p>
-        <p className="text-red-500">{character.injury}</p>
-        <p>{character.extra}</p>
-        <div className="flex flex-col">
-          {character.temperment?.description ? (
-            <HoverCard>
-              <HoverCardTrigger asChild>
-                <p className="underline">{character.temperment?.name}</p>
-              </HoverCardTrigger>
-              <HoverCardContent>
-                {character.temperment?.description}
-              </HoverCardContent>
-            </HoverCard>
-          ) : (
-            <p>{character.temperment?.name}</p>
+        <div>
+          {character.origin && <p>Origine: {character.origin}</p>}
+          {character.role && <p>Rôle: {character.role}</p>}
+          {character.age && <p>Âge: {character.age}</p>}
+          {character.injury && (
+            <p className="text-red-500">Blessure: {character.injury}</p>
           )}
-          {character.alignment?.description ? (
-            <HoverCard>
-              <HoverCardTrigger asChild>
-                <p className="underline">{character.alignment?.name}</p>
-              </HoverCardTrigger>
-              <HoverCardContent>
-                {character.alignment?.description}
-              </HoverCardContent>
-            </HoverCard>
-          ) : (
-            <p>{character.alignment?.name}</p>
-          )}
-          {character.fortune?.description ? (
-            <HoverCard>
-              <HoverCardTrigger asChild>
-                <p className="underline">{character.fortune?.name}</p>
-              </HoverCardTrigger>
-              <HoverCardContent>
-                {character.fortune?.description}
-              </HoverCardContent>
-            </HoverCard>
-          ) : (
-            <p>{character.fortune?.name}</p>
-          )}
+          {character.extra && <p>Extra: {character.extra}</p>}
+          {character.temperment ? (
+            character.temperment?.description ? (
+              <HoverCard>
+                <HoverCardTrigger asChild className="hover:text-primary">
+                  <p className="italic">
+                    Temperement: {character.temperment?.name}
+                  </p>
+                </HoverCardTrigger>
+                <HoverCardContent>
+                  {character.temperment?.description}
+                </HoverCardContent>
+              </HoverCard>
+            ) : (
+              <p>Temperement: {character.temperment?.name}</p>
+            )
+          ) : null}
+          {character.alignment ? (
+            character.alignment?.description ? (
+              <HoverCard>
+                <HoverCardTrigger asChild className="hover:text-primary">
+                  <p className="italic">
+                    Alignement: {character.alignment?.name}
+                  </p>
+                </HoverCardTrigger>
+                <HoverCardContent>
+                  {character.alignment?.description}
+                </HoverCardContent>
+              </HoverCard>
+            ) : (
+              <p>Alignement: {character.alignment?.name}</p>
+            )
+          ) : null}
+          {character.fortune ? (
+            character.fortune?.description ? (
+              <HoverCard>
+                <HoverCardTrigger asChild className="hover:text-primary">
+                  <p className="italic">Richesse: {character.fortune?.name}</p>
+                </HoverCardTrigger>
+                <HoverCardContent>
+                  {character.fortune?.description}
+                </HoverCardContent>
+              </HoverCard>
+            ) : (
+              <p>Richesse: {character.fortune?.name}</p>
+            )
+          ) : null}
         </div>
         <Accordion type="multiple">
           <AccordionItem value="weapons">

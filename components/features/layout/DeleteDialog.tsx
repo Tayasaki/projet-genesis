@@ -9,6 +9,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 import { XCircle } from "lucide-react";
 import { toast } from "sonner";
 
@@ -21,12 +22,10 @@ export const DeleteDialog = ({
 }) => {
   return (
     <AlertDialog>
-      <AlertDialogTrigger>
-        <XCircle
-          className="rounded-lg transition hover:ring-2 hover:ring-destructive"
-          size={24}
-          color="red"
-        />
+      <AlertDialogTrigger asChild>
+        <Button variant="destructive" className="rounded-md">
+          <XCircle />
+        </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>

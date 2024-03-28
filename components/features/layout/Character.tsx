@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/hover-card";
 import { CharacterScenario } from "@/src/query/character.query";
 import Link from "next/link";
+
 export const Character = ({ character }: { character: CharacterScenario }) => {
   return (
     <Card className="max-w-md transition hover:scale-110 hover:ring-2 hover:ring-ring hover:ring-offset-2 active:scale-105">
@@ -26,68 +27,56 @@ export const Character = ({ character }: { character: CharacterScenario }) => {
           {character.pj ? "🧔" : "🤖"}
         </CardHeader>
         <div className="container">
-          {character.origin}
-          {character.role}
-          {character.age}
-          {character.injury}
-          {character.extra}
-          {character.temperment?.description ? (
-            <HoverCard>
-              <HoverCardTrigger asChild>
-                <p className="underline">{character.temperment?.name}</p>
-              </HoverCardTrigger>
-              <HoverCardContent>
-                {character.temperment?.description}
-              </HoverCardContent>
-            </HoverCard>
-          ) : (
-            character.temperment?.name
-          )}
-          {character.alignment?.description ? (
-            <HoverCard>
-              <HoverCardTrigger asChild>
-                <p className="underline">{character.alignment?.name}</p>
-              </HoverCardTrigger>
-              <HoverCardContent>
-                {character.alignment?.description}
-              </HoverCardContent>
-            </HoverCard>
-          ) : (
-            character.alignment?.name
-          )}
-          {character.fortune?.description ? (
-            <HoverCard>
-              <HoverCardTrigger asChild>
-                <p className="underline">{character.fortune?.name}</p>
-              </HoverCardTrigger>
-              <HoverCardContent>
-                {character.fortune?.description}
-              </HoverCardContent>
-            </HoverCard>
-          ) : (
-            character.fortune?.name
-          )}
-          {character.strength.length > 0 && (
-            <ul>
-              {character.strength.map((s) => (
-                <li key={s.id}>{s.name}</li>
-              ))}
-            </ul>
-          )}
-          {character.weakness.length > 0 && (
-            <ul>
-              {character.weakness.map((w) => (
-                <li key={w.id}>{w.name}</li>
-              ))}
-            </ul>
-          )}
-          {character.skillSet.length > 0 && (
-            <ul>
-              {character.skillSet.map((s) => (
-                <li key={s.id}>{s.name}</li>
-              ))}
-            </ul>
-          )}
+          {character.origin && <p>Origine: {character.origin}</p>}
+          {character.role && <p>Rôle: {character.role}</p>}
+          {character.age && <p>Âge: {character.age}</p>}
+          {character.injury && <p>Blessure: {character.injury}</p>}
+          {character.temperment ? (
+            character.temperment?.description ? (
+              <HoverCard>
+                <HoverCardTrigger asChild className="hover:text-primary">
+                  <p className="italic">
+                    Temperement: {character.temperment?.name}
+                  </p>
+                </HoverCardTrigger>
+                <HoverCardContent>
+                  {character.temperment?.description}
+                </HoverCardContent>
+              </HoverCard>
+            ) : (
+              <p>Temperement: {character.temperment?.name}</p>
+            )
+          ) : null}
+          {character.alignment ? (
+            character.alignment?.description ? (
+              <HoverCard>
+                <HoverCardTrigger asChild className="hover:text-primary">
+                  <p className="italic">
+                    Alignement: {character.alignment?.name}
+                  </p>
+                </HoverCardTrigger>
+                <HoverCardContent>
+                  {character.alignment?.description}
+                </HoverCardContent>
+              </HoverCard>
+            ) : (
+              <p>Alignement: {character.alignment?.name}</p>
+            )
+          ) : null}
+          {character.fortune ? (
+            character.fortune?.description ? (
+              <HoverCard>
+                <HoverCardTrigger asChild className="hover:text-primary">
+                  <p className="italic">Richesse: {character.fortune?.name}</p>
+                </HoverCardTrigger>
+                <HoverCardContent>
+                  {character.fortune?.description}
+                </HoverCardContent>
+              </HoverCard>
+            ) : (
+              <p>Richesse: {character.fortune?.name}</p>
+            )
+          ) : null}
         </div>
       </Link>
     </Card>

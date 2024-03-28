@@ -12,6 +12,7 @@ import {
   Weaknesses,
 } from "@/src/query/character.query";
 import { Weapon } from "@/src/query/weapon.query";
+import { Character } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -26,6 +27,7 @@ export const CharacterForm = ({
   alignements,
   fortunes,
   scenarioId,
+  character,
 }: {
   temperments: Temperments;
   strengths: Strengths;
@@ -35,6 +37,7 @@ export const CharacterForm = ({
   alignements: Alignments;
   fortunes: Fortunes;
   scenarioId: string;
+  character?: Character;
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [values, setValues] = useState<

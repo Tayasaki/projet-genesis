@@ -1,5 +1,15 @@
+import { CharacterForm } from "@/components/form/character/CharacterForm";
 import { getAuthSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import {
+  getAlignments,
+  getCharacterSkills,
+  getFortunes,
+  getStrengths,
+  getTemperments,
+  getWeaknesses,
+} from "@/src/query/character.query";
+import { getWeapons } from "@/src/query/weapon.query";
 import { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 
@@ -53,73 +63,25 @@ export default async function CharacterPage({
 
   if (!character) return notFound();
 
+  const temperments = await getTemperments();
+  const alignments = await getAlignments();
+  const fortunes = await getFortunes();
+  const strengths = await getStrengths();
+  const weaknesses = await getWeaknesses();
+  const weapons = await getWeapons();
+  const characterSkills = await getCharacterSkills();
+
   return (
-    <section>
-      <h1 className="text-4xl font-bold">{character.name}</h1>
-      <p>{character.pj ? "🧔" : "🤖"}</p>
-      <p>{character.age} ans</p>
-      <p>{character.image ?? "Pas d'image"}</p>
-      <p>{character.origin}</p>
-      <p>{character.role}</p>
-      <p className="text-red-500">{character.injury}</p>
-      <p>{character.extra}</p>
-      <p>{character.temperment?.name}</p>
-      <p>{character.alignment?.name}</p>
-      <p>{character.fortune?.name}</p>
-      <div>
-        {character.skillSet.length > 0 && (
-          <>
-            <h3 className="text-2xl font-semibold">Compétences</h3>
-            <ul>
-              {character.skillSet.map((s) => (
-                <li className="italic" key={s.id}>
-                  {s.name}
-                </li>
-              ))}
-            </ul>
-          </>
-        )}
-      </div>
-      <div>
-        {character.strength.length > 0 && (
-          <>
-            <h3 className="text-2xl font-semibold">Forces</h3>
-            <ul>
-              {character.strength.map((s) => (
-                <li className="italic" key={s.id}>
-                  {s.name}
-                </li>
-              ))}
-            </ul>
-          </>
-        )}
-      </div>
-      <div>
-        {character.weakness.length > 0 && (
-          <>
-            <h3 className="text-2xl font-semibold">Faiblesses</h3>
-            <ul>
-              {character.weakness.map((w) => (
-                <li className="italic" key={w.id}>
-                  {w.name}
-                </li>
-              ))}
-            </ul>
-          </>
-        )}
-      </div>
-      <div>
-        {character.weapon.length > 0 && (
-          <>
-            <h3>Armes</h3>
-            <ul>
-              {character.weapon.map((w) => (
-                <li key={w.id}>{w.name}</li>
-              ))}
-            </ul>
-          </>
-        )}
-      </div>
-    </section>
+    <CharacterForm
+      temperments={temperments}
+      alignements={alignments}
+      fortunes={fortunes}
+      strengths={strengths}
+      weaknesses={weaknesses}
+      weapons={weapons}
+      characterSkills={characterSkills}
+      scenarioId=""
+      character={character}
+    />
   );
 }

@@ -93,3 +93,15 @@ export const createCharacter = authenticatedAction(
     revalidatePath(`/${scenarioId}`);
   },
 );
+
+export const deleteCharacter = authenticatedAction(
+  characterSchema.pick({ id: true }),
+  async ({ id }) => {
+    await prisma.character.delete({
+      where: {
+        id: id,
+      },
+    });
+    revalidatePath("/characters");
+  },
+);
