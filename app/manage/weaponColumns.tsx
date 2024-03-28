@@ -1,9 +1,11 @@
 "use client";
 
 import { DeleteDialog } from "@/components/features/layout/DeleteDialog";
+import { Button } from "@/components/ui/button";
 import { deleteWeapon } from "@/src/actions/weapon/weapon.action";
 import { Weapon } from "@/src/query/weapon.query";
 import { ColumnDef } from "@tanstack/react-table";
+import { ArrowUpDown } from "lucide-react";
 
 export const columns: ColumnDef<Weapon>[] = [
   {
@@ -12,7 +14,16 @@ export const columns: ColumnDef<Weapon>[] = [
   },
   {
     accessorKey: "melee",
-    header: "Mêlée",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Type <ArrowUpDown className="ml-2 size-4" />
+        </Button>
+      );
+    },
     cell: ({ row }) => {
       return row.original.melee ? "🗡" : "🔫";
     },
