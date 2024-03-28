@@ -1,5 +1,4 @@
 import { CharacterForm } from "@/components/form/character/CharacterForm";
-import { WeaponForm } from "@/components/form/weapon/WeaponForm";
 import { getAuthSession } from "@/lib/auth";
 import {
   getAlignments,
@@ -25,7 +24,7 @@ export default async function CharacterGeneration({
   params: { scenarioId: string };
 }) {
   const session = await getAuthSession();
-  if (!session) redirect("/login");
+  if (!session?.user.id) redirect("/login");
 
   const temperments = await getTemperments();
   const strengths = await getStrengths();
@@ -33,7 +32,7 @@ export default async function CharacterGeneration({
   const characterSkills = await getCharacterSkills();
   const alignments = await getAlignments();
   const fortunes = await getFortunes();
-  const weapons = await getWeapons();
+  const weapons = await getWeapons(session.user.id);
 
   return (
     <div className="-mx-96">

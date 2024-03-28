@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-	provider = "sqlite"
+	provider = "postgresql"
 	url      = env("DATABASE_URL")
 }
 
@@ -51,9 +51,17 @@ model User {
 	email         String?   @unique
 	emailVerified DateTime?
 	image         String?
+	role          Role     @default(USER)
 	accounts      Account[]
 	sessions      Session[]
 	Scenario      Scenario[]
+	Weapon				Weapon[]
+}
+
+enum Role {
+	USER
+	SUPERUSER
+	ADMIN
 }
 
 model Scenario {
@@ -80,7 +88,7 @@ model Character {
 
 	weapon      Weapon[]
 	skillSet    CharacterSkill[]
-	scneario    Scenario[]
+	scenario    Scenario[]
 	strength    Strength[]
 	weakness    Weakness[]
 
@@ -140,6 +148,9 @@ model Weapon {
 	description String?
 	character   Character[]
 	weaponSkill WeaponSkill[]
+
+	userId			String
+	user			User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
 	damageId    String
 	damage      Damage @relation(fields: [damageId], references: [id], onDelete: Cascade)

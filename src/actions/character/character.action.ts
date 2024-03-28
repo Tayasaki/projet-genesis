@@ -6,7 +6,6 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 const characterSchema = z.object({
-  id: z.string().optional(),
   name: z.string().min(1).max(50),
   pj: z.boolean().optional(),
   origin: z.string().max(100).optional(),
@@ -56,7 +55,7 @@ export const createCharacter = authenticatedAction(
         age: age ?? null,
         injury: injury ?? null,
         extra: extra ?? null,
-        scneario: {
+        scenario: {
           connect: {
             id: scenarioId,
           },
@@ -95,7 +94,7 @@ export const createCharacter = authenticatedAction(
 );
 
 export const deleteCharacter = authenticatedAction(
-  characterSchema.pick({ id: true }),
+  z.object({id: z.string().min(1)}),
   async ({ id }) => {
     await prisma.character.delete({
       where: {

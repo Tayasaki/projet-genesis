@@ -37,12 +37,12 @@ export default async function CharacterPage({
 }) {
   const session = await getAuthSession();
 
-  if (!session) redirect("/login");
+  if (!session?.user.id) redirect("/login");
 
   const character = await prisma.character.findUnique({
     where: {
       id: params.characterId,
-      scneario: {
+      scenario: {
         some: {
           user: {
             id: session?.user.id,
@@ -68,7 +68,7 @@ export default async function CharacterPage({
   const fortunes = await getFortunes();
   const strengths = await getStrengths();
   const weaknesses = await getWeaknesses();
-  const weapons = await getWeapons();
+  const weapons = await getWeapons(session.user.id);
   const characterSkills = await getCharacterSkills();
 
   return (

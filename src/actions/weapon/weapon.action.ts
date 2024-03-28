@@ -14,6 +14,7 @@ const weaponSchema = z.object({
   range: z.string(),
   damage: z.string(),
   skillSet: z.array(z.string().optional()),
+  userId: z.string().min(1),
 });
 
 export const createWeapon = authenticatedAction(
@@ -27,6 +28,7 @@ export const createWeapon = authenticatedAction(
     range,
     damage,
     skillSet,
+    userId,
   }) => {
     skillSet = skillSet.filter((s) => s);
     await prisma.weapon.create({
@@ -34,6 +36,11 @@ export const createWeapon = authenticatedAction(
         name: name,
         description: description,
         melee: melee ?? false,
+        user: {
+          connect: {
+            id: userId,
+          },
+        },
         ammo: {
           connect: melee ? undefined : ammo ? { name: ammo } : undefined,
         },

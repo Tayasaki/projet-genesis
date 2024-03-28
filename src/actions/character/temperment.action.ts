@@ -24,7 +24,7 @@ export const createTemperment = authenticatedAction(
 );
 
 export const deleteTemperment = authenticatedAction(
-  tempermentSchema,
+  tempermentSchema.pick({ name: true }),
   async ({ name }) => {
     await prisma.temperment.delete({
       where: {

@@ -6,6 +6,7 @@ import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getCharacters } from "../../../src/query/character.query";
+import { cn } from "@/lib/utils";
 
 export default async function ScenarioManage({
   params,
@@ -35,18 +36,21 @@ export default async function ScenarioManage({
           {scenario.description}
         </span>
       </div>
+      <div className="mb-4 flex items-center justify-between">
+        <h2 className="text-2xl font-semibold">Personnages</h2>
+        <Link
+          className={cn(buttonVariants({ variant: "link" }), "group")}
+          href={`/${params.scenarioId}/character-generation`}
+        >
+          Créer un personnage
+          <ArrowRight
+            className="ml-2 transition group-hover:translate-x-2"
+            size={16}
+          />
+        </Link>
+      </div>
       {characters.length > 0 ? (
         <div>
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-2xl font-semibold">Personnages</h2>
-            <Link
-              className={buttonVariants({ variant: "link" })}
-              href={`/${params.scenarioId}/character-generation`}
-            >
-              Créer un personnage
-              <ArrowRight className="ml-2" size={16} />
-            </Link>
-          </div>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
             {characters.map((c) => (
               <div key={c.id}>

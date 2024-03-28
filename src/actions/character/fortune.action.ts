@@ -24,7 +24,7 @@ export const createFortune = authenticatedAction(
 );
 
 export const deleteFortune = authenticatedAction(
-  fortuneSchema,
+  fortuneSchema.pick({ name: true }),
   async ({ name }) => {
     await prisma.fortune.delete({
       where: {

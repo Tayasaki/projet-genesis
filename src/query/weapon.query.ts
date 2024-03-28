@@ -1,8 +1,11 @@
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 
-export const getWeapons = () =>
+export const getWeapons = (userId: string) =>
   prisma.weapon.findMany({
+    where: {
+      userId: userId,
+    },
     include: {
       ammo: true,
       weight: true,

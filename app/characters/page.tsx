@@ -1,6 +1,5 @@
 import { getAuthSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { Prisma } from "@prisma/client";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { DataTable } from "../manage/data-table";
@@ -17,7 +16,7 @@ export default async function MyCharacters() {
   if (!session) notFound();
   const characters = await prisma.character.findMany({
     where: {
-      scneario: {
+      scenario: {
         some: {
           userId: session.user.id,
         },

@@ -18,28 +18,26 @@ export const ScenarioList = async () => {
     },
   });
   return (
-    <>
-      {session?.user && (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {scenario.map((s) => (
-            <div key={s.id}>
-              <Link href={`/${s.id}/characters`}>
-                <Card className="max-w-md transition hover:scale-110 hover:ring-2 hover:ring-ring hover:ring-offset-2 active:scale-105">
-                  <CardHeader>
-                    <CardTitle>{s.name}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <CardDescription className="text-wrap">
-                      {s.description}
-                    </CardDescription>
-                  </CardContent>
-                  <CardFooter>{s.universe}</CardFooter>
-                </Card>
-              </Link>
-            </div>
-          ))}
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+      {scenario.map((s) => (
+        <div key={s.id}>
+          <Link href={`/${s.id}/characters`}>
+            <Card className="max-w-md transition hover:scale-110 hover:ring-2 hover:ring-ring hover:ring-offset-2 active:scale-105">
+              <CardHeader>
+                <CardTitle>{s.name}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription className="text-wrap text-muted-foreground">
+                  {s.description}
+                </CardDescription>
+              </CardContent>
+              <CardFooter className="font-semibold italic text-primary">
+                {s.universe}
+              </CardFooter>
+            </Card>
+          </Link>
         </div>
-      )}
-    </>
+      ))}
+    </div>
   );
 };

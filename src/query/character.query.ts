@@ -4,7 +4,7 @@ import { Prisma } from "@prisma/client";
 export const getCharacters = (scenarioId: string) =>
   prisma.character.findMany({
     where: {
-      scneario: {
+      scenario: {
         some: {
           id: scenarioId,
         },

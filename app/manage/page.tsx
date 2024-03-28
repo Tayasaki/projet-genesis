@@ -1,5 +1,6 @@
 import { TabsManagement } from "@/components/features/layout/TabsManagement";
 import { WeaponForm } from "@/components/form/weapon/WeaponForm";
+import { Separator } from "@/components/ui/separator";
 import { getAuthSession } from "@/lib/auth";
 import {
   getAlignments,
@@ -17,13 +18,12 @@ import {
   getWeapons,
   getWeights,
 } from "@/src/query/weapon.query";
+import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { columns as characterAttributesColumns } from "./characterAttributesColumns";
 import { DataTable } from "./data-table";
 import { columns as weaponAttributesColumns } from "./weaponAttributesColumns";
 import { columns as weaponColumns } from "./weaponColumns";
-import { Metadata } from "next";
-import { Separator } from "@/components/ui/separator";
 
 export type CharacterAttributes = {
   id: string;
@@ -50,7 +50,7 @@ export default async function Manage() {
 
   const characterAttributes: CharacterAttributes[] = [];
   const weaponAttributes: WeaponAttributes[] = [];
-  const weapons = await getWeapons();
+  const weapons = await getWeapons(session.user.id);
   const temperments = await getTemperments();
   const alignements = await getAlignments();
   const fortunes = await getFortunes();
@@ -112,6 +112,7 @@ export default async function Manage() {
         ranges={range}
         weights={weight}
         skills={weaponSkill}
+        userId={session.user.id}
       />
       <Separator />
       <TabsManagement />
