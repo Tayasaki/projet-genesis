@@ -2,10 +2,10 @@ import { Character } from "@/components/features/layout/Character";
 import { buttonVariants } from "@/components/ui/button";
 import { getAuthSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getCharacters } from "../../../src/query/character.query";
-import { ArrowRight } from "lucide-react";
 
 export default async function ScenarioManage({
   params,
@@ -22,6 +22,8 @@ export default async function ScenarioManage({
 
   if (!scenario) notFound();
   const characters = await getCharacters(params.scenarioId);
+
+  characters.sort((a, b) => (a.pj === b.pj ? 0 : a.pj ? -1 : 1));
 
   return (
     <div className="h-full">
@@ -47,7 +49,9 @@ export default async function ScenarioManage({
           </div>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
             {characters.map((c) => (
-              <Character key={c.id} character={c} />
+              <div key={c.id}>
+                <Character character={c} />
+              </div>
             ))}
           </div>
         </div>

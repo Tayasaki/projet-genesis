@@ -9,11 +9,22 @@ import { deleteTemperment } from "@/src/actions/character/temperment.action";
 import { deleteWeakness } from "@/src/actions/character/weakness.action";
 import { ColumnDef } from "@tanstack/react-table";
 import { CharacterAttributes } from "./page";
+import { Button } from "@/components/ui/button";
+import { ArrowUpDown } from "lucide-react";
 
 export const columns: ColumnDef<CharacterAttributes>[] = [
   {
     accessorKey: "type",
-    header: "Type",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Type <ArrowUpDown className="ml-2 size-4" />
+        </Button>
+      );
+    },
     cell: ({ row }) => {
       const r = row.original;
       let type = "";
