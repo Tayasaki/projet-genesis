@@ -1,4 +1,5 @@
 "use client";
+
 import {
   createAlignment,
   deleteAlignment,
@@ -8,7 +9,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import AutoForm, { AutoFormSubmit } from "../../ui/auto-form";
 
-export const AlignementForm = () => {
+export const AlignementForm = ({ suggest }: { suggest: boolean }) => {
   const [isLoading, setIsLoading] = useState(false);
   return (
     <AutoForm
@@ -34,6 +35,11 @@ export const AlignementForm = () => {
       }}
       onSubmit={async (data) => {
         setIsLoading(true);
+        if (suggest) {
+          toast.info("Votre suggestion a été envoyée");
+          setIsLoading(false);
+          return;
+        }
         const values = await createAlignment({
           name: data.name,
           description: data.description,

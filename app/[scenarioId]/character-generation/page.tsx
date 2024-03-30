@@ -35,8 +35,8 @@ export default async function CharacterGeneration({
   const weapons = await getWeapons(session.user.id);
 
   return (
-    <div className="-mx-96">
-      <h1>Générer votre personnage</h1>
+    <div className="-mx-96 space-y-2">
+      <h1 className="text-3xl font-semibold">Générer votre personnage</h1>
       <CharacterForm
         temperments={temperments}
         strengths={strengths}

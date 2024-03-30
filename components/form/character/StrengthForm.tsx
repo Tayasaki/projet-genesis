@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import AutoForm, { AutoFormSubmit } from "../../ui/auto-form";
 
-export const StrengthForm = () => {
+export const StrengthForm = ({ suggest }: { suggest: boolean }) => {
   const [isLoading, setIsLoading] = useState(false);
   return (
     <AutoForm
@@ -23,6 +23,11 @@ export const StrengthForm = () => {
       }}
       onSubmit={async (data) => {
         setIsLoading(true);
+        if (suggest) {
+          toast.info("Votre suggestion a été envoyée");
+          setIsLoading(false);
+          return;
+        }
         const values = await createStrength({
           name: data.name,
         });

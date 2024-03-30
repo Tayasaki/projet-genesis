@@ -5,6 +5,8 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { LoginButton } from "./auth/LoginButtons";
 import { UserProfile } from "./auth/UserProfile";
+import Image from "next/image";
+import logo from "@/public/logo.png";
 
 export const Header = async () => {
   const session = await getAuthSession();
@@ -12,7 +14,10 @@ export const Header = async () => {
     <header className="fixed top-0 z-20 w-full border-b border-b-accent bg-background">
       <div className="container m-auto flex items-center justify-between gap-1 py-2">
         <h1 className="gap-1 text-2xl font-bold">
-          <Link href="/">Project Genesis</Link>
+          <Link href="/" className="flex">
+            <Image src={logo} alt="logo" width={32} className="dark:" />
+            Project Genesis
+          </Link>
         </h1>
         <span>
           <Link

@@ -6,7 +6,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 
-export const DamageForm = () => {
+export const DamageForm = ({ suggest }: { suggest: boolean }) => {
   const [isLoading, setIsLoading] = useState(false);
   return (
     <AutoForm
@@ -22,6 +22,11 @@ export const DamageForm = () => {
       }}
       onSubmit={async (data) => {
         setIsLoading(true);
+        if (suggest) {
+          toast.info("Votre suggestion a été envoyée");
+          setIsLoading(false);
+          return;
+        }
         const values = await createDamage({
           name: data.name,
         });

@@ -26,16 +26,18 @@ export const Character = ({ character }: { character: CharacterScenario }) => {
           <CardTitle>{character.name}</CardTitle>
           {character.pj ? "🧔" : "🤖"}
         </CardHeader>
-        <div className="container">
+        <div className="container space-y-3">
           {character.origin && <p>Origine: {character.origin}</p>}
           {character.role && <p>Rôle: {character.role}</p>}
           {character.age && <p>Âge: {character.age}</p>}
-          {character.injury && <p>Blessure: {character.injury}</p>}
+          {character.injury && (
+            <p className="text-red-500">Blessure: {character.injury}</p>
+          )}
           {character.temperment ? (
             character.temperment?.description ? (
               <HoverCard>
                 <HoverCardTrigger asChild className="hover:text-primary">
-                  <p className="italic">
+                  <p className="italic underline">
                     Temperement: {character.temperment?.name}
                   </p>
                 </HoverCardTrigger>
@@ -51,7 +53,7 @@ export const Character = ({ character }: { character: CharacterScenario }) => {
             character.alignment?.description ? (
               <HoverCard>
                 <HoverCardTrigger asChild className="hover:text-primary">
-                  <p className="italic">
+                  <p className="italic underline">
                     Alignement: {character.alignment?.name}
                   </p>
                 </HoverCardTrigger>
@@ -67,7 +69,9 @@ export const Character = ({ character }: { character: CharacterScenario }) => {
             character.fortune?.description ? (
               <HoverCard>
                 <HoverCardTrigger asChild className="hover:text-primary">
-                  <p className="italic">Richesse: {character.fortune?.name}</p>
+                  <p className="italic underline">
+                    Richesse: {character.fortune?.name}
+                  </p>
                 </HoverCardTrigger>
                 <HoverCardContent>
                   {character.fortune?.description}

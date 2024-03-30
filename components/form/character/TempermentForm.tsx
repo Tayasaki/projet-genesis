@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import AutoForm, { AutoFormSubmit } from "../../ui/auto-form";
 
-export const TempermentForm = () => {
+export const TempermentForm = ({ suggest }: { suggest: boolean }) => {
   const [isLoading, setIsLoading] = useState(false);
   return (
     <AutoForm
@@ -35,6 +35,11 @@ export const TempermentForm = () => {
       }}
       onSubmit={async (data) => {
         setIsLoading(true);
+        if (suggest) {
+          toast.info("Votre suggestion a été envoyée");
+          setIsLoading(false);
+          return;
+        }
         const values = await createTemperment({
           name: data.name,
           description: data.description,

@@ -58,6 +58,7 @@ export default async function CharacterPage({
       strength: true,
       weakness: true,
       weapon: true,
+      scenario: { select: { id: true } },
     },
   });
 
@@ -72,16 +73,19 @@ export default async function CharacterPage({
   const characterSkills = await getCharacterSkills();
 
   return (
-    <CharacterForm
-      temperments={temperments}
-      alignements={alignments}
-      fortunes={fortunes}
-      strengths={strengths}
-      weaknesses={weaknesses}
-      weapons={weapons}
-      characterSkills={characterSkills}
-      scenarioId=""
-      character={character}
-    />
+    <div className="-mx-96 space-y-2">
+      <h1 className="text-3xl font-semibold">Modifier votre personnage</h1>
+      <CharacterForm
+        temperments={temperments}
+        alignements={alignments}
+        fortunes={fortunes}
+        strengths={strengths}
+        weaknesses={weaknesses}
+        weapons={weapons}
+        characterSkills={characterSkills}
+        character={character}
+        modify
+      />
+    </div>
   );
 }

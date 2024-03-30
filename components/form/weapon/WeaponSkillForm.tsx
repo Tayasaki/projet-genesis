@@ -9,7 +9,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 
-export const WeaponSkillForm = () => {
+export const WeaponSkillForm = ({ suggest }: { suggest: boolean }) => {
   const [isLoading, setIsLoading] = useState(false);
   return (
     <AutoForm
@@ -25,6 +25,11 @@ export const WeaponSkillForm = () => {
       }}
       onSubmit={async (data) => {
         setIsLoading(true);
+        if (suggest) {
+          toast.info("Votre suggestion a été envoyée");
+          setIsLoading(false);
+          return;
+        }
         const values = await createWeaponSkill({
           name: data.name,
         });

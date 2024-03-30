@@ -51,7 +51,7 @@ export default async function ScenarioManage({
       </div>
       {characters.length > 0 ? (
         <div>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             {characters.map((c) => (
               <div key={c.id}>
                 <Character character={c} />

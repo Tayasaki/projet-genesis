@@ -20,7 +20,7 @@ const characterSchema = z.object({
   weakness: z.array(z.string().optional()),
   skillSet: z.array(z.string().optional()),
   weaponSet: z.array(z.string().optional()),
-  scenarioId: z.string(),
+  scenarioId: z.string().optional(),
 });
 
 export const createCharacter = authenticatedAction(
@@ -93,8 +93,78 @@ export const createCharacter = authenticatedAction(
   },
 );
 
+export const updateCharacter = authenticatedAction(
+  characterSchema
+    .omit({ scenarioId: true })
+    .merge(z.object({ id: z.string().min(1) })),
+  async ({
+    id,
+    name,
+    pj,
+    origin,
+    role,
+    age,
+    injury,
+    extra,
+    temperment,
+    alignment,
+    fortune,
+    strength,
+    weakness,
+    skillSet,
+    weaponSet,
+  }) => {
+    strength = strength.filter((s) => s);
+    weakness = weakness.filter((w) => w);
+    skillSet = skillSet.filter((s) => s);
+    weaponSet = weaponSet.filter((w) => w);
+    await prisma.character.update({
+      where: {
+        id: id,
+      },
+      data: {
+        name: name,
+        pj: pj ?? false,
+        origin: origin ?? null,
+        role: role ?? null,
+        age: age ?? null,
+        injury: injury ?? null,
+        extra: extra ?? null,
+        temperment: {
+          connect: {
+            name: temperment,
+          },
+        },
+        alignment: {
+          connect: {
+            name: alignment,
+          },
+        },
+        fortune: {
+          connect: {
+            name: fortune,
+          },
+        },
+        strength: {
+          set: strength.map((s) => ({ name: s })),
+        },
+        weakness: {
+          set: weakness.map((w) => ({ name: w })),
+        },
+        skillSet: {
+          set: skillSet.map((s) => ({ name: s })),
+        },
+        weapon: {
+          set: weaponSet.map((w) => ({ id: w })),
+        },
+      },
+    });
+    revalidatePath("/characters");
+  },
+);
+
 export const deleteCharacter = authenticatedAction(
-  z.object({id: z.string().min(1)}),
+  z.object({ id: z.string().min(1) }),
   async ({ id }) => {
     await prisma.character.delete({
       where: {

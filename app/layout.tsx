@@ -24,7 +24,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={clsx(inter.className, "h-full bg-background ")}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <div className="flex size-full flex-col">
+          <div className="flex size-full min-h-screen flex-col">
             <Header />
             <main className="m-auto h-full max-w-5xl flex-1 py-24">
               {children}

@@ -24,6 +24,7 @@ import { columns as characterAttributesColumns } from "./characterAttributesColu
 import { DataTable } from "./data-table";
 import { columns as weaponAttributesColumns } from "./weaponAttributesColumns";
 import { columns as weaponColumns } from "./weaponColumns";
+import { prisma } from "@/lib/prisma";
 
 export type CharacterAttributes = {
   id: string;
@@ -47,6 +48,10 @@ export const metadata: Metadata = {
 export default async function Manage() {
   const session = await getAuthSession();
   if (!session?.user.id) redirect("/login");
+  const user = await prisma.user.findUniqueOrThrow({
+    where: { id: session.user.id },
+  });
+  const isAuthorized = user.role === "ADMIN" || user.role === "SUPERUSER";
 
   const characterAttributes: CharacterAttributes[] = [];
   const weaponAttributes: WeaponAttributes[] = [];
@@ -104,7 +109,7 @@ export default async function Manage() {
         <DataTable columns={weaponColumns} data={weapons} title="Armes" />
       </div>
       <h2 className="text-2xl font-semibold underline underline-offset-8 dark:text-primary">
-        Créer votre arme
+        Créer une arme
       </h2>
       <WeaponForm
         ammos={ammo}
@@ -115,7 +120,7 @@ export default async function Manage() {
         userId={session.user.id}
       />
       <Separator />
-      <TabsManagement />
+      <TabsManagement isAuthorized={isAuthorized} />
     </div>
   );
 }
