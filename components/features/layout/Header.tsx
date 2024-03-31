@@ -2,11 +2,12 @@ import { ToggleTheme } from "@/components/features/theme/ToggleTheme";
 import { buttonVariants } from "@/components/ui/button";
 import { getAuthSession } from "@/lib/auth";
 import { cn } from "@/lib/utils";
+import logo from "@/public/logo.png";
+import { Slash } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { LoginButton } from "./auth/LoginButtons";
 import { UserProfile } from "./auth/UserProfile";
-import Image from "next/image";
-import logo from "@/public/logo.png";
 
 export const Header = async () => {
   const session = await getAuthSession();
@@ -19,20 +20,22 @@ export const Header = async () => {
             Project Genesis
           </Link>
         </h1>
-        <span>
+        <nav className="flex items-center">
           <Link
             className={cn(buttonVariants({ variant: "link" }))}
             href={"/manage"}
           >
             Gestion
           </Link>
+          <Slash className="size-4 text-muted" />
           <Link
             className={cn(buttonVariants({ variant: "link" }))}
             href={"/characters"}
           >
             Mes personnages
           </Link>
-        </span>
+        </nav>
+
         <div className="flex space-x-2">
           {session?.user ? <UserProfile /> : <LoginButton />}
           <ToggleTheme />

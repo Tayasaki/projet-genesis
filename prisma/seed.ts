@@ -40,8 +40,7 @@ const main = async () => {
   }
 
   for (let i = 0; i < 10; i++) {
-    const character =
-      characters[faker.number.int({ min: 0, max: characters.length - 1 })];
+    const character = characters[i];
     const scenario =
       scenarios[faker.number.int({ min: 0, max: scenarios.length - 1 })];
     await prisma.scenario.update({

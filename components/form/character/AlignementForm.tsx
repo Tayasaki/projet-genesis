@@ -8,6 +8,8 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 import AutoForm, { AutoFormSubmit } from "../../ui/auto-form";
+import { createSuggestion } from "@/src/actions/suggestion.action";
+import { SuggestionType } from "@prisma/client";
 
 export const AlignementForm = ({ suggest }: { suggest: boolean }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -36,6 +38,11 @@ export const AlignementForm = ({ suggest }: { suggest: boolean }) => {
       onSubmit={async (data) => {
         setIsLoading(true);
         if (suggest) {
+          const values = await createSuggestion({
+            type: SuggestionType.Alignment,
+            name: data.name,
+            description: data.description,
+          });
           toast.info("Votre suggestion a été envoyée");
           setIsLoading(false);
           return;
@@ -70,7 +77,9 @@ export const AlignementForm = ({ suggest }: { suggest: boolean }) => {
         setIsLoading(false);
       }}
     >
-      <AutoFormSubmit isLoading={isLoading}>Créer le alignement</AutoFormSubmit>
+      <AutoFormSubmit isLoading={isLoading}>
+        {suggest ? "Suggérer" : "Créer le alignement"}
+      </AutoFormSubmit>
     </AutoForm>
   );
 };

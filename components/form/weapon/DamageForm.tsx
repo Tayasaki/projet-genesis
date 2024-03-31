@@ -1,7 +1,9 @@
 "use client";
 
 import AutoForm, { AutoFormSubmit } from "@/components/ui/auto-form";
+import { createSuggestion } from "@/src/actions/suggestion.action";
 import { createDamage, deleteDamage } from "@/src/actions/weapon/damage.action";
+import { SuggestionType } from "@prisma/client";
 import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -23,6 +25,10 @@ export const DamageForm = ({ suggest }: { suggest: boolean }) => {
       onSubmit={async (data) => {
         setIsLoading(true);
         if (suggest) {
+          const values = await createSuggestion({
+            type: SuggestionType.Damage,
+            name: data.name,
+          });
           toast.info("Votre suggestion a été envoyée");
           setIsLoading(false);
           return;
@@ -56,7 +62,9 @@ export const DamageForm = ({ suggest }: { suggest: boolean }) => {
         setIsLoading(false);
       }}
     >
-      <AutoFormSubmit isLoading={isLoading}>Créer le dégât</AutoFormSubmit>
+      <AutoFormSubmit isLoading={isLoading}>
+        {suggest ? "Suggérer" : "Créer le dégât"}
+      </AutoFormSubmit>
     </AutoForm>
   );
 };

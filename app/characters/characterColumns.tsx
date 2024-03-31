@@ -42,14 +42,18 @@ export const columns: ColumnDef<Character>[] = [
     accessorKey: "role",
     header: "Role",
     cell: ({ row }) => {
-      return row.original.role ?? "Pas de role";
+      return row.original.role === "" || row.original.role === null
+        ? "Pas de role"
+        : row.original.role;
     },
   },
   {
     accessorKey: "origin",
     header: "Origine",
     cell: ({ row }) => {
-      return row.original.origin ?? "Pas d'origine";
+      return row.original.origin === "" || row.original.origin === null
+        ? "Pas d'orgine"
+        : row.original.origin;
     },
   },
   {

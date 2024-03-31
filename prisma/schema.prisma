@@ -194,3 +194,23 @@ model Range {
 	name        String 	@unique
 	weapon      Weapon[]
 }
+
+model Suggestion {
+	type				SuggestionType
+	name				String @id
+	description	String?
+}
+
+enum SuggestionType {
+	Temperment
+	Alignment
+	Fortune
+	Strength
+	Weakness
+	CharacterSkill
+	WeaponSkill
+	Range
+	Damage
+	Weight
+	Ammo
+}

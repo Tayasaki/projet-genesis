@@ -6,6 +6,8 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 import AutoForm, { AutoFormSubmit } from "../../ui/auto-form";
+import { createSuggestion } from "@/src/actions/suggestion.action";
+import { SuggestionType } from "@prisma/client";
 
 export const WeaknessForm = ({ suggest }: { suggest: boolean }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -24,6 +26,10 @@ export const WeaknessForm = ({ suggest }: { suggest: boolean }) => {
       onSubmit={async (data) => {
         setIsLoading(true);
         if (suggest) {
+          const values = await createSuggestion({
+            type: SuggestionType.Weakness,
+            name: data.name,
+          });
           toast.info("Votre suggestion a été envoyée");
           setIsLoading(false);
           return;
@@ -57,7 +63,9 @@ export const WeaknessForm = ({ suggest }: { suggest: boolean }) => {
         setIsLoading(false);
       }}
     >
-      <AutoFormSubmit isLoading={isLoading}>Créer la faiblesse</AutoFormSubmit>
+      <AutoFormSubmit isLoading={isLoading}>
+        {suggest ? "Suggérer" : "Créer la faiblesse"}
+      </AutoFormSubmit>
     </AutoForm>
   );
 };

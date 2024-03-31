@@ -1,10 +1,12 @@
 "use client";
 
 import AutoForm, { AutoFormSubmit } from "@/components/ui/auto-form";
+import { createSuggestion } from "@/src/actions/suggestion.action";
 import {
   createWeaponSkill,
   deleteWeaponSkill,
 } from "@/src/actions/weapon/weaponSkill.action";
+import { SuggestionType } from "@prisma/client";
 import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -26,6 +28,10 @@ export const WeaponSkillForm = ({ suggest }: { suggest: boolean }) => {
       onSubmit={async (data) => {
         setIsLoading(true);
         if (suggest) {
+          const values = await createSuggestion({
+            type: SuggestionType.WeaponSkill,
+            name: data.name,
+          });
           toast.info("Votre suggestion a été envoyée");
           setIsLoading(false);
           return;
@@ -59,7 +65,9 @@ export const WeaponSkillForm = ({ suggest }: { suggest: boolean }) => {
         setIsLoading(false);
       }}
     >
-      <AutoFormSubmit isLoading={isLoading}>Créer la compétence</AutoFormSubmit>
+      <AutoFormSubmit isLoading={isLoading}>
+        {suggest ? "Suggérer" : "Créer la compétence"}
+      </AutoFormSubmit>
     </AutoForm>
   );
 };

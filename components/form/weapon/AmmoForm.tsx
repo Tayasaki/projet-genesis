@@ -1,7 +1,9 @@
 "use client";
 
 import AutoForm, { AutoFormSubmit } from "@/components/ui/auto-form";
+import { createSuggestion } from "@/src/actions/suggestion.action";
 import { createAmmo, deleteAmmo } from "@/src/actions/weapon/ammo.action";
+import { SuggestionType } from "@prisma/client";
 import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -23,6 +25,10 @@ export const AmmoForm = ({ suggest }: { suggest: boolean }) => {
       onSubmit={async (data) => {
         setIsLoading(true);
         if (suggest) {
+          const values = await createSuggestion({
+            type: SuggestionType.Ammo,
+            name: data.name,
+          });
           toast.info("Votre suggestion a été envoyée");
           setIsLoading(false);
           return;
@@ -56,7 +62,9 @@ export const AmmoForm = ({ suggest }: { suggest: boolean }) => {
         setIsLoading(false);
       }}
     >
-      <AutoFormSubmit isLoading={isLoading}>Créer la munition</AutoFormSubmit>
+      <AutoFormSubmit isLoading={isLoading}>
+        {suggest ? "Suggérer" : "Créer la munition"}
+      </AutoFormSubmit>
     </AutoForm>
   );
 };
