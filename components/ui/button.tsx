@@ -25,6 +25,8 @@ const buttonVariants = cva(
           "bg-[#7289da] text-white hover:bg-[#677bc4] hover:ring-[#7289da]",
         github:
           "bg-[#24292e] text-white hover:bg-[#2f363d] hover:ring-[#24292e]",
+        google:
+          "border bg-white text-black hover:bg-[#d4d4d4] hover:ring-[#4285f4]",
       },
       size: {
         default: "h-10 px-4 py-2",

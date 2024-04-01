@@ -1,8 +1,9 @@
 import {
   LoginDiscordButton,
   LoginGithubButton,
+  LoginGoogleButton,
 } from "@/components/features/layout/auth/LoginButtons";
-import { Button } from "@/components/ui/button";
+import { LoginForm } from "@/components/form/LoginForm";
 import {
   Card,
   CardContent,
@@ -10,6 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import { getAuthSession } from "@/lib/auth";
 import { Metadata } from "next";
 import Link from "next/link";
@@ -29,38 +31,25 @@ export default async function Login() {
       <CardHeader>
         <CardTitle className="text-2xl">Login</CardTitle>
         <CardDescription>
-          Enter your email below to login to your account
+          Entrez votre email et votre mot de passe pour vous connecter à votre
+          compte
         </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="grid gap-4">
-          {/* <div className="grid gap-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="m@example.com"
-              required
-            />
+          <LoginForm />
+          <div className="flex items-center gap-2">
+            <Separator className="w-1/3" />
+            <span className="text-gray-300">or</span>
+            <Separator className="w-1/3" />
           </div>
-          <div className="grid gap-2">
-            <div className="flex items-center">
-              <Label htmlFor="password">Password</Label>
-              <Link href="#" className="ml-auto inline-block text-sm underline">
-                Forgot your password?
-              </Link>
-            </div>
-            <Input id="password" type="password" required />
-          </div> */}
-          <Button type="submit" className="w-full">
-            Login
-          </Button>
+          <LoginGoogleButton />
           <LoginGithubButton />
           <LoginDiscordButton />
         </div>
         <div className="mt-4 text-center text-sm">
-          Don&apos;t have an account?{" "}
-          <Link href="#" className="underline">
+          Vous n&apos;avez pas de compte?{" "}
+          <Link href="/sign-up" className="underline">
             Sign up
           </Link>
         </div>
