@@ -20,14 +20,12 @@ export const WeaponForm = ({
   ranges,
   damages,
   skills,
-  userId,
 }: {
   ammos: Ammos;
   weights: Weights;
   ranges: Ranges;
   damages: Damages;
   skills: WeaponSkill;
-  userId: string;
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const ammoNames = ammos.map((a) => a.name) as [string, ...string[]];
@@ -65,7 +63,6 @@ export const WeaponForm = ({
         const dataToSend = {
           ...data,
           skillSet: data.skillSet?.map((s) => s.name),
-          userId: userId,
         };
         const values = await createWeapon(dataToSend);
 

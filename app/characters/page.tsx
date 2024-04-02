@@ -1,7 +1,7 @@
 import { getAuthSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { DataTable } from "../manage/data-table";
 import { columns } from "./characterColumns";
 
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default async function MyCharacters() {
   const session = await getAuthSession();
-  if (!session) notFound();
+  if (!session) redirect("/login");
   const characters = await prisma.character.findMany({
     where: {
       scenario: {

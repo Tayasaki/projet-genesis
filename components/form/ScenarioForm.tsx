@@ -1,6 +1,6 @@
 "use client";
 
-import { createScenario } from "@/src/actions/createScenario.action";
+import { createScenario } from "@/src/actions/scenario.action";
 import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";

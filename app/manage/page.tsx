@@ -117,7 +117,6 @@ export default async function Manage() {
         ranges={range}
         weights={weight}
         skills={weaponSkill}
-        userId={session.user.id}
       />
       <Separator />
       <TabsManagement isAuthorized={isAuthorized} />

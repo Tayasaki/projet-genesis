@@ -1,9 +1,9 @@
 "use server";
 
+import { prisma } from "@/lib/prisma";
 import { authenticatedAction } from "@/lib/safe-action";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { prisma } from "@/lib/prisma";
 
 export const createScenario = authenticatedAction(
   z.object({
@@ -21,5 +21,18 @@ export const createScenario = authenticatedAction(
       },
     });
     revalidatePath("/");
-  }
+  },
+);
+
+export const deleteScenario = authenticatedAction(
+  z.object({ id: z.string().min(1) }),
+  async ({ id }, { userId }) => {
+    await prisma.scenario.deleteMany({
+      where: {
+        id: id,
+        userId: userId,
+      },
+    });
+    revalidatePath("/");
+  },
 );

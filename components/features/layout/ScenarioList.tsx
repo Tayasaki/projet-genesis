@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Card,
   CardContent,
@@ -6,36 +8,40 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { getAuthSession } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { Scenario } from "@prisma/client";
 import Link from "next/link";
+import { DeleteDialog } from "./DeleteDialog";
+import { deleteScenario } from "@/src/actions/scenario.action";
 
-export const ScenarioList = async () => {
-  const session = await getAuthSession();
-  const scenario = await prisma.scenario.findMany({
-    where: {
-      userId: session?.user?.id,
-    },
-  });
+export const ScenarioList = ({ scenario }: { scenario: Scenario[] }) => {
   return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
       {scenario.map((s) => (
         <div key={s.id}>
-          <Link href={`/${s.id}/characters`}>
-            <Card className="max-w-md transition hover:scale-110 hover:ring-2 hover:ring-ring hover:ring-offset-2 active:scale-105">
-              <CardHeader>
-                <CardTitle>{s.name}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-wrap text-muted-foreground">
-                  {s.description}
-                </CardDescription>
-              </CardContent>
-              <CardFooter className="font-semibold italic text-primary">
-                {s.universe}
-              </CardFooter>
-            </Card>
-          </Link>
+          <Card className="max-w-md transition">
+            <CardHeader>
+              <CardTitle>
+                <Link
+                  className="hover:text-primary"
+                  href={`/${s.id}/characters`}
+                >
+                  {s.name}{" "}
+                </Link>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <CardDescription className="text-wrap text-muted-foreground">
+                {s.description}
+              </CardDescription>
+            </CardContent>
+            <CardFooter className="justify-between font-semibold italic text-primary">
+              {s.universe}
+              <DeleteDialog
+                item={s.name}
+                deleteItem={async () => await deleteScenario({ id: s.id })}
+              />
+            </CardFooter>
+          </Card>
         </div>
       ))}
     </div>
