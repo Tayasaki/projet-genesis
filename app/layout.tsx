@@ -22,7 +22,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={clsx(inter.className, "h-full bg-background ")}>
+      <body
+        className={clsx(
+          inter.className,
+          "light:bg-gradient-to-b h-full from-slate-50/40 from-80% to-white dark:bg-background",
+        )}
+      >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <div className="flex size-full min-h-screen flex-col">
             <Header />

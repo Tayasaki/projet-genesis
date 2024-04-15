@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { deleteWeapon } from "@/src/actions/weapon/weapon.action";
 import { Weapon } from "@/src/query/weapon.query";
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown } from "lucide-react";
+import { ArrowUpDown, Swords } from "lucide-react";
 
 export const columns: ColumnDef<Weapon>[] = [
   {
@@ -25,7 +25,7 @@ export const columns: ColumnDef<Weapon>[] = [
       );
     },
     cell: ({ row }) => {
-      return row.original.melee ? "🗡" : "🔫";
+      return row.original.melee ? <Swords /> : "🔫";
     },
   },
   {
