@@ -61,7 +61,7 @@ export function DataTable<TData, TValue>({
       </h3>
       <div className="flex items-center py-4">
         <Input
-        type="search"
+          type="search"
           placeholder="Recherche..."
           value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
@@ -113,7 +113,7 @@ export function DataTable<TData, TValue>({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  Aucun résultat.
                 </TableCell>
               </TableRow>
             )}

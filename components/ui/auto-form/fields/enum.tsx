@@ -37,7 +37,9 @@ export default function AutoFormEnum({
     return values.find((item) => item[0] === value);
   }
 
-  return (
+  return values.length === 0 ? (
+    <p>Il n&apos;y a pas encore d&apos;élément pour cette catégorie</p>
+  ) : (
     <FormItem>
       <AutoFormLabel label={label} isRequired={isRequired} />
       <FormControl>

@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { authenticatedAction } from "@/lib/safe-action";
 import { SuggestionType } from "@prisma/client";
+import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 const suggestionSchema = z.object({
@@ -33,5 +34,18 @@ export const createSuggestion = authenticatedAction(
         description,
       },
     });
+    revalidatePath("/suggestions");
+  },
+);
+
+export const deleteSuggestion = authenticatedAction(
+  suggestionSchema.pick({ name: true }),
+  async ({ name }) => {
+    await prisma.suggestion.delete({
+      where: {
+        name,
+      },
+    });
+    revalidatePath("/suggestions");
   },
 );
