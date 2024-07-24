@@ -1,0 +1,31 @@
+version: "3.8"
+services:
+  db:
+    container_name: projet-genesis-db
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=mysecretpassword
+    ports:
+      - 5432:5432
+    networks:
+      - app-network
+
+  app:
+    container_name: projet-genesis-app
+    image: projet-genesis
+    ports:
+      - 3000:3000
+    command: sh -c "pnpx prisma migrate dev && pnpm dev"
+    environment:
+      - DATABASE_URL=postgresql://postgres:mysecretpassword@db:5432/projet-genesis
+      - NEXTAUTH_URL=http://localhost:3000
+      - NEXTAUTH_SECRET=votresupersecret
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
