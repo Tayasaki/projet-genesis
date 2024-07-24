@@ -12,8 +12,8 @@ import { UserProfile } from "./auth/UserProfile";
 
 export const Header = async () => {
   const session = await getAuthSession();
-  const user = await prisma.user.findUniqueOrThrow({
-    where: { id: session?.user.id },
+  const user = await prisma.user.findUnique({
+    where: { id: session?.user.id ?? "" },
   });
 
   return (
@@ -26,18 +26,17 @@ export const Header = async () => {
           </Link>
         </h1>
         <nav className="flex items-center">
-          {user.role === "ADMIN" ||
-            (user.role === "SUPERUSER" && (
-              <>
-                <Link
-                  className={cn(buttonVariants({ variant: "link" }))}
-                  href={"/suggestions"}
-                >
-                  Suggestions
-                </Link>
-                <Slash className="size-4 text-muted" />
-              </>
-            ))}
+          {(user?.role === "ADMIN" || user?.role === "SUPERUSER") && (
+            <>
+              <Link
+                className={cn(buttonVariants({ variant: "link" }))}
+                href={"/suggestions"}
+              >
+                Suggestions
+              </Link>
+              <Slash className="size-4 text-muted" />
+            </>
+          )}
           <Link
             className={cn(buttonVariants({ variant: "link" }))}
             href={"/manage"}

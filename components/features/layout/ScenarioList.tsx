@@ -12,6 +12,7 @@ import { Scenario } from "@prisma/client";
 import Link from "next/link";
 import { DeleteDialog } from "./DeleteDialog";
 import { deleteScenario } from "@/src/actions/scenario.action";
+import { toast } from "sonner";
 
 export const ScenarioList = ({ scenario }: { scenario: Scenario[] }) => {
   return (
@@ -38,7 +39,10 @@ export const ScenarioList = ({ scenario }: { scenario: Scenario[] }) => {
               {s.universe}
               <DeleteDialog
                 item={s.name}
-                deleteItem={async () => await deleteScenario({ id: s.id })}
+                deleteItem={async () => {
+                  await deleteScenario({ id: s.id });
+                  toast.success(`${s.name} supprimé`);
+                }}
               />
             </CardFooter>
           </Card>
