@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { authenticatedAction } from "@/lib/safe-action";
+import { authorizedAction } from "@/lib/safe-action";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
@@ -10,7 +10,7 @@ const fortuneSchema = z.object({
   description: z.string().max(200).optional(),
 });
 
-export const createFortune = authenticatedAction(
+export const createFortune = authorizedAction(
   fortuneSchema,
   async ({ name, description }) => {
     await prisma.fortune.create({
@@ -23,7 +23,7 @@ export const createFortune = authenticatedAction(
   },
 );
 
-export const deleteFortune = authenticatedAction(
+export const deleteFortune = authorizedAction(
   fortuneSchema.pick({ name: true }),
   async ({ name }) => {
     await prisma.fortune.delete({

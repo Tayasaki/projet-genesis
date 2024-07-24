@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { authenticatedAction } from "@/lib/safe-action";
+import { authorizedAction } from "@/lib/safe-action";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
@@ -10,7 +10,7 @@ const alignmentSchema = z.object({
   description: z.string().max(200).optional(),
 });
 
-export const createAlignment = authenticatedAction(
+export const createAlignment = authorizedAction(
   alignmentSchema,
   async ({ name, description }) => {
     await prisma.alignment.create({
@@ -23,7 +23,7 @@ export const createAlignment = authenticatedAction(
   },
 );
 
-export const deleteAlignment = authenticatedAction(
+export const deleteAlignment = authorizedAction(
   alignmentSchema,
   async ({ name }) => {
     await prisma.alignment.delete({

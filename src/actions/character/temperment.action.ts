@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { authenticatedAction } from "@/lib/safe-action";
+import { authorizedAction } from "@/lib/safe-action";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
@@ -10,7 +10,7 @@ const tempermentSchema = z.object({
   description: z.string().max(200).optional(),
 });
 
-export const createTemperment = authenticatedAction(
+export const createTemperment = authorizedAction(
   tempermentSchema,
   async ({ name, description }) => {
     await prisma.temperment.create({
@@ -23,7 +23,7 @@ export const createTemperment = authenticatedAction(
   },
 );
 
-export const deleteTemperment = authenticatedAction(
+export const deleteTemperment = authorizedAction(
   tempermentSchema.pick({ name: true }),
   async ({ name }) => {
     await prisma.temperment.delete({

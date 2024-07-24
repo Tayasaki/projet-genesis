@@ -7,6 +7,7 @@ import { Character } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, PenLine } from "lucide-react";
 import Link from "next/link";
+import { toast } from "sonner";
 
 export const columns: ColumnDef<Character>[] = [
   {
@@ -71,7 +72,10 @@ export const columns: ColumnDef<Character>[] = [
           </Link>
           <DeleteDialog
             item={row.original.name}
-            deleteItem={async () => deleteCharacter({ id: row.original.id })}
+            deleteItem={async () => {
+              await deleteCharacter({ id: row.original.id });
+              toast.success(`${row.original.name} supprimé`);
+            }}
           />
         </div>
       );

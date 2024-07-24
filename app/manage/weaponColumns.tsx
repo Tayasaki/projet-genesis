@@ -6,6 +6,7 @@ import { deleteWeapon } from "@/src/actions/weapon/weapon.action";
 import { Weapon } from "@/src/query/weapon.query";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, Swords } from "lucide-react";
+import { toast } from "sonner";
 
 export const columns: ColumnDef<Weapon>[] = [
   {
@@ -65,7 +66,10 @@ export const columns: ColumnDef<Weapon>[] = [
       return (
         <DeleteDialog
           item={row.original.name}
-          deleteItem={() => deleteWeapon({ id: row.original.id })}
+          deleteItem={async () => {
+            await deleteWeapon({ id: row.original.id });
+            toast.success(`${row.original.name} supprimé`);
+          }}
         />
       );
     },

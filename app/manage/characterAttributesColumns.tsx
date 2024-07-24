@@ -1,6 +1,7 @@
 "use client";
 
 import { DeleteDialog } from "@/components/features/layout/DeleteDialog";
+import { Button } from "@/components/ui/button";
 import { deleteAlignment } from "@/src/actions/character/alignment.action";
 import { deleteCharacterSkill } from "@/src/actions/character/characterSkill.action";
 import { deleteFortune } from "@/src/actions/character/fortune.action";
@@ -8,9 +9,9 @@ import { deleteStrength } from "@/src/actions/character/strength.action";
 import { deleteTemperment } from "@/src/actions/character/temperment.action";
 import { deleteWeakness } from "@/src/actions/character/weakness.action";
 import { ColumnDef } from "@tanstack/react-table";
-import { CharacterAttributes } from "./page";
-import { Button } from "@/components/ui/button";
 import { ArrowUpDown } from "lucide-react";
+import { CharacterAttributes } from "./page";
+import { toast } from "sonner";
 
 export const columns: ColumnDef<CharacterAttributes>[] = [
   {
@@ -70,31 +71,38 @@ export const columns: ColumnDef<CharacterAttributes>[] = [
   {
     id: "actions",
     header: "Actions",
-    cell: ({ row }) => {
+    cell: async ({ row }) => {
       const r = row.original;
+
       return (
         <DeleteDialog
           item={row.original.name}
           deleteItem={async () => {
+            let value = null;
             switch (r.type) {
               case "temperment":
-                await deleteTemperment({ name: r.name });
+                value = await deleteTemperment({ name: r.name });
                 break;
               case "alignement":
-                await deleteAlignment({ name: r.name });
+                value = await deleteAlignment({ name: r.name });
                 break;
               case "fortune":
-                await deleteFortune({ name: r.name });
+                value = await deleteFortune({ name: r.name });
                 break;
               case "strength":
-                await deleteStrength({ name: r.name });
+                value = await deleteStrength({ name: r.name });
                 break;
               case "weakness":
-                await deleteWeakness({ name: r.name });
+                value = await deleteWeakness({ name: r.name });
                 break;
               case "skill":
-                await deleteCharacterSkill({ name: r.name });
+                value = await deleteCharacterSkill({ name: r.name });
                 break;
+            }
+            if (value?.serverError) {
+              toast.error(
+                "Vous n'êtes pas autorisé à supprimer ce type d'attribut",
+              );
             }
           }}
         />

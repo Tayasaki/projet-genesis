@@ -9,6 +9,7 @@ import { deleteWeaponSkill } from "@/src/actions/weapon/weaponSkill.action";
 import { deleteWeight } from "@/src/actions/weapon/weight.action";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
+import { toast } from "sonner";
 import { CharacterAttributes } from "./page";
 
 export const columns: ColumnDef<CharacterAttributes>[] = [
@@ -60,22 +61,28 @@ export const columns: ColumnDef<CharacterAttributes>[] = [
         <DeleteDialog
           item={row.original.name}
           deleteItem={async () => {
+            let value = null;
             switch (r.type) {
               case "ammo":
-                await deleteAmmo({ name: r.name });
+                value = await deleteAmmo({ name: r.name });
                 break;
               case "damage":
-                await deleteDamage({ name: r.name });
+                value = await deleteDamage({ name: r.name });
                 break;
               case "range":
-                await deleteRange({ name: r.name });
+                value = await deleteRange({ name: r.name });
                 break;
               case "weight":
-                await deleteWeight({ name: r.name });
+                value = await deleteWeight({ name: r.name });
                 break;
               case "skill":
-                await deleteWeaponSkill({ name: r.name });
+                value = await deleteWeaponSkill({ name: r.name });
                 break;
+            }
+            if (value?.serverError) {
+              toast.error(
+                "Vous n'êtes pas autorisé à supprimer ce type d'attribut",
+              );
             }
           }}
         />

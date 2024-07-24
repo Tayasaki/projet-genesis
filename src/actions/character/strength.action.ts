@@ -1,15 +1,15 @@
 "use server";
 
-import { authenticatedAction } from "@/lib/safe-action";
+import { prisma } from "@/lib/prisma";
+import { authorizedAction } from "@/lib/safe-action";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { prisma } from "@/lib/prisma";
 
 const strengthSchema = z.object({
   name: z.string().min(1).max(50),
 });
 
-export const createStrength = authenticatedAction(
+export const createStrength = authorizedAction(
   strengthSchema,
   async ({ name }) => {
     await prisma.strength.create({
@@ -21,7 +21,7 @@ export const createStrength = authenticatedAction(
   },
 );
 
-export const deleteStrength = authenticatedAction(
+export const deleteStrength = authorizedAction(
   strengthSchema,
   async ({ name }) => {
     await prisma.strength.delete({

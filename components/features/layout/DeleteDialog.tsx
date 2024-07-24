@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { XCircle } from "lucide-react";
-import { toast } from "sonner";
 
 export const DeleteDialog = ({
   item,
@@ -42,7 +41,6 @@ export const DeleteDialog = ({
           <AlertDialogAction
             onClick={async () => {
               deleteItem();
-              toast.success("Supprimé");
             }}
           >
             Supprimer

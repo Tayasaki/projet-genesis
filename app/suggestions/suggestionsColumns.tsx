@@ -103,7 +103,10 @@ export const columns: ColumnDef<Suggestion>[] = [
           </Button>
           <DeleteDialog
             item={row.original.name}
-            deleteItem={() => deleteSuggestion({ name: row.original.name })}
+            deleteItem={async () => {
+              await deleteSuggestion({ name: row.original.name });
+              toast.success(`${row.original.name} supprimé`);
+            }}
           />
         </div>
       );
