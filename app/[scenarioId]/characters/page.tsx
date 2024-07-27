@@ -1,12 +1,23 @@
 import { Character } from "@/components/features/layout/Character";
-import { buttonVariants } from "@/components/ui/button";
+import { ImportCharacter } from "@/components/features/layout/ImportCharacter";
+import { Button, buttonVariants } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { getAuthSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { ArrowRight } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { ArrowRight, Plus } from "lucide-react";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getCharacters } from "../../../src/query/character.query";
-import { cn } from "@/lib/utils";
 
 export default async function ScenarioManage({
   params,
@@ -22,9 +33,22 @@ export default async function ScenarioManage({
   });
 
   if (!scenario) notFound();
-  const characters = await getCharacters(params.scenarioId);
+  const scenarioCharacter = await getCharacters(params.scenarioId);
+  const userCharacter = (
+    await prisma.character.findMany({
+      where: {
+        scenario: {
+          some: {
+            userId: session.user.id,
+          },
+        },
+      },
+    })
+  ).filter((c) => !scenarioCharacter.some((sc) => sc.id === c.id));
 
-  characters.sort((a, b) => (a.pj === b.pj ? 0 : a.pj ? -1 : 1));
+  const characterToImport: string[] = [];
+
+  scenarioCharacter.sort((a, b) => (a.pj === b.pj ? 0 : a.pj ? -1 : 1));
 
   return (
     <div className="h-full">
@@ -38,21 +62,44 @@ export default async function ScenarioManage({
       </div>
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-2xl font-semibold">Personnages</h2>
-        <Link
-          className={cn(buttonVariants({ variant: "link" }), "group")}
-          href={`/${params.scenarioId}/character-generation`}
-        >
-          Créer un personnage
-          <ArrowRight
-            className="ml-2 transition group-hover:translate-x-2"
-            size={16}
-          />
-        </Link>
+        <div className="flex items-center gap-2">
+          <Dialog>
+            <DialogTrigger
+              className={cn(buttonVariants(), "flex items-center gap-2")}
+            >
+              <Plus size={16} className="mr-2" />
+              Importer
+            </DialogTrigger>
+            <DialogContent className=" max-w-5xl">
+              <DialogHeader>
+                <DialogTitle>Importer un personnage</DialogTitle>
+              </DialogHeader>
+              <DialogDescription>
+                Sélectionnez un personnage dans votre liste pour l&apos;importer
+                dans ce scénario.
+              </DialogDescription>
+              <ImportCharacter
+                characterList={userCharacter}
+                scenarioId={params.scenarioId}
+              />
+            </DialogContent>
+          </Dialog>
+          <Link
+            className={cn(buttonVariants({ variant: "link" }), "group")}
+            href={`/${params.scenarioId}/character-generation`}
+          >
+            Créer un personnage
+            <ArrowRight
+              className="ml-2 transition group-hover:translate-x-2"
+              size={16}
+            />
+          </Link>
+        </div>
       </div>
-      {characters.length > 0 ? (
+      {scenarioCharacter.length > 0 ? (
         <div>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {characters.map((c) => (
+            {scenarioCharacter.map((c) => (
               <div key={c.id}>
                 <Character character={c} />
               </div>

@@ -24,6 +24,24 @@ export const createScenario = authenticatedAction(
   },
 );
 
+export const updateScenarioCharacter = authenticatedAction(
+  z.object({
+    scenarioId: z.string().min(1),
+    characterId: z.string().min(1),
+  }),
+  async ({ scenarioId, characterId }, { userId }) => {
+    await prisma.scenario.update({
+      where: { id: scenarioId, userId: userId },
+      data: {
+        character: {
+          connect: { id: characterId },
+        },
+      },
+    });
+    revalidatePath(`/${scenarioId}/characters`);
+  },
+);
+
 export const deleteScenario = authenticatedAction(
   z.object({ id: z.string().min(1) }),
   async ({ id }, { userId }) => {
