@@ -18,6 +18,7 @@ import { ArrowRight, Plus } from "lucide-react";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getCharacters } from "../../../src/query/character.query";
+import { DisplayCharacter } from "@/components/features/layout/DisplayCharacter";
 
 export default async function ScenarioManage({
   params,
@@ -97,15 +98,7 @@ export default async function ScenarioManage({
         </div>
       </div>
       {scenarioCharacter.length > 0 ? (
-        <div>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {scenarioCharacter.map((c) => (
-              <div key={c.id}>
-                <Character character={c} />
-              </div>
-            ))}
-          </div>
-        </div>
+        <DisplayCharacter characterList={scenarioCharacter} />
       ) : (
         <p>Pas encore de personnage</p>
       )}
