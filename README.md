@@ -39,17 +39,17 @@ pnpm install
 ```bash
 DATABASE_URL="postgresql://user:password@localhost:5432/database"
 
-NEXTAUTH_URL="http://localhost:3000"
-NEXTAUTH_SECRET="votresupersecret"
+AUTH_NEXTAUTH_URL="http://localhost:3000"
+AUTH_NEXTAUTH_SECRET="votresupersecret"
 
-GITHUB_ID="votreidgithub"
-GITHUB_SECRET="votresecretgithub"
+AUTH_GITHUB_ID="votreidgithub"
+AUTH_GITHUB_SECRET="votresecretgithub"
 
-DISCORD_ID="votreiddiscord"
-DISCORD_SECRET="votresecretdiscord"
+AUTH_DISCORD_ID="votreiddiscord"
+AUTH_DISCORD_SECRET="votresecretdiscord"
 
-GOOGLE_ID="votreidgoogle"
-GOOGLE_SECRET="votresecretgoogle"
+AUTH_GOOGLE_ID="votreidgoogle"
+AUTH_GOOGLE_SECRET="votresecretgoogle"
 ```
 
 `Notez que les variables d'environnement pour les services d'authentification tel que GITHUB_ID, GITHUB_SECRET sont optionnelles. Vous pouvez les laisser vide si vous ne souhaitez pas les utiliser mais les fonctionnalités de login pour les service en question ne seront pas disponible.`

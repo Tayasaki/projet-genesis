@@ -12,11 +12,11 @@ export const env = createEnv({
   },
   client: {},
   runtimeEnv: {
-    GITHUB_ID: process.env.GITHUB_ID,
-    GITHUB_SECRET: process.env.GITHUB_SECRET,
-    DISCORD_ID: process.env.DISCORD_ID,
-    DISCORD_SECRET: process.env.DISCORD_SECRET,
-    GOOGLE_ID: process.env.GOOGLE_ID,
-    GOOGLE_SECRET: process.env.GOOGLE_SECRET,
+    GITHUB_ID: process.env.AUTH_GITHUB_ID,
+    GITHUB_SECRET: process.env.AUTH_GITHUB_SECRET,
+    DISCORD_ID: process.env.AUTH_DISCORD_ID,
+    DISCORD_SECRET: process.env.AUTH_DISCORD_SECRET,
+    GOOGLE_ID: process.env.AUTH_GOOGLE_ID,
+    GOOGLE_SECRET: process.env.AUTH_GOOGLE_SECRET,
   },
 });
