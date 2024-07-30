@@ -18,8 +18,6 @@ export const DisplayCharacter = ({
 }: {
   characterList: CharacterScenario[];
 }) => {
-  const [character, setCharacter] =
-    useState<CharacterScenario[]>(characterList);
   const [displayArgument, setDisplayArgument] = useState<{
     search: string;
     sort: "name" | "pj" | "";

@@ -1,6 +1,17 @@
 "use client";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Loader2, LogOut } from "lucide-react";
+import { Loader2, LogOut, XCircle } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { useTransition } from "react";
 
@@ -18,5 +29,36 @@ export const LogoutButton = () => {
       )}
       Log out
     </Button>
+  );
+};
+
+export const DeleteAccountButton = () => {
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button
+          variant="destructive"
+          className="rounded-md bg-gray-200 text-destructive hover:bg-gray-200/70"
+        >
+          Supprimer mon compte
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Cette action est irréversible 🤯</AlertDialogTitle>
+          <AlertDialogDescription>
+            En continuant, vous supprimerez votre compte et toute les données
+            liées à ce dernier. Etes vous sûr et certain de vouloir tout
+            supprimer.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Annuler</AlertDialogCancel>
+          <AlertDialogAction onClick={async () => {}}>
+            Supprimer mon compte
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 };

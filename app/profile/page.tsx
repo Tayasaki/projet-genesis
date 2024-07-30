@@ -1,4 +1,7 @@
-import { LogoutButton } from "@/components/features/layout/auth/LogoutButton";
+import {
+  DeleteAccountButton,
+  LogoutButton,
+} from "@/components/features/layout/auth/LogoutButton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getAuthSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -39,8 +42,8 @@ export default async function Profile() {
 
   return (
     <div className="flex">
-      <div className="mr-8 flex flex-col items-center">
-        <Avatar className="mb-5 size-56">
+      <div className="mr-8 flex flex-col items-center space-y-3">
+        <Avatar className="size-56">
           <AvatarImage
             src={`https://api.dicebear.com/7.x/adventurer/svg?seed=${user.name}`}
             alt="Profile picture"
@@ -49,6 +52,7 @@ export default async function Profile() {
           <AvatarFallback>{user.name?.slice(0, 2) ?? "AA"}</AvatarFallback>
         </Avatar>
         <LogoutButton />
+        <DeleteAccountButton />
       </div>
       <div>
         <h1 className="mb-3 text-5xl font-semibold">{user.name}</h1>

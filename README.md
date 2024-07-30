@@ -40,7 +40,7 @@ pnpm install
 DATABASE_URL="postgresql://user:password@localhost:5432/database"
 
 NEXTAUTH_URL="http://localhost:3000"
-NEXTAUTH_SECRET="votresupersecret"
+AUTH_SECRET="votresupersecret"
 
 AUTH_GITHUB_ID="votreidgithub"
 AUTH_GITHUB_SECRET="votresecretgithub"
