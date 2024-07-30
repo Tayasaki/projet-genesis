@@ -4,6 +4,7 @@ import React from "react";
 
 type Props = {
   params: { scenarioId: string };
+  modal: React.ReactNode;
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
