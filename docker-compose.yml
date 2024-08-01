@@ -13,14 +13,18 @@ services:
 
   app:
     container_name: projet-genesis-app
-    image: projet-genesis
+    image: ghcr.io/tayasaki/projet-genesis:latest
     ports:
       - 3000:3000
-    command: sh -c "pnpx prisma migrate dev && pnpm dev"
+    command: sh -c "npx prisma db push --skip-generate && node server.js"
     environment:
       - DATABASE_URL=postgresql://postgres:mysecretpassword@db:5432/projet-genesis
       - NEXTAUTH_URL=http://localhost:3000
       - NEXTAUTH_SECRET=votresupersecret
+      - AUTH_GITHUB_ID=votregithubid
+      - AUTH_GITHUB_SECRET=votregithubsecret
+      - AUTH_DISCORD_ID=votrediscordid
+      - AUTH_DISCORD_SECRET=votrediscordsecret
     depends_on:
       - db
     networks:

@@ -67,3 +67,25 @@ pnpm dev
 ```
 
 Vous pouvez maintenant accéder à l'application à l'adresse `http://localhost:3000`
+
+## Docker
+
+Dans le cadre de ce projet, une image Docker de l'application est disponible pour faciliter le déploiement. Pour lancer l'application avec Docker, suivez les instructions suivantes:
+
+1. Construire l'image Docker
+
+```bash
+docker build -t projet-geneis .
+```
+
+2. Lancer le conteneur
+
+```bash
+docker compose up
+```
+
+L'application est maintenant accessible à l'adresse `http://localhost:3000`
+
+### Troubleshooting
+
+A noter qu'il faut bien veilier à ce que le port 3000 ne soit pas déjà utilisé par une autre application. Aussi prenez soin de vérifier que vous aillez bien les droits pour accéder à l'image Docker dans la registry.
