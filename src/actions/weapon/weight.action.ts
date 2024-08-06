@@ -9,20 +9,24 @@ const weightSchema = z.object({
   name: z.string().min(1).max(50),
 });
 
-export const createWeight = authorizedAction(weightSchema, async ({ name }) => {
-  await prisma.weight.create({
-    data: {
-      name: name,
-    },
+export const createWeight = authorizedAction
+  .schema(weightSchema)
+  .action(async ({ parsedInput }) => {
+    await prisma.weight.create({
+      data: {
+        name: parsedInput.name,
+      },
+    });
+    revalidatePath("/manage");
   });
-  revalidatePath("/manage");
-});
 
-export const deleteWeight = authorizedAction(weightSchema, async ({ name }) => {
-  await prisma.weight.delete({
-    where: {
-      name: name,
-    },
+export const deleteWeight = authorizedAction
+  .schema(weightSchema)
+  .action(async ({ parsedInput }) => {
+    await prisma.weight.delete({
+      where: {
+        name: parsedInput.name,
+      },
+    });
+    revalidatePath("/manage");
   });
-  revalidatePath("/manage");
-});

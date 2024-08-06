@@ -9,20 +9,24 @@ const damageSchema = z.object({
   name: z.string().min(1).max(50),
 });
 
-export const createDamage = authorizedAction(damageSchema, async ({ name }) => {
-  await prisma.damage.create({
-    data: {
-      name: name,
-    },
+export const createDamage = authorizedAction
+  .schema(damageSchema)
+  .action(async ({ parsedInput }) => {
+    await prisma.damage.create({
+      data: {
+        name: parsedInput.name,
+      },
+    });
+    revalidatePath("/manage");
   });
-  revalidatePath("/manage");
-});
 
-export const deleteDamage = authorizedAction(damageSchema, async ({ name }) => {
-  await prisma.damage.delete({
-    where: {
-      name: name,
-    },
+export const deleteDamage = authorizedAction
+  .schema(damageSchema)
+  .action(async ({ parsedInput }) => {
+    await prisma.damage.delete({
+      where: {
+        name: parsedInput.name,
+      },
+    });
+    revalidatePath("/manage");
   });
-  revalidatePath("/manage");
-});

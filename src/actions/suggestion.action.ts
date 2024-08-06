@@ -24,28 +24,26 @@ const suggestionSchema = z.object({
   description: z.string().max(200).optional(),
 });
 
-export const createSuggestion = authenticatedAction(
-  suggestionSchema,
-  async ({ type, name, description }) => {
+export const createSuggestion = authenticatedAction
+  .schema(suggestionSchema)
+  .action(async ({ parsedInput }) => {
     await prisma.suggestion.create({
       data: {
-        type,
-        name,
-        description,
+        type: parsedInput.type,
+        name: parsedInput.name,
+        description: parsedInput.description,
       },
     });
     revalidatePath("/suggestions");
-  },
-);
+  });
 
-export const deleteSuggestion = authenticatedAction(
-  suggestionSchema.pick({ name: true }),
-  async ({ name }) => {
+export const deleteSuggestion = authenticatedAction
+  .schema(suggestionSchema.pick({ name: true }))
+  .action(async ({ parsedInput }) => {
     await prisma.suggestion.delete({
       where: {
-        name,
+        name: parsedInput.name,
       },
     });
     revalidatePath("/suggestions");
-  },
-);
+  });

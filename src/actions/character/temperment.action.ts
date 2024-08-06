@@ -10,27 +10,25 @@ const tempermentSchema = z.object({
   description: z.string().max(200).optional(),
 });
 
-export const createTemperment = authorizedAction(
-  tempermentSchema,
-  async ({ name, description }) => {
+export const createTemperment = authorizedAction
+  .schema(tempermentSchema)
+  .action(async ({ parsedInput }) => {
     await prisma.temperment.create({
       data: {
-        name: name,
-        description: description,
+        name: parsedInput.name,
+        description: parsedInput.description,
       },
     });
     revalidatePath("/manage");
-  },
-);
+  });
 
-export const deleteTemperment = authorizedAction(
-  tempermentSchema.pick({ name: true }),
-  async ({ name }) => {
+export const deleteTemperment = authorizedAction
+  .schema(tempermentSchema.pick({ name: true }))
+  .action(async ({ parsedInput }) => {
     await prisma.temperment.delete({
       where: {
-        name: name,
+        name: parsedInput.name,
       },
     });
     revalidatePath("/manage");
-  },
-);
+  });

@@ -2,12 +2,12 @@ import {
   createStrength,
   deleteStrength,
 } from "@/src/actions/character/strength.action";
+import { createSuggestion } from "@/src/actions/suggestion.action";
+import { SuggestionType } from "@prisma/client";
 import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 import AutoForm, { AutoFormSubmit } from "../../ui/auto-form";
-import { createSuggestion } from "@/src/actions/suggestion.action";
-import { SuggestionType } from "@prisma/client";
 
 export const StrengthForm = ({ suggest }: { suggest: boolean }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -26,7 +26,7 @@ export const StrengthForm = ({ suggest }: { suggest: boolean }) => {
       onSubmit={async (data) => {
         setIsLoading(true);
         if (suggest) {
-          const values = await createSuggestion({
+          await createSuggestion({
             type: SuggestionType.Strength,
             name: data.name,
           });
@@ -38,11 +38,11 @@ export const StrengthForm = ({ suggest }: { suggest: boolean }) => {
           name: data.name,
         });
 
-        if (values.validationErrors || values.serverError) {
-          if (values.validationErrors) {
+        if (values?.validationErrors || values?.serverError) {
+          if (values?.validationErrors) {
             toast.error("Veuillez remplir tous les champs");
           }
-          if (values.serverError) {
+          if (values?.serverError) {
             toast.error("Vous devez être connecté pour créer une force");
           }
           setIsLoading(false);

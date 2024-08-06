@@ -16,48 +16,47 @@ const weaponSchema = z.object({
   skillSet: z.array(z.string().optional()),
 });
 
-export const createWeapon = authenticatedAction(
-  weaponSchema,
-  async (
-    { name, description, melee, ammo, weight, range, damage, skillSet },
-    { userId },
-  ) => {
-    skillSet = skillSet.filter((s) => s);
+export const createWeapon = authenticatedAction
+  .schema(weaponSchema)
+  .action(async ({ parsedInput, ctx: userId }) => {
+    parsedInput.skillSet = parsedInput.skillSet.filter((s) => s);
     await prisma.weapon.create({
       data: {
-        name: name,
-        description: description,
-        melee: melee ?? false,
+        name: parsedInput.name,
+        description: parsedInput.description,
+        melee: parsedInput.melee ?? false,
         user: {
           connect: {
             id: userId,
           },
         },
         ammo: {
-          connect: melee ? undefined : ammo ? { name: ammo } : undefined,
+          connect: parsedInput.melee
+            ? undefined
+            : parsedInput.ammo
+              ? { name: parsedInput.ammo }
+              : undefined,
         },
         weight: {
-          connect: { name: weight },
+          connect: { name: parsedInput.weight },
         },
         range: {
-          connect: { name: range },
+          connect: { name: parsedInput.range },
         },
         damage: {
-          connect: { name: damage },
+          connect: { name: parsedInput.damage },
         },
         weaponSkill: {
-          connect: skillSet.map((s) => ({ name: s })),
+          connect: parsedInput.skillSet.map((s) => ({ name: s })),
         },
       },
     });
     revalidatePath("/manage");
-  },
-);
+  });
 
-export const deleteWeapon = authenticatedAction(
-  z.object({ id: z.string() }),
-  async ({ id }) => {
-    await prisma.weapon.delete({ where: { id } });
+export const deleteWeapon = authenticatedAction
+  .schema(z.object({ id: z.string() }))
+  .action(async ({ parsedInput }) => {
+    await prisma.weapon.delete({ where: { id: parsedInput.id } });
     revalidatePath("/manage");
-  },
-);
+  });

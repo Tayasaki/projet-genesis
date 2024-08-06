@@ -1,9 +1,11 @@
 "use client";
 
 import AutoForm, { AutoFormSubmit } from "@/components/ui/auto-form";
+import { Button } from "@/components/ui/button";
 import { RandomButton } from "@/components/ui/randomButton";
 import {
   createCharacter,
+  generateCharacter,
   updateCharacter,
 } from "@/src/actions/character/character.action";
 import {
@@ -16,6 +18,7 @@ import {
   Weaknesses,
 } from "@/src/query/character.query";
 import { Weapon } from "@/src/query/weapon.query";
+import { Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -145,107 +148,159 @@ export const CharacterForm = ({
       .describe("Armes"),
   });
 
+  function getRandomItemsFromArray<T>(
+    array: T[],
+    maxItems: number,
+  ): { name: T }[] {
+    // Shuffle the array
+    const shuffledArray = array.sort(() => 0.5 - Math.random());
+    // Return the first maxItems elements
+    return shuffledArray.slice(0, maxItems).map((item) => ({ name: item }));
+  }
+
   return (
-    <AutoForm
-      values={values}
-      formSchema={characterFormSchema}
-      onValuesChange={setValues}
-      onSubmit={async (data) => {
-        setIsLoading(true);
-        const dataToSend = {
-          ...data,
-          strength: data.strength.map((s) => s.name),
-          weakness: data.weakness.map((w) => w.name),
-          skillSet: data.skillSet.map((s) => s.name),
-          weaponSet: data.weaponSet.map(
-            (w) => weapons.find((weapon) => weapon.name === w.name)?.id,
-          ),
-          scenarioId: scenarioId,
-        };
-
-        let values = null;
-
-        if (modify) {
-          if (character?.id) {
-            values = await updateCharacter({ ...dataToSend, id: character.id });
+    <div className="flex flex-col gap-2">
+      {!character && (
+        <div className="ml-auto">
+          <Button
+            disabled={isLoading}
+            onClick={async () => {
+              setIsLoading(true);
+              const value = await generateCharacter({});
+              if (value?.data?.type === "success" && value?.data.character) {
+                const generatedCharacter = {
+                  ...value?.data.character,
+                  temperment:
+                    tempermentsNames[
+                      Math.floor(Math.random() * (tempermentsNames.length - 1))
+                    ],
+                  alignment:
+                    alignementsNames[
+                      Math.floor(Math.random() * (alignementsNames.length - 1))
+                    ],
+                  fortune:
+                    fortunesNames[
+                      Math.floor(Math.random() * (fortunesNames.length - 1))
+                    ],
+                  strength: getRandomItemsFromArray(strengthNames, 2),
+                  weakness: getRandomItemsFromArray(weaknessNames, 2),
+                  skillSet: getRandomItemsFromArray(characterSkillNames, 3),
+                  weaponSet: getRandomItemsFromArray(weaponNames, 1),
+                } satisfies Partial<z.infer<typeof characterFormSchema>>;
+                setValues(generatedCharacter);
+                toast.success("Personnage généré avec succès ✨");
+              } else if (value?.data?.type === "error") {
+                toast.error("Erreur lors de la génération du personnage");
+              } else if (value?.data?.type === "validation-error") {
+                toast.error("L'IA n'a pas pu générer de personnage");
+              }
+              setIsLoading(false);
+            }}
+          >
+            Générer avec l&apos;IA <Sparkles className="ml-2" size={16} />
+          </Button>
+        </div>
+      )}
+      <AutoForm
+        values={values}
+        formSchema={characterFormSchema}
+        onValuesChange={setValues}
+        onSubmit={async (data) => {
+          setIsLoading(true);
+          const dataToSend = {
+            ...data,
+            strength: data.strength.map((s) => s.name),
+            weakness: data.weakness.map((w) => w.name),
+            skillSet: data.skillSet.map((s) => s.name),
+            weaponSet: data.weaponSet.map(
+              (w) => weapons.find((weapon) => weapon.name === w.name)?.id,
+            ),
+            scenarioId: scenarioId,
+          };
+          let values = null;
+          if (modify) {
+            if (character?.id) {
+              values = await updateCharacter({
+                ...dataToSend,
+                id: character.id,
+              });
+            } else {
+              throw new Error("Character id is missing");
+            }
           } else {
-            throw new Error("Character id is missing");
+            values = await createCharacter(dataToSend);
           }
-        } else {
-          values = await createCharacter(dataToSend);
-        }
-
-        if (values.validationErrors || values.serverError) {
-          if (values.validationErrors) {
-            toast.error("Veuillez remplir tous les champs");
+          if (values?.validationErrors || values?.serverError) {
+            if (values?.validationErrors) {
+              toast.error("Veuillez remplir tous les champs");
+            }
+            if (values?.serverError) {
+              toast.error("Vous devez être connecté pour créer un personnage");
+            }
+            setIsLoading(false);
+            return;
           }
-          if (values.serverError) {
-            toast.error("Vous devez être connecté pour créer un personnage");
+          if (modify) {
+            toast.success("Personnage modifié");
+            router.push(`/characters`);
+          } else {
+            toast.success("Personnage créé avec succès");
+            router.push(`/${scenarioId}/characters`);
           }
-          setIsLoading(false);
-          return;
-        }
-
-        if (modify) {
-          toast.success("Personnage modifié");
-          router.push(`/characters`);
-        } else {
-          toast.success("Personnage créé avec succès");
-          router.push(`/${scenarioId}/characters`);
-        }
-      }}
-      fieldConfig={{
-        name: {
-          inputProps: {
-            placeholder: "Eric Tournlavis",
+        }}
+        fieldConfig={{
+          name: {
+            inputProps: {
+              placeholder: "Eric Tournlavis",
+            },
           },
-        },
-        pj: {
-          fieldType: "switch",
-        },
-        origin: {
-          inputProps: {
-            placeholder: "Né dans les montagnes",
+          pj: {
+            fieldType: "switch",
           },
-        },
-        role: {
-          inputProps: {
-            placeholder: "Guerrier",
+          origin: {
+            inputProps: {
+              placeholder: "Né dans les montagnes",
+            },
           },
-        },
-        age: {
-          renderParent: ({ children }) => (
-            <div className="space-y-2">
-              {children}
-              <RandomButton
-                randomize={() => {
-                  setValues({
-                    ...values,
-                    age: Math.floor(Math.random() * 100),
-                  });
-                }}
-              />
-            </div>
-          ),
-          inputProps: {
-            placeholder: "25",
+          role: {
+            inputProps: {
+              placeholder: "Guerrier",
+            },
           },
-        },
-        injury: {
-          inputProps: {
-            placeholder: "Blessure à la jambe",
+          age: {
+            renderParent: ({ children }) => (
+              <div className="space-y-2">
+                {children}
+                <RandomButton
+                  randomize={() => {
+                    setValues({
+                      ...values,
+                      age: Math.floor(Math.random() * 100),
+                    });
+                  }}
+                />
+              </div>
+            ),
+            inputProps: {
+              placeholder: "25",
+            },
           },
-        },
-        extra: {
-          inputProps: {
-            placeholder: "Aime les chats",
+          injury: {
+            inputProps: {
+              placeholder: "Blessure à la jambe",
+            },
           },
-        },
-      }}
-    >
-      <AutoFormSubmit isLoading={isLoading}>
-        {modify ? "Modifier votre personnage" : "Créer votre personnage"}
-      </AutoFormSubmit>
-    </AutoForm>
+          extra: {
+            inputProps: {
+              placeholder: "Aime les chats",
+            },
+          },
+        }}
+      >
+        <AutoFormSubmit isLoading={isLoading}>
+          {modify ? "Modifier votre personnage" : "Créer votre personnage"}
+        </AutoFormSubmit>
+      </AutoForm>
+    </div>
   );
 };

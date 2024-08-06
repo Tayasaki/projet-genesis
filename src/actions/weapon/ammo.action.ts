@@ -9,20 +9,24 @@ const ammoSchema = z.object({
   name: z.string().min(1).max(50),
 });
 
-export const createAmmo = authorizedAction(ammoSchema, async ({ name }) => {
-  await prisma.ammo.create({
-    data: {
-      name: name,
-    },
+export const createAmmo = authorizedAction
+  .schema(ammoSchema)
+  .action(async ({ parsedInput }) => {
+    await prisma.ammo.create({
+      data: {
+        name: parsedInput.name,
+      },
+    });
+    revalidatePath("/manage");
   });
-  revalidatePath("/manage");
-});
 
-export const deleteAmmo = authorizedAction(ammoSchema, async ({ name }) => {
-  await prisma.ammo.delete({
-    where: {
-      name: name,
-    },
+export const deleteAmmo = authorizedAction
+  .schema(ammoSchema)
+  .action(async ({ parsedInput }) => {
+    await prisma.ammo.delete({
+      where: {
+        name: parsedInput.name,
+      },
+    });
+    revalidatePath("/manage");
   });
-  revalidatePath("/manage");
-});

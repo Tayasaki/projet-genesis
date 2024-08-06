@@ -66,11 +66,11 @@ export const WeaponForm = ({
         };
         const values = await createWeapon(dataToSend);
 
-        if (values.validationErrors || values.serverError) {
-          if (values.validationErrors) {
+        if (values?.validationErrors || values?.serverError) {
+          if (values?.validationErrors) {
             toast.error("Veuillez remplir tous les champs");
           }
-          if (values.serverError) {
+          if (values?.serverError) {
             toast.error("Vous devez être connecté pour créer une arme");
           }
           setIsLoading(false);
@@ -78,7 +78,6 @@ export const WeaponForm = ({
         }
         setIsLoading(false);
         toast.success("Arme créé avec succès");
-        //router.push(`/${scenarioId}`);
       }}
       fieldConfig={{
         melee: {

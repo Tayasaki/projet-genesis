@@ -4,12 +4,14 @@ import { prisma } from "@/lib/prisma";
 import { authenticatedAction } from "@/lib/safe-action";
 import { z } from "zod";
 
-export const deleteAccount = authenticatedAction(
-  z.object({
-    sessionId: z.string().min(1),
-  }),
-  async ({ sessionId }, { userId }) => {
-    if (sessionId !== userId) throw new Error("Invalid session id");
+export const deleteAccount = authenticatedAction
+  .schema(
+    z.object({
+      sessionId: z.string().min(1),
+    }),
+  )
+  .action(async ({ parsedInput, ctx: userId }) => {
+    if (parsedInput.sessionId !== userId) throw new Error("Invalid session id");
     const account = await prisma.account.findFirstOrThrow({
       where: { userId: userId },
     });
@@ -35,5 +37,4 @@ export const deleteAccount = authenticatedAction(
     await prisma.account.delete({
       where: { id: account.id },
     });
-  },
-);
+  });
