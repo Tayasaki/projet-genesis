@@ -9,26 +9,24 @@ const characterSkillSchema = z.object({
   name: z.string().min(1).max(50),
 });
 
-export const createCharacterSkill = authorizedAction(
-  characterSkillSchema,
-  async ({ name }) => {
+export const createCharacterSkill = authorizedAction
+  .schema(characterSkillSchema)
+  .action(async ({ parsedInput }) => {
     await prisma.characterSkill.create({
       data: {
-        name: name,
+        name: parsedInput.name,
       },
     });
     revalidatePath("/manage");
-  },
-);
+  });
 
-export const deleteCharacterSkill = authorizedAction(
-  characterSkillSchema,
-  async ({ name }) => {
+export const deleteCharacterSkill = authorizedAction
+  .schema(characterSkillSchema)
+  .action(async ({ parsedInput }) => {
     await prisma.characterSkill.delete({
       where: {
-        name: name,
+        name: parsedInput.name,
       },
     });
     revalidatePath("/manage");
-  },
-);
+  });

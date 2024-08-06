@@ -10,25 +10,25 @@ const alignmentSchema = z.object({
   description: z.string().max(200).optional(),
 });
 
-export const createAlignment = authorizedAction(
-  alignmentSchema,
-  async ({ name, description }) => {
+export const createAlignment = authorizedAction.schema(
+  alignmentSchema).action(
+  async ({ parsedInput }) => {
     await prisma.alignment.create({
       data: {
-        name: name,
-        description: description,
+        name: parsedInput.name,
+        description: parsedInput.description,
       },
     });
     revalidatePath("/manage");
   },
 );
 
-export const deleteAlignment = authorizedAction(
-  alignmentSchema,
-  async ({ name }) => {
+export const deleteAlignment = authorizedAction.schema(
+  alignmentSchema).action(
+  async ({ parsedInput }) => {
     await prisma.alignment.delete({
       where: {
-        name: name,
+        name: parsedInput.name,
       },
     });
     revalidatePath("/manage");

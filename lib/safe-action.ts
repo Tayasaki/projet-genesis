@@ -19,34 +19,26 @@ const handleReturnedError = (error: Error) => {
   return "An unexpected error occurred";
 };
 
-export const authenticatedAction = createSafeActionClient({
-  handleReturnedServerError: handleReturnedError,
-  async middleware() {
-    const session = await getAuthSession();
-    if (!session?.user.id) {
-      throw new ActionError("You must be logged in to perform this action");
-    }
-
-    return {
-      userId: session.user.id,
-    };
-  },
+export const authenticatedAction = action.use(async ({ next }) => {
+  const session = await getAuthSession();
+  if (!session?.user.id) {
+    throw new ActionError("You must be logged in to perform this action");
+  }
+  return next({ ctx: session.user.id });
 });
 
-export const authorizedAction = createSafeActionClient({
-  handleReturnedServerError: handleReturnedError,
-  async middleware() {
-    const session = await getAuthSession();
-    if (!session?.user.id) {
-      throw new ActionError("You must be logged in to perform this action");
-    }
-    const user = await prisma.user.findUniqueOrThrow({
-      where: {
-        id: session.user.id,
-      },
-    });
-    if (user.role !== "SUPERUSER" && user.role !== "ADMIN") {
-      throw new ActionError("You are not authorized to perform this action");
-    }
-  },
+export const authorizedAction = action.use(async ({ next }) => {
+  const session = await getAuthSession();
+  if (!session?.user.id) {
+    throw new ActionError("You must be logged in to perform this action");
+  }
+  const user = await prisma.user.findUniqueOrThrow({
+    where: {
+      id: session.user.id,
+    },
+  });
+  if (user.role !== "SUPERUSER" && user.role !== "ADMIN") {
+    throw new ActionError("You are not authorized to perform this action");
+  }
+  return next({ ctx: session.user.id });
 });

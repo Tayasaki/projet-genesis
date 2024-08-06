@@ -38,7 +38,7 @@ export const TempermentForm = ({ suggest }: { suggest: boolean }) => {
       onSubmit={async (data) => {
         setIsLoading(true);
         if (suggest) {
-          const values = await createSuggestion({
+          await createSuggestion({
             type: SuggestionType.Temperment,
             name: data.name,
             description: data.description,
@@ -52,11 +52,11 @@ export const TempermentForm = ({ suggest }: { suggest: boolean }) => {
           description: data.description,
         });
 
-        if (values.validationErrors || values.serverError) {
-          if (values.validationErrors) {
+        if (values?.validationErrors || values?.serverError) {
+          if (values?.validationErrors) {
             toast.error("Veuillez remplir tous les champs");
           }
-          if (values.serverError) {
+          if (values?.serverError) {
             toast.error("Vous devez être connecté pour créer un tempérament");
           }
           setIsLoading(false);

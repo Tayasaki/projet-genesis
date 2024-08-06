@@ -9,26 +9,24 @@ const weaponSkillSchema = z.object({
   name: z.string().min(1).max(50),
 });
 
-export const createWeaponSkill = authorizedAction(
-  weaponSkillSchema,
-  async ({ name }) => {
+export const createWeaponSkill = authorizedAction
+  .schema(weaponSkillSchema)
+  .action(async ({ parsedInput }) => {
     await prisma.weaponSkill.create({
       data: {
-        name: name,
+        name: parsedInput.name,
       },
     });
     revalidatePath("/manage");
-  },
-);
+  });
 
-export const deleteWeaponSkill = authorizedAction(
-  weaponSkillSchema,
-  async ({ name }) => {
+export const deleteWeaponSkill = authorizedAction
+  .schema(weaponSkillSchema)
+  .action(async ({ parsedInput }) => {
     await prisma.weaponSkill.delete({
       where: {
-        name: name,
+        name: parsedInput.name,
       },
     });
     revalidatePath("/manage");
-  },
-);
+  });

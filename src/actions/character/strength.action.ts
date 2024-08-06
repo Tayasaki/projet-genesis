@@ -9,26 +9,24 @@ const strengthSchema = z.object({
   name: z.string().min(1).max(50),
 });
 
-export const createStrength = authorizedAction(
-  strengthSchema,
-  async ({ name }) => {
+export const createStrength = authorizedAction
+  .schema(strengthSchema)
+  .action(async ({ parsedInput }) => {
     await prisma.strength.create({
       data: {
-        name: name,
+        name: parsedInput.name,
       },
     });
     revalidatePath("/manage");
-  },
-);
+  });
 
-export const deleteStrength = authorizedAction(
-  strengthSchema,
-  async ({ name }) => {
+export const deleteStrength = authorizedAction
+  .schema(strengthSchema)
+  .action(async ({ parsedInput }) => {
     await prisma.strength.delete({
       where: {
-        name: name,
+        name: parsedInput.name,
       },
     });
     revalidatePath("/manage");
-  },
-);
+  });

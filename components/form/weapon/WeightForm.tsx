@@ -25,7 +25,7 @@ export const WeightForm = ({ suggest }: { suggest: boolean }) => {
       onSubmit={async (data) => {
         setIsLoading(true);
         if (suggest) {
-          const values = await createSuggestion({
+          await createSuggestion({
             type: SuggestionType.Weight,
             name: data.name,
           });
@@ -37,11 +37,11 @@ export const WeightForm = ({ suggest }: { suggest: boolean }) => {
           name: data.name,
         });
 
-        if (values.validationErrors || values.serverError) {
-          if (values.validationErrors) {
+        if (values?.validationErrors || values?.serverError) {
+          if (values?.validationErrors) {
             toast.error("Veuillez remplir tous les champs");
           }
-          if (values.serverError) {
+          if (values?.serverError) {
             toast.error("Vous devez être connecté pour créer un poids");
           }
           setIsLoading(false);

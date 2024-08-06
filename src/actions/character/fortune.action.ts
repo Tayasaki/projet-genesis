@@ -10,27 +10,25 @@ const fortuneSchema = z.object({
   description: z.string().max(200).optional(),
 });
 
-export const createFortune = authorizedAction(
-  fortuneSchema,
-  async ({ name, description }) => {
+export const createFortune = authorizedAction
+  .schema(fortuneSchema)
+  .action(async ({ parsedInput }) => {
     await prisma.fortune.create({
       data: {
-        name: name,
-        description: description,
+        name: parsedInput.name,
+        description: parsedInput.description,
       },
     });
     revalidatePath("/manage");
-  },
-);
+  });
 
-export const deleteFortune = authorizedAction(
-  fortuneSchema.pick({ name: true }),
-  async ({ name }) => {
+export const deleteFortune = authorizedAction
+  .schema(fortuneSchema.pick({ name: true }))
+  .action(async ({ parsedInput }) => {
     await prisma.fortune.delete({
       where: {
-        name: name,
+        name: parsedInput.name,
       },
     });
     revalidatePath("/manage");
-  },
-);
+  });
