@@ -2,6 +2,8 @@
 
 import { prisma } from "@/lib/prisma";
 import { authenticatedAction } from "@/lib/safe-action";
+import { openai } from "@ai-sdk/openai";
+import { generateObject, TypeValidationError } from "ai";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
@@ -23,154 +25,172 @@ const characterSchema = z.object({
   scenarioId: z.string().optional(),
 });
 
-export const createCharacter = authenticatedAction(
-  characterSchema,
-  async ({
-    name,
-    pj,
-    origin,
-    role,
-    age,
-    injury,
-    extra,
-    temperment,
-    alignment,
-    fortune,
-    strength,
-    weakness,
-    skillSet,
-    weaponSet,
-    scenarioId,
-  }) => {
-    strength = strength.filter((s) => s);
-    weakness = weakness.filter((w) => w);
-    skillSet = skillSet.filter((s) => s);
-    weaponSet = weaponSet.filter((w) => w);
+const characterIASchema = z.object({
+  name: z.string().min(1).max(50),
+  pj: z.boolean(),
+  origin: z.string().max(100),
+  role: z.string().max(50),
+  age: z.number().min(1),
+  injury: z.string().max(100),
+  extra: z.string().max(200),
+});
+
+const systemPrompt = `
+  Context: 
+  You are a Project-Genesis AI, an IA that create character object in JS/TS.
+  You have a lot of imagination in order to create great character for scenarios.
+
+  Goal:
+  Generate a character that match the schema given to you
+
+  Criteria:
+  * The object that you generate MUST match the schema given to you.
+  * You never use someone reel name on purpose.
+  * You never add proporties that is not in the schema.
+  * You exclusively create JS/TS object
+  * You never write text or explaination of the generated object
+  * You never generate the same object twice
+  * You always write properties in french
+  
+  Response format:
+  You reply with the generated object that match the schema
+  `;
+
+export const createCharacter = authenticatedAction
+  .schema(characterSchema)
+  .action(async ({ parsedInput }) => {
+    parsedInput.strength = parsedInput.strength.filter((s) => s);
+    parsedInput.weakness = parsedInput.weakness.filter((w) => w);
+    parsedInput.skillSet = parsedInput.skillSet.filter((s) => s);
+    parsedInput.weaponSet = parsedInput.weaponSet.filter((w) => w);
     await prisma.character.create({
       data: {
-        name: name,
-        pj: pj ?? false,
-        origin: origin ?? null,
-        role: role ?? null,
-        age: age ?? null,
-        injury: injury ?? null,
-        extra: extra ?? null,
+        name: parsedInput.name,
+        pj: parsedInput.pj ?? false,
+        origin: parsedInput.origin ?? null,
+        role: parsedInput.role ?? null,
+        age: parsedInput.age ?? null,
+        injury: parsedInput.injury ?? null,
+        extra: parsedInput.extra ?? null,
         scenario: {
           connect: {
-            id: scenarioId,
+            id: parsedInput.scenarioId,
           },
         },
         temperment: {
           connect: {
-            name: temperment,
+            name: parsedInput.temperment,
           },
         },
         alignment: {
           connect: {
-            name: alignment,
+            name: parsedInput.alignment,
           },
         },
         fortune: {
           connect: {
-            name: fortune,
+            name: parsedInput.fortune,
           },
         },
         strength: {
-          connect: strength.map((s) => ({ name: s })),
+          connect: parsedInput.strength.map((s) => ({ name: s })),
         },
         weakness: {
-          connect: weakness.map((w) => ({ name: w })),
+          connect: parsedInput.weakness.map((w) => ({ name: w })),
         },
         skillSet: {
-          connect: skillSet.map((s) => ({ name: s })),
+          connect: parsedInput.skillSet.map((s) => ({ name: s })),
         },
         weapon: {
-          connect: weaponSet.map((w) => ({ id: w })),
+          connect: parsedInput.weaponSet.map((w) => ({ id: w })),
         },
       },
     });
-    revalidatePath(`/${scenarioId}`);
-  },
-);
+    revalidatePath(`/${parsedInput.scenarioId}`);
+  });
 
-export const updateCharacter = authenticatedAction(
-  characterSchema
-    .omit({ scenarioId: true })
-    .merge(z.object({ id: z.string().min(1) })),
-  async ({
-    id,
-    name,
-    pj,
-    origin,
-    role,
-    age,
-    injury,
-    extra,
-    temperment,
-    alignment,
-    fortune,
-    strength,
-    weakness,
-    skillSet,
-    weaponSet,
-  }) => {
-    strength = strength.filter((s) => s);
-    weakness = weakness.filter((w) => w);
-    skillSet = skillSet.filter((s) => s);
-    weaponSet = weaponSet.filter((w) => w);
+export const generateCharacter = authenticatedAction
+  .schema(z.object({}))
+  .action(async () => {
+    try {
+      const { object } = await generateObject({
+        model: openai("gpt-4o"),
+        schema: characterIASchema, // This schema need to be changed
+        system: systemPrompt,
+        prompt: "Generate a character object",
+      });
+      return { type: "success", character: object };
+    } catch (error) {
+      if (TypeValidationError.isTypeValidationError(error)) {
+        return { type: "validation-error", value: error.value };
+      }
+      console.error("Error", error);
+      throw new Error("Error while generating character");
+    }
+  });
+
+export const updateCharacter = authenticatedAction
+  .schema(
+    characterSchema
+      .omit({ scenarioId: true })
+      .merge(z.object({ id: z.string().min(1) })),
+  )
+  .action(async ({ parsedInput }) => {
+    parsedInput.strength = parsedInput.strength.filter((s) => s);
+    parsedInput.weakness = parsedInput.weakness.filter((w) => w);
+    parsedInput.skillSet = parsedInput.skillSet.filter((s) => s);
+    parsedInput.weaponSet = parsedInput.weaponSet.filter((w) => w);
     await prisma.character.update({
       where: {
-        id: id,
+        id: parsedInput.id,
       },
       data: {
-        name: name,
-        pj: pj ?? false,
-        origin: origin ?? null,
-        role: role ?? null,
-        age: age ?? null,
-        injury: injury ?? null,
-        extra: extra ?? null,
+        name: parsedInput.name,
+        pj: parsedInput.pj ?? false,
+        origin: parsedInput.origin ?? null,
+        role: parsedInput.role ?? null,
+        age: parsedInput.age ?? null,
+        injury: parsedInput.injury ?? null,
+        extra: parsedInput.extra ?? null,
         temperment: {
           connect: {
-            name: temperment,
+            name: parsedInput.temperment,
           },
         },
         alignment: {
           connect: {
-            name: alignment,
+            name: parsedInput.alignment,
           },
         },
         fortune: {
           connect: {
-            name: fortune,
+            name: parsedInput.fortune,
           },
         },
         strength: {
-          set: strength.map((s) => ({ name: s })),
+          set: parsedInput.strength.map((s) => ({ name: s })),
         },
         weakness: {
-          set: weakness.map((w) => ({ name: w })),
+          set: parsedInput.weakness.map((w) => ({ name: w })),
         },
         skillSet: {
-          set: skillSet.map((s) => ({ name: s })),
+          set: parsedInput.skillSet.map((s) => ({ name: s })),
         },
         weapon: {
-          set: weaponSet.map((w) => ({ id: w })),
+          set: parsedInput.weaponSet.map((w) => ({ id: w })),
         },
       },
     });
     revalidatePath("/characters");
-  },
-);
+  });
 
-export const deleteCharacter = authenticatedAction(
-  z.object({ id: z.string().min(1) }),
-  async ({ id }) => {
+export const deleteCharacter = authenticatedAction
+  .schema(z.object({ id: z.string().min(1) }))
+  .action(async ({ parsedInput }) => {
     await prisma.character.delete({
       where: {
-        id: id,
+        id: parsedInput.id,
       },
     });
     revalidatePath("/characters");
-  },
-);
+  });
