@@ -129,7 +129,6 @@ export const generateCharacter = authenticatedAction
       if (TypeValidationError.isTypeValidationError(error)) {
         return { type: "validation-error", value: error.value };
       }
-      console.error("Error", error);
       throw new Error("Error while generating character");
     }
   });
