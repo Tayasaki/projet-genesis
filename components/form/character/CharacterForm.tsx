@@ -1,8 +1,16 @@
 "use client";
 
 import AutoForm, { AutoFormSubmit } from "@/components/ui/auto-form";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import { RandomButton } from "@/components/ui/randomButton";
+import { cn } from "@/lib/utils";
 import {
   createCharacter,
   generateCharacter,
@@ -50,6 +58,7 @@ export const CharacterForm = ({
   const [isLoading, setIsLoading] = useState(false);
   const [values, setValues] =
     useState<Partial<z.infer<typeof characterFormSchema>>>();
+  const [message, setMessage] = useState("");
   const router = useRouter();
 
   const tempermentsNames = temperments.map((t) => t.name) as [
@@ -162,43 +171,76 @@ export const CharacterForm = ({
     <div className="flex flex-col gap-2">
       {!character && (
         <div className="ml-auto">
-          <Button
-            disabled={isLoading}
-            onClick={async () => {
-              setIsLoading(true);
-              const value = await generateCharacter({});
-              if (value?.data?.type === "success" && value?.data.character) {
-                const generatedCharacter = {
-                  ...value?.data.character,
-                  temperment:
-                    tempermentsNames[
-                      Math.floor(Math.random() * (tempermentsNames.length - 1))
-                    ],
-                  alignment:
-                    alignementsNames[
-                      Math.floor(Math.random() * (alignementsNames.length - 1))
-                    ],
-                  fortune:
-                    fortunesNames[
-                      Math.floor(Math.random() * (fortunesNames.length - 1))
-                    ],
-                  strength: getRandomItemsFromArray(strengthNames, 2),
-                  weakness: getRandomItemsFromArray(weaknessNames, 2),
-                  skillSet: getRandomItemsFromArray(characterSkillNames, 3),
-                  weaponSet: getRandomItemsFromArray(weaponNames, 1),
-                } satisfies Partial<z.infer<typeof characterFormSchema>>;
-                setValues(generatedCharacter);
-                toast.success("Personnage généré avec succès ✨");
-              } else if (value?.data?.type === "error") {
-                toast.error("Erreur lors de la génération du personnage");
-              } else if (value?.data?.type === "validation-error") {
-                toast.error("L'IA n'a pas pu générer de personnage");
-              }
-              setIsLoading(false);
-            }}
-          >
-            Générer avec l&apos;IA <Sparkles className="ml-2" size={16} />
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              disabled={isLoading}
+              className={cn(buttonVariants())}
+            >
+              {isLoading ? (
+                <span className="animate-pulse">
+                  Votre personnage est bientôt prêt...
+                </span>
+              ) : (
+                <span className="flex">
+                  Générer avec l&apos;IA <Sparkles className="ml-2" size={16} />{" "}
+                </span>
+              )}
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="flex flex-col gap-2 p-2">
+              <Input
+                defaultValue={message}
+                placeholder="Message..."
+                className="w-full"
+                onBlur={(e) => setMessage(e.target.value)}
+                max={50}
+              />
+              <DropdownMenuItem
+                className={cn(buttonVariants())}
+                disabled={message === ""}
+                onClick={async () => {
+                  setIsLoading(true);
+                  const value = await generateCharacter({ message: message });
+                  if (
+                    value?.data?.type === "success" &&
+                    value?.data.character
+                  ) {
+                    const generatedCharacter = {
+                      ...value?.data.character,
+                      temperment:
+                        tempermentsNames[
+                          Math.floor(
+                            Math.random() * (tempermentsNames.length - 1),
+                          )
+                        ],
+                      alignment:
+                        alignementsNames[
+                          Math.floor(
+                            Math.random() * (alignementsNames.length - 1),
+                          )
+                        ],
+                      fortune:
+                        fortunesNames[
+                          Math.floor(Math.random() * (fortunesNames.length - 1))
+                        ],
+                      strength: getRandomItemsFromArray(strengthNames, 2),
+                      weakness: getRandomItemsFromArray(weaknessNames, 2),
+                      skillSet: getRandomItemsFromArray(characterSkillNames, 3),
+                      weaponSet: getRandomItemsFromArray(weaponNames, 1),
+                    } satisfies Partial<z.infer<typeof characterFormSchema>>;
+                    setValues(generatedCharacter);
+                    toast.success("Personnage généré avec succès ✨");
+                  } else if (value?.data?.type === "error") {
+                    toast.error("Erreur lors de la génération du personnage");
+                  } else if (value?.data?.type === "validation-error") {
+                    toast.error("L'IA n'a pas pu générer de personnage");
+                  }
+                  setIsLoading(false);
+                }}
+              >
+                C&apos;est parti!
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       )}
       <AutoForm

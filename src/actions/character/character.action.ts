@@ -41,19 +41,20 @@ const systemPrompt = `
   You have a lot of imagination in order to create great character for scenarios.
 
   Goal:
-  Generate a character that match the schema given to you
+  Generate a character that match the schema given to you.
 
   Criteria:
   * The object that you generate MUST match the schema given to you.
   * You never use someone reel name on purpose.
   * You never add proporties that is not in the schema.
-  * You exclusively create JS/TS object
-  * You never write text or explaination of the generated object
-  * You never generate the same object twice
-  * You always write properties in french
+  * You exclusively create JS/TS object.
+  * You never write text or explaination of the generated object.
+  * You never generate the same object twice.
+  * You always write properties in the same language as the user prompt.
+  * If the user ask you something else than generating a character, you reply with an empty object.
   
   Response format:
-  You reply with the generated object that match the schema
+  You reply with the generated object that match the schema.
   `;
 
 export const createCharacter = authenticatedAction
@@ -110,14 +111,18 @@ export const createCharacter = authenticatedAction
   });
 
 export const generateCharacter = authenticatedAction
-  .schema(z.object({}))
-  .action(async () => {
+  .schema(
+    z.object({
+      message: z.string().min(1),
+    }),
+  )
+  .action(async ({ parsedInput }) => {
     try {
       const { object } = await generateObject({
         model: openai("gpt-4o"),
         schema: characterIASchema, // This schema need to be changed
         system: systemPrompt,
-        prompt: "Generate a character object",
+        prompt: parsedInput.message,
       });
       return { type: "success", character: object };
     } catch (error) {
