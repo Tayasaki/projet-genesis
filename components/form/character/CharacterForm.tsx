@@ -43,6 +43,7 @@ export const CharacterForm = ({
   scenarioId,
   character,
   modify = false,
+  autoGeneration,
 }: {
   temperments: Temperments;
   strengths: Strengths;
@@ -54,6 +55,7 @@ export const CharacterForm = ({
   scenarioId?: string;
   character?: CharacterScenario;
   modify?: boolean;
+  autoGeneration: boolean;
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [values, setValues] =
@@ -169,7 +171,7 @@ export const CharacterForm = ({
 
   return (
     <div className="flex flex-col gap-2">
-      {!character && (
+      {!character && autoGeneration && (
         <div className="ml-auto">
           <DropdownMenu>
             <DropdownMenuTrigger

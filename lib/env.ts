@@ -9,6 +9,7 @@ export const env = createEnv({
     DISCORD_SECRET: z.string().min(1),
     GOOGLE_ID: z.string().min(1),
     GOOGLE_SECRET: z.string().min(1),
+    OPENAI_API_KEY: z.string().optional(),
   },
   client: {},
   runtimeEnv: {
@@ -18,5 +19,6 @@ export const env = createEnv({
     DISCORD_SECRET: process.env.AUTH_DISCORD_SECRET,
     GOOGLE_ID: process.env.AUTH_GOOGLE_ID,
     GOOGLE_SECRET: process.env.AUTH_GOOGLE_SECRET,
+    OPENAI_API_KEY: process.env.OPENAI_API_KEY,
   },
 });

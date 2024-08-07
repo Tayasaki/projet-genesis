@@ -1,5 +1,6 @@
 import { CharacterForm } from "@/components/form/character/CharacterForm";
 import { getAuthSession } from "@/lib/auth";
+import { env } from "@/lib/env";
 import {
   getAlignments,
   getCharacterSkills,
@@ -33,6 +34,7 @@ export default async function CharacterGeneration({
   const alignments = await getAlignments();
   const fortunes = await getFortunes();
   const weapons = await getWeapons(session.user.id);
+  const isAIAllowed = env.OPENAI_API_KEY !== "";
 
   return (
     <div className="-mx-96 space-y-2">
@@ -46,6 +48,7 @@ export default async function CharacterGeneration({
         alignements={alignments}
         fortunes={fortunes}
         scenarioId={params.scenarioId}
+        autoGeneration={isAIAllowed}
       />
     </div>
   );
