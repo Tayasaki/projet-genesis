@@ -51,7 +51,7 @@ export const ImportCharacter = ({
         scenarioId: scenarioId,
         characterId: character.id,
       });
-      if (value.validationErrors || value.serverError) {
+      if (value?.validationErrors || value?.serverError) {
         toast.error("Une erreur est survenue");
       } else {
         toast.success(`${character.name} a été importé avec succès 🧙`);

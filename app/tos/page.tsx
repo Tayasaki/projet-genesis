@@ -6,9 +6,11 @@ export default async function TOS() {
   if (!session?.user.id) redirect("/login");
   return (
     <div className="flex flex-col gap-4">
-      <h1>Conditions générales d&apos;utilisation de Projet-Genesis</h1>
+      <h1 className="text-3xl font-bold">
+        Conditions générales d&apos;utilisation de Projet-Genesis
+      </h1>
       <div>
-        <h2>1. Introduction</h2>
+        <h2 className="text-xl font-semibold">1. Introduction</h2>
         <p>
           Bienvenue sur Projet-Genesis, une application dédiée aux passionnés de
           jeux de rôle (JDR). Cette application vous permet de créer des
@@ -20,7 +22,7 @@ export default async function TOS() {
         </p>
       </div>
       <div>
-        <h2>2. Acceptation des conditions</h2>
+        <h2 className="text-xl font-semibold">2. Acceptation des conditions</h2>
         <p>
           En accédant ou en utilisant Projet-Genesis, vous acceptez d&apos;être
           lié par les présentes CGU. Si vous n&apos;acceptez pas ces conditions,
@@ -30,7 +32,9 @@ export default async function TOS() {
         </p>
       </div>
       <div>
-        <h2>3. Accès et utilisation de l&apos;application</h2>
+        <h2 className="text-xl font-semibold">
+          3. Accès et utilisation de l&apos;application
+        </h2>
         <p>
           L&apos;application est destinée à toute personne âgée de 13 ans ou
           plus. Si vous avez moins de 13 ans, vous devez obtenir la permission
@@ -41,8 +45,8 @@ export default async function TOS() {
           complètes.
         </p>
       </div>
-      <div>
-        <h2>4. Comptes utilisateurs</h2>
+      <div className="flex flex-col gap-2">
+        <h2 className="text-xl font-semibold">4. Comptes utilisateurs</h2>
         <p>
           Pour accéder à l&apos;application, vous devez créer un compte
           utilisateur. Vous acceptez de fournir des informations précises et de
@@ -55,8 +59,8 @@ export default async function TOS() {
           de supprimer des comptes sans préavis en cas de violation de ces CGU.
         </p>
       </div>
-      <div>
-        <h2>5. Propriété intellectuelle</h2>
+      <div className="flex flex-col gap-2">
+        <h2 className="text-xl font-semibold">5. Propriété intellectuelle</h2>
         <p>
           Tous les contenus disponibles sur l&apos;application, y compris les
           textes, images, graphiques, logos, interfaces utilisateur, et le code
@@ -73,7 +77,9 @@ export default async function TOS() {
         </p>
       </div>
       <div>
-        <h2>6. Modification des conditions</h2>
+        <h2 className="text-xl font-semibold">
+          6. Modification des conditions
+        </h2>
         <p>
           Nous nous réservons le droit de modifier ces CGU à tout moment. Si
           nous apportons des modifications importantes, nous vous en informerons

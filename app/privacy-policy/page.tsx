@@ -5,10 +5,12 @@ export default async function PrivacyPolicy() {
   const session = await getAuthSession();
   if (!session?.user.id) redirect("/login");
   return (
-    <div>
-      <h1>Politique de Confidentialité de Projet-Genesis</h1>
+    <div className="flex flex-col gap-4">
+      <h1 className="text-3xl font-bold">
+        Politique de Confidentialité de Projet-Genesis
+      </h1>
       <div>
-        <h2>1. Introduction</h2>
+        <h2 className="text-xl font-semibold">1. Introduction</h2>
         <p>
           Cette Politique de Confidentialité explique comment Projet-Gensis
           (ci-après &lduoquotes;l&apos;application&rduoquotes;) collecte,
@@ -17,8 +19,8 @@ export default async function PrivacyPolicy() {
           dans cette politique.
         </p>
       </div>
-      <div>
-        <h2>2. Informations Collectées</h2>
+      <div className="flex flex-col gap-2">
+        <h2 className="text-xl font-semibold">2. Informations Collectées</h2>
         <p>
           L&apos;application utilise exclusivement l&apos;authentification via
           OAuth pour permettre aux utilisateurs de se connecter. OAuth est un
@@ -34,15 +36,23 @@ export default async function PrivacyPolicy() {
           la gestion de votre compte utilisateur sur notre application. Cela
           inclut :
         </p>
-        <ul>
-          <li>Nom et prénom (le cas échéant)</li>
-          <li>Adresse email</li>
-          <li>Photo de profil (facultatif, selon le fournisseur OAuth)</li>
-          <li>ID utilisateur fourni par le service OAuth</li>
+        <ul role="list">
+          <li className="before:ml-6 before:mr-2 before:content-['•']">
+            Nom et prénom (le cas échéant)
+          </li>
+          <li className="before:ml-6 before:mr-2 before:content-['•']">
+            Adresse email
+          </li>
+          <li className="before:ml-6 before:mr-2 before:content-['•']">
+            Photo de profil (facultatif, selon le fournisseur OAuth)
+          </li>
+          <li className="before:ml-6 before:mr-2 before:content-['•']">
+            ID utilisateur fourni par le service OAuth
+          </li>
         </ul>
       </div>
-      <div>
-        <h2>3. Sécurité des Données</h2>
+      <div className="flex flex-col gap-2">
+        <h2 className="text-xl font-semibold">3. Sécurité des Données</h2>
         <p>
           Nous prenons la sécurité de vos données très au sérieux et mettons en
           œuvre des mesures de sécurité techniques et organisationnelles
@@ -58,7 +68,9 @@ export default async function PrivacyPolicy() {
         </p>
       </div>
       <div>
-        <h2>4. Modifications de la politique de confidentialité</h2>
+        <h2 className="text-xl font-semibold">
+          4. Modifications de la politique de confidentialité
+        </h2>
         <p>
           Nous nous réservons le droit de modifier cette Politique de
           Confidentialité à tout moment. En cas de modification substantielle,

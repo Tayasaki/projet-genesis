@@ -1,5 +1,6 @@
 import { CharacterForm } from "@/components/form/character/CharacterForm";
 import { getAuthSession } from "@/lib/auth";
+import { env } from "@/lib/env";
 import { prisma } from "@/lib/prisma";
 import {
   getAlignments,
@@ -76,6 +77,7 @@ export default async function CharacterPage({
     <div className="-mx-96 space-y-2">
       <h1 className="text-3xl font-semibold">Modifier votre personnage</h1>
       <CharacterForm
+        autoGeneration={false}
         temperments={temperments}
         alignements={alignments}
         fortunes={fortunes}

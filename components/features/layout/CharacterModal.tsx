@@ -6,7 +6,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import {
   HoverCard,
@@ -16,7 +16,6 @@ import {
 import { CharacterScenario } from "@/src/query/character.query";
 import { AccordionContent } from "@radix-ui/react-accordion";
 import { PenLine } from "lucide-react";
-import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
 export const CharacterModal = ({
@@ -44,7 +43,10 @@ export const CharacterModal = ({
           </Avatar>
           <h1 className="text-4xl font-bold">{character.name}</h1>
           <p className="text-lg">{character.pj ? "🧔" : "🤖"}</p>
-          <Button variant={"outline"} onClick={() => router.refresh()}>
+          <Button
+            variant={"outline"}
+            onClick={() => document.location.reload()}
+          >
             <PenLine size={16} className="mr-2" />
             Editer
           </Button>
