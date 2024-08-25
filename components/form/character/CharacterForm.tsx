@@ -104,10 +104,10 @@ export const CharacterForm = ({
       .default(character?.role ?? "")
       .optional(),
     age: z
-      .number()
+      .string()
       .min(1)
       .describe("Age du personnage")
-      .default(character?.age ?? 0)
+      .default(character?.age?.toString() ?? "0")
       .optional(),
     injury: z
       .string()
@@ -208,6 +208,7 @@ export const CharacterForm = ({
                   ) {
                     const generatedCharacter = {
                       ...value?.data.character,
+                      age: value?.data.character.age.toString(),
                       temperment:
                         tempermentsNames[
                           Math.floor(
@@ -253,6 +254,7 @@ export const CharacterForm = ({
           setIsLoading(true);
           const dataToSend = {
             ...data,
+            age: parseInt(data.age ?? "0"),
             strength: data.strength.map((s) => s.name),
             weakness: data.weakness.map((w) => w.name),
             skillSet: data.skillSet.map((s) => s.name),
@@ -319,7 +321,7 @@ export const CharacterForm = ({
                   randomize={() => {
                     setValues({
                       ...values,
-                      age: Math.floor(Math.random() * 100),
+                      age: Math.floor(Math.random() * 100).toString(),
                     });
                   }}
                 />

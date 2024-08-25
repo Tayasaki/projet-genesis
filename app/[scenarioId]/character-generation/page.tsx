@@ -34,7 +34,8 @@ export default async function CharacterGeneration({
   const alignments = await getAlignments();
   const fortunes = await getFortunes();
   const weapons = await getWeapons(session.user.id);
-  const isAIAllowed = env.OPENAI_API_KEY !== "";
+  const isAIAllowed =
+    env.OPENAI_API_KEY !== undefined && env.OPENAI_API_KEY !== "";
 
   return (
     <div className="-mx-96 space-y-2">

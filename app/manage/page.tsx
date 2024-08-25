@@ -2,6 +2,7 @@ import { TabsManagement } from "@/components/features/layout/TabsManagement";
 import { WeaponForm } from "@/components/form/weapon/WeaponForm";
 import { Separator } from "@/components/ui/separator";
 import { getAuthSession } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 import {
   getAlignments,
   getCharacterSkills,
@@ -24,7 +25,6 @@ import { columns as characterAttributesColumns } from "./characterAttributesColu
 import { DataTable } from "./data-table";
 import { columns as weaponAttributesColumns } from "./weaponAttributesColumns";
 import { columns as weaponColumns } from "./weaponColumns";
-import { prisma } from "@/lib/prisma";
 
 export type CharacterAttributes = {
   id: string;
@@ -68,28 +68,22 @@ export default async function Manage() {
   const weight = await getWeights();
   const weaponSkill = await getWeaponSkill();
 
-  temperments.flatMap((t) =>
+  temperments.map((t) =>
     characterAttributes.push({ ...t, type: "temperment" }),
   );
-  alignements.flatMap((a) =>
+  alignements.map((a) =>
     characterAttributes.push({ ...a, type: "alignement" }),
   );
-  fortunes.flatMap((f) => characterAttributes.push({ ...f, type: "fortune" }));
-  strengths.flatMap((s) =>
-    characterAttributes.push({ ...s, type: "strength" }),
-  );
-  weaknesses.flatMap((w) =>
-    characterAttributes.push({ ...w, type: "weakness" }),
-  );
-  characterSkills.flatMap((c) =>
-    characterAttributes.push({ ...c, type: "skill" }),
-  );
+  fortunes.map((f) => characterAttributes.push({ ...f, type: "fortune" }));
+  strengths.map((s) => characterAttributes.push({ ...s, type: "strength" }));
+  weaknesses.map((w) => characterAttributes.push({ ...w, type: "weakness" }));
+  characterSkills.map((c) => characterAttributes.push({ ...c, type: "skill" }));
 
-  ammo.flatMap((a) => weaponAttributes.push({ ...a, type: "ammo" }));
-  damage.flatMap((d) => weaponAttributes.push({ ...d, type: "damage" }));
-  range.flatMap((r) => weaponAttributes.push({ ...r, type: "range" }));
-  weight.flatMap((w) => weaponAttributes.push({ ...w, type: "weight" }));
-  weaponSkill.flatMap((w) => weaponAttributes.push({ ...w, type: "skill" }));
+  ammo.map((a) => weaponAttributes.push({ ...a, type: "ammo" }));
+  damage.map((d) => weaponAttributes.push({ ...d, type: "damage" }));
+  range.map((r) => weaponAttributes.push({ ...r, type: "range" }));
+  weight.map((w) => weaponAttributes.push({ ...w, type: "weight" }));
+  weaponSkill.map((w) => weaponAttributes.push({ ...w, type: "skill" }));
 
   return (
     <div className="space-y-4">
