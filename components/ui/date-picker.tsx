@@ -23,7 +23,7 @@ export const DatePicker = forwardRef<
     <Popover>
       <PopoverTrigger asChild>
         <Button
-          variant={"outline"}
+          variant={"outline-solid"}
           className={cn(
             "w-full justify-start text-left font-normal",
             !date && "text-muted-foreground",

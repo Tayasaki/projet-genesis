@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import React, { ComponentPropsWithoutRef } from "react";
+import { ComponentPropsWithoutRef } from "react";
 
 export const Code = ({
   className,
@@ -8,7 +8,7 @@ export const Code = ({
   return (
     <span
       className={cn(
-        "pointer-events-none inline-flex items-center rounded-sm border border-accent bg-accent/30 p-1 font-mono font-bold text-primary transition-colors hover:bg-accent/50",
+        "border-accent bg-accent/30 text-primary hover:bg-accent/50 pointer-events-none inline-flex items-center rounded-sm border p-1 font-mono font-bold transition-colors",
         className,
       )}
       {...props}

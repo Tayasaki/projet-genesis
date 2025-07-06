@@ -25,7 +25,7 @@ export default function RootLayout({
       <body
         className={clsx(
           inter.className,
-          "light:bg-gradient-to-b h-full from-slate-50/40 from-80% to-white dark:bg-background",
+          "light:bg-gradient-to-b dark:bg-background h-full from-slate-50/40 from-80% to-white",
         )}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
