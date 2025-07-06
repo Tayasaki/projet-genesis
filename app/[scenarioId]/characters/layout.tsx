@@ -3,11 +3,12 @@ import { Metadata } from "next";
 import React from "react";
 
 type Props = {
-  params: { scenarioId: string };
+  params: Promise<{ scenarioId: string }>;
   modal: React.ReactNode;
 };
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params;
   const scenario = await prisma.scenario.findUniqueOrThrow({
     where: { id: params.scenarioId },
     select: { name: true },

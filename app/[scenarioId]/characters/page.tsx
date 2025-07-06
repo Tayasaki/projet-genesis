@@ -20,11 +20,12 @@ import { notFound, redirect } from "next/navigation";
 import { getCharacters } from "../../../src/query/character.query";
 import { DisplayCharacter } from "@/components/features/layout/DisplayCharacter";
 
-export default async function ScenarioManage({
-  params,
-}: {
-  params: { scenarioId: string };
-}) {
+export default async function ScenarioManage(
+  props: {
+    params: Promise<{ scenarioId: string }>;
+  }
+) {
+  const params = await props.params;
   const session = await getAuthSession();
   if (!session) redirect("/login");
   const scenario = await prisma.scenario.findUnique({

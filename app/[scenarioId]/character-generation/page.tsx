@@ -19,11 +19,12 @@ export const metadata: Metadata = {
     "Création de scénarios pour jeux de rôle | Générateur de fiche de personnage",
 };
 
-export default async function CharacterGeneration({
-  params,
-}: {
-  params: { scenarioId: string };
-}) {
+export default async function CharacterGeneration(
+  props: {
+    params: Promise<{ scenarioId: string }>;
+  }
+) {
+  const params = await props.params;
   const session = await getAuthSession();
   if (!session?.user.id) redirect("/login");
 

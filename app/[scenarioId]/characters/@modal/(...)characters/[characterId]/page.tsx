@@ -1,11 +1,12 @@
 import { CharacterModal } from "@/components/features/layout/CharacterModal";
 import { prisma } from "@/lib/prisma";
 
-export default async function ModalCharacter({
-  params,
-}: {
-  params: { characterId: string };
-}) {
+export default async function ModalCharacter(
+  props: {
+    params: Promise<{ characterId: string }>;
+  }
+) {
+  const params = await props.params;
   const character = await prisma.character.findUniqueOrThrow({
     where: { id: params.characterId },
     include: {

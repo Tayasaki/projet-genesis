@@ -15,10 +15,11 @@ import { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 
 type Props = {
-  params: { characterId: string };
+  params: Promise<{ characterId: string }>;
 };
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params;
   const character = await prisma.character.findUniqueOrThrow({
     where: { id: params.characterId },
     select: { name: true },
@@ -31,11 +32,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function CharacterPage({
-  params,
-}: {
-  params: { characterId: string; scenarioId: string };
-}) {
+export default async function CharacterPage(
+  props: {
+    params: Promise<{ characterId: string; scenarioId: string }>;
+  }
+) {
+  const params = await props.params;
   const session = await getAuthSession();
 
   if (!session?.user.id) redirect("/login");
