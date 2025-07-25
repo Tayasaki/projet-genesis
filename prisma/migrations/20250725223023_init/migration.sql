@@ -1,3 +1,9 @@
+-- CreateEnum
+CREATE TYPE "Role" AS ENUM ('USER', 'SUPERUSER', 'ADMIN');
+
+-- CreateEnum
+CREATE TYPE "SuggestionType" AS ENUM ('Temperment', 'Alignment', 'Fortune', 'Strength', 'Weakness', 'CharacterSkill', 'WeaponSkill', 'Range', 'Damage', 'Weight', 'Ammo');
+
 -- CreateTable
 CREATE TABLE "Account" (
     "id" TEXT NOT NULL,
@@ -40,6 +46,7 @@ CREATE TABLE "User" (
     "email" TEXT,
     "emailVerified" TIMESTAMP(3),
     "image" TEXT,
+    "role" "Role" NOT NULL DEFAULT 'USER',
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -180,39 +187,60 @@ CREATE TABLE "Range" (
 );
 
 -- CreateTable
+CREATE TABLE "Suggestion" (
+    "type" "SuggestionType" NOT NULL,
+    "name" TEXT NOT NULL,
+    "description" TEXT,
+
+    CONSTRAINT "Suggestion_pkey" PRIMARY KEY ("name")
+);
+
+-- CreateTable
 CREATE TABLE "_CharacterToWeapon" (
     "A" TEXT NOT NULL,
-    "B" TEXT NOT NULL
+    "B" TEXT NOT NULL,
+
+    CONSTRAINT "_CharacterToWeapon_AB_pkey" PRIMARY KEY ("A","B")
 );
 
 -- CreateTable
 CREATE TABLE "_CharacterToCharacterSkill" (
     "A" TEXT NOT NULL,
-    "B" TEXT NOT NULL
+    "B" TEXT NOT NULL,
+
+    CONSTRAINT "_CharacterToCharacterSkill_AB_pkey" PRIMARY KEY ("A","B")
 );
 
 -- CreateTable
 CREATE TABLE "_CharacterToScenario" (
     "A" TEXT NOT NULL,
-    "B" TEXT NOT NULL
+    "B" TEXT NOT NULL,
+
+    CONSTRAINT "_CharacterToScenario_AB_pkey" PRIMARY KEY ("A","B")
 );
 
 -- CreateTable
 CREATE TABLE "_CharacterToStrength" (
     "A" TEXT NOT NULL,
-    "B" TEXT NOT NULL
+    "B" TEXT NOT NULL,
+
+    CONSTRAINT "_CharacterToStrength_AB_pkey" PRIMARY KEY ("A","B")
 );
 
 -- CreateTable
 CREATE TABLE "_CharacterToWeakness" (
     "A" TEXT NOT NULL,
-    "B" TEXT NOT NULL
+    "B" TEXT NOT NULL,
+
+    CONSTRAINT "_CharacterToWeakness_AB_pkey" PRIMARY KEY ("A","B")
 );
 
 -- CreateTable
 CREATE TABLE "_WeaponToWeaponSkill" (
     "A" TEXT NOT NULL,
-    "B" TEXT NOT NULL
+    "B" TEXT NOT NULL,
+
+    CONSTRAINT "_WeaponToWeaponSkill_AB_pkey" PRIMARY KEY ("A","B")
 );
 
 -- CreateIndex
@@ -264,37 +292,19 @@ CREATE UNIQUE INDEX "Ammo_name_key" ON "Ammo"("name");
 CREATE UNIQUE INDEX "Range_name_key" ON "Range"("name");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "_CharacterToWeapon_AB_unique" ON "_CharacterToWeapon"("A", "B");
-
--- CreateIndex
 CREATE INDEX "_CharacterToWeapon_B_index" ON "_CharacterToWeapon"("B");
-
--- CreateIndex
-CREATE UNIQUE INDEX "_CharacterToCharacterSkill_AB_unique" ON "_CharacterToCharacterSkill"("A", "B");
 
 -- CreateIndex
 CREATE INDEX "_CharacterToCharacterSkill_B_index" ON "_CharacterToCharacterSkill"("B");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "_CharacterToScenario_AB_unique" ON "_CharacterToScenario"("A", "B");
-
--- CreateIndex
 CREATE INDEX "_CharacterToScenario_B_index" ON "_CharacterToScenario"("B");
-
--- CreateIndex
-CREATE UNIQUE INDEX "_CharacterToStrength_AB_unique" ON "_CharacterToStrength"("A", "B");
 
 -- CreateIndex
 CREATE INDEX "_CharacterToStrength_B_index" ON "_CharacterToStrength"("B");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "_CharacterToWeakness_AB_unique" ON "_CharacterToWeakness"("A", "B");
-
--- CreateIndex
 CREATE INDEX "_CharacterToWeakness_B_index" ON "_CharacterToWeakness"("B");
-
--- CreateIndex
-CREATE UNIQUE INDEX "_WeaponToWeaponSkill_AB_unique" ON "_WeaponToWeaponSkill"("A", "B");
 
 -- CreateIndex
 CREATE INDEX "_WeaponToWeaponSkill_B_index" ON "_WeaponToWeaponSkill"("B");

@@ -5,6 +5,7 @@
 /.pnp
 .pnp.js
 .yarn/install-state.gz
+pnpm-lock.yaml  
 
 # testing
 /coverage
@@ -36,3 +37,6 @@ yarn-error.log*
 next-env.d.ts
 .env
 *.db*
+
+# prisma
+/app/generated/prisma
