@@ -1,36 +1,23 @@
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { NextAuthOptions, getServerSession } from "next-auth";
-import DiscordProvider from "next-auth/providers/discord";
-import GithubProvider from "next-auth/providers/github";
-import GoogleProvider from "next-auth/providers/google";
+import { betterAuth } from "better-auth";
+import { prismaAdapter } from "better-auth/adapters/prisma";
+import { headers } from "next/headers";
 import { env } from "./env";
 import { prisma } from "./prisma";
 
-export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma),
-  providers: [
-    GithubProvider({
-      clientId: env.GITHUB_ID,
-      clientSecret: env.GITHUB_SECRET,
-    }),
-    DiscordProvider({
-      clientId: env.DISCORD_ID,
-      clientSecret: env.DISCORD_SECRET,
-    }),
-    GoogleProvider({
+export const auth = betterAuth({
+  database: prismaAdapter(prisma, {
+    provider: "postgresql",
+  }),
+  socialProviders: {
+    google: {
+      prompt: "select_account",
       clientId: env.GOOGLE_ID,
       clientSecret: env.GOOGLE_SECRET,
-    }),
-  ],
-  callbacks: {
-    session({ session, user }) {
-      if (!session?.user) return session;
-      session.user.id = user.id;
-      return session;
     },
   },
-};
+});
 
-export const getAuthSession = async () => {
-  return await getServerSession(authOptions);
-};
+export const getAuthSession = async () =>
+  auth.api.getSession({
+    headers: await headers(),
+  });

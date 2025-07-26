@@ -1,9 +1,9 @@
 "use client";
 
 import { Button, buttonVariants } from "@/components/ui/button";
+import { signIn } from "@/lib/auth-client";
 import clsx from "clsx";
 import { Loader2, LogIn } from "lucide-react";
-import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -23,7 +23,7 @@ export const LoginGithubButton = () => {
       variant={"github"}
       onClick={() => {
         setIsLoading(true);
-        signIn("github");
+        signIn.social({ provider: "github" });
       }}
     >
       {isLoading ? (
@@ -52,7 +52,7 @@ export const LoginDiscordButton = () => {
       variant={"discord"}
       onClick={() => {
         setIsLoading(true);
-        signIn("discord");
+        signIn.social({ provider: "discord" });
       }}
     >
       {isLoading ? (
@@ -81,7 +81,7 @@ export const LoginGoogleButton = () => {
       variant={"google"}
       onClick={() => {
         setIsLoading(true);
-        signIn("google");
+        signIn.social({ provider: "google" });
       }}
     >
       {isLoading ? (
