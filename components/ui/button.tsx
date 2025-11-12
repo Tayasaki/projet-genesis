@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { Loader } from "./loader";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 enabled:hover:scale-105 enabled:hover:ring-2 enabled:hover:ring-offset-2 enabled:active:scale-[1.02]  disabled:cursor-not-allowed disabled:opacity-50",
+  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-all focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 enabled:hover:scale-105 enabled:hover:ring-2 enabled:hover:ring-offset-2 enabled:active:scale-[1.02]  disabled:cursor-not-allowed disabled:opacity-50",
   {
     variants: {
       variant: {
