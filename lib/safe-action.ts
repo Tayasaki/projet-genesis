@@ -21,7 +21,7 @@ const handleReturnedError = (error: Error) => {
 
 export const authenticatedAction = action.use(async ({ next }) => {
   const session = await getAuthSession();
-  if (!session?.user.id) {
+  if (!session?.user?.id) {
     throw new ActionError("You must be logged in to perform this action");
   }
   return next({ ctx: session.user.id });
@@ -29,7 +29,7 @@ export const authenticatedAction = action.use(async ({ next }) => {
 
 export const authorizedAction = action.use(async ({ next }) => {
   const session = await getAuthSession();
-  if (!session?.user.id) {
+  if (!session?.user?.id) {
     throw new ActionError("You must be logged in to perform this action");
   }
   const user = await prisma.user.findUniqueOrThrow({

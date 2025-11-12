@@ -13,7 +13,7 @@ import { UserProfile } from "./auth/UserProfile";
 export const Header = async () => {
   const session = await getAuthSession();
   const user = await prisma.user.findUnique({
-    where: { id: session?.user.id ?? "" },
+    where: { id: session?.user?.id ?? "" },
   });
 
   return (

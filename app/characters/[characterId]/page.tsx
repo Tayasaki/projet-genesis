@@ -40,7 +40,7 @@ export default async function CharacterPage(
   const params = await props.params;
   const session = await getAuthSession();
 
-  if (!session?.user.id) redirect("/login");
+  if (!session?.user?.id) redirect("/login");
 
   const character = await prisma.character.findUnique({
     where: {
@@ -48,7 +48,7 @@ export default async function CharacterPage(
       scenario: {
         some: {
           user: {
-            id: session?.user.id,
+            id: session.user.id,
           },
         },
       },

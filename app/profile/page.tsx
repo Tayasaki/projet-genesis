@@ -19,7 +19,7 @@ export default async function Profile() {
   if (!session) redirect("/login");
 
   const user = await prisma.user.findUniqueOrThrow({
-    where: { id: session?.user.id },
+    where: { id: session?.user?.id ?? "" },
   });
 
   const nbScenario = await prisma.scenario.count({

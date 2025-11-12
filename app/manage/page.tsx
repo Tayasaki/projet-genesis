@@ -47,7 +47,7 @@ export const metadata: Metadata = {
 
 export default async function Manage() {
   const session = await getAuthSession();
-  if (!session?.user.id) redirect("/login");
+  if (!session?.user?.id) redirect("/login");
   const user = await prisma.user.findUniqueOrThrow({
     where: { id: session.user.id },
   });

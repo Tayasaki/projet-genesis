@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Loader2, LogOut, XCircle } from "lucide-react";
-import { signOut } from "next-auth/react";
+import { signOut } from "@/lib/auth-client";
 import { useTransition } from "react";
 
 export const LogoutButton = () => {
@@ -20,7 +20,11 @@ export const LogoutButton = () => {
   return (
     <Button
       variant={"destructive"}
-      onClick={() => startTransition(() => signOut())}
+      onClick={() => {
+        startTransition(() => {
+          signOut();
+        });
+      }}
     >
       {isPending ? (
         <Loader2 className="mr-2 size-4 animate-spin" />

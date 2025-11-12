@@ -1,5 +1,5 @@
 import { createEnv } from "@t3-oss/env-nextjs";
-import z from "zod";
+import { z } from "zod";
 
 export const env = createEnv({
   server: {
@@ -9,6 +9,7 @@ export const env = createEnv({
     DISCORD_SECRET: z.string().min(1),
     GOOGLE_ID: z.string().min(1),
     GOOGLE_SECRET: z.string().min(1),
+    BETTER_AUTH_URL: z.string().min(1),
     OPENAI_API_KEY: z.string().optional(),
   },
   client: {},
@@ -20,5 +21,6 @@ export const env = createEnv({
     GOOGLE_ID: process.env.AUTH_GOOGLE_ID,
     GOOGLE_SECRET: process.env.AUTH_GOOGLE_SECRET,
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+    BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
   },
 });

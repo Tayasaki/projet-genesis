@@ -27,7 +27,7 @@ export default async function ScenarioManage(
 ) {
   const params = await props.params;
   const session = await getAuthSession();
-  if (!session) redirect("/login");
+  if (!session?.user?.id) redirect("/login");
   const scenario = await prisma.scenario.findUnique({
     where: {
       id: params.scenarioId,

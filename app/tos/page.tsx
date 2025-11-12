@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 
 export default async function TOS() {
   const session = await getAuthSession();
-  if (!session?.user.id) redirect("/login");
+  if (!session?.user?.id) redirect("/login");
   return (
     <div className="flex flex-col gap-4">
       <h1 className="text-3xl font-bold">

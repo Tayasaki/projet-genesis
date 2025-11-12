@@ -3,7 +3,7 @@
 import { Button, buttonVariants } from "@/components/ui/button";
 import clsx from "clsx";
 import { Loader2, LogIn } from "lucide-react";
-import { signIn } from "next-auth/react";
+import { signIn } from "@/lib/auth-client";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -21,9 +21,9 @@ export const LoginGithubButton = () => {
   return (
     <Button
       variant={"github"}
-      onClick={() => {
+      onClick={async () => {
         setIsLoading(true);
-        signIn("github");
+        await signIn.social({ provider: "github" });
       }}
     >
       {isLoading ? (
@@ -50,9 +50,9 @@ export const LoginDiscordButton = () => {
   return (
     <Button
       variant={"discord"}
-      onClick={() => {
+      onClick={async () => {
         setIsLoading(true);
-        signIn("discord");
+        await signIn.social({ provider: "discord" });
       }}
     >
       {isLoading ? (
@@ -79,9 +79,9 @@ export const LoginGoogleButton = () => {
   return (
     <Button
       variant={"google"}
-      onClick={() => {
+      onClick={async () => {
         setIsLoading(true);
-        signIn("google");
+        await signIn.social({ provider: "google" });
       }}
     >
       {isLoading ? (

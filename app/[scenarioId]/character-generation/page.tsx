@@ -26,7 +26,7 @@ export default async function CharacterGeneration(
 ) {
   const params = await props.params;
   const session = await getAuthSession();
-  if (!session?.user.id) redirect("/login");
+  if (!session?.user?.id) redirect("/login");
 
   const temperments = await getTemperments();
   const strengths = await getStrengths();

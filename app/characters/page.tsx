@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default async function MyCharacters() {
   const session = await getAuthSession();
-  if (!session) redirect("/login");
+  if (!session?.user?.id) redirect("/login");
   const characters = await prisma.character.findMany({
     where: {
       scenario: {
