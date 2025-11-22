@@ -17,7 +17,7 @@ export const TabsManagement = ({ isAuthorized }: { isAuthorized: boolean }) => {
   return (
     <div className="flex space-x-2">
       <div>
-        <h3 className="mb-3 text-xl dark:text-primary">
+        <h3 className="dark:text-primary mb-3 text-xl">
           Créer des attributs de personnages
         </h3>
         <Tabs defaultValue="temperment">
@@ -52,7 +52,7 @@ export const TabsManagement = ({ isAuthorized }: { isAuthorized: boolean }) => {
       </div>
 
       <div>
-        <h3 className="mb-3 text-xl dark:text-primary">
+        <h3 className="dark:text-primary mb-3 text-xl">
           Créer des attributs d&apos;armes
         </h3>
         <Tabs defaultValue="damage">
