@@ -18,7 +18,7 @@ const weaponSchema = z.object({
 
 export const createWeapon = authenticatedAction
   .schema(weaponSchema)
-  .action(async ({ parsedInput, ctx: userId }) => {
+  .action(async ({ parsedInput, ctx: { userId } }) => {
     parsedInput.skillSet = parsedInput.skillSet.filter((s) => s);
     await prisma.weapon.create({
       data: {

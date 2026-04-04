@@ -11,20 +11,12 @@ class ActionError extends Error {
   }
 }
 
-const handleReturnedError = (error: Error) => {
-  if (error instanceof ActionError) {
-    // Handle the error
-    return error.message;
-  }
-  return "An unexpected error occurred";
-};
-
 export const authenticatedAction = action.use(async ({ next }) => {
   const session = await getAuthSession();
   if (!session?.user?.id) {
     throw new ActionError("You must be logged in to perform this action");
   }
-  return next({ ctx: session.user.id });
+  return next({ ctx: { userId: session.user.id } });
 });
 
 export const authorizedAction = action.use(async ({ next }) => {
@@ -40,5 +32,5 @@ export const authorizedAction = action.use(async ({ next }) => {
   if (user.role !== "SUPERUSER" && user.role !== "ADMIN") {
     throw new ActionError("You are not authorized to perform this action");
   }
-  return next({ ctx: session.user.id });
+  return next({ ctx: { userId: session.user.id } });
 });

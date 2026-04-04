@@ -3,7 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { authenticatedAction } from "@/lib/safe-action";
 import { openai } from "@ai-sdk/openai";
-import { generateObject, TypeValidationError } from "ai";
+import { generateText, NoObjectGeneratedError, Output } from "ai";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
@@ -118,16 +118,20 @@ export const generateCharacter = authenticatedAction
   )
   .action(async ({ parsedInput }) => {
     try {
-      const { object } = await generateObject({
+      const { output } = await generateText({
         model: openai("gpt-4o"),
-        schema: characterIASchema, // This schema need to be changed
+        output: Output.object({ schema: characterIASchema }),
         system: systemPrompt,
         prompt: parsedInput.message,
       });
-      return { type: "success", character: object };
+      return { type: "success", character: output };
     } catch (error) {
-      if (TypeValidationError.isTypeValidationError(error)) {
-        return { type: "validation-error", value: error.value };
+      if (NoObjectGeneratedError.isInstance(error)) {
+        console.error(
+          "[generateCharacter] NoObjectGeneratedError:",
+          error.text,
+        );
+        return { type: "validation-error" };
       }
       throw new Error("Error while generating character");
     }

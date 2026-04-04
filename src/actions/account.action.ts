@@ -10,7 +10,7 @@ export const deleteAccount = authenticatedAction
       sessionId: z.string().min(1),
     }),
   )
-  .action(async ({ parsedInput, ctx: userId }) => {
+  .action(async ({ parsedInput, ctx: { userId } }) => {
     if (parsedInput.sessionId !== userId) throw new Error("Invalid session id");
     const account = await prisma.account.findFirstOrThrow({
       where: { userId: userId },

@@ -13,7 +13,7 @@ export const createScenario = authenticatedAction
       description: z.string().max(200).optional(),
     }),
   )
-  .action(async ({ parsedInput, ctx: userId }) => {
+  .action(async ({ parsedInput, ctx: { userId } }) => {
     await prisma.scenario.create({
       data: {
         name: parsedInput.name,
@@ -32,7 +32,7 @@ export const updateScenarioCharacter = authenticatedAction
       characterId: z.string().min(1),
     }),
   )
-  .action(async ({ parsedInput, ctx: userId }) => {
+  .action(async ({ parsedInput, ctx: { userId } }) => {
     await prisma.scenario.update({
       where: { id: parsedInput.scenarioId, userId: userId },
       data: {
@@ -46,7 +46,7 @@ export const updateScenarioCharacter = authenticatedAction
 
 export const deleteScenario = authenticatedAction
   .schema(z.object({ id: z.string().min(1) }))
-  .action(async ({ parsedInput, ctx: userId }) => {
+  .action(async ({ parsedInput, ctx: { userId } }) => {
     await prisma.scenario.deleteMany({
       where: {
         id: parsedInput.id,
