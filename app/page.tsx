@@ -5,15 +5,16 @@ import { getAuthSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { Dices } from "lucide-react";
 import { redirect } from "next/navigation";
+import { cache } from "react";
+
+const getScenarios = cache((userId: string) =>
+  prisma.scenario.findMany({ where: { userId } }),
+);
 
 export default async function Home() {
   const session = await getAuthSession();
   if (!session?.user?.id) redirect("/login");
-  const scenarios = await prisma.scenario.findMany({
-    where: {
-      userId: session.user.id,
-    },
-  });
+  const scenarios = await getScenarios(session.user.id);
   return (
     <main className="flex flex-col gap-4">
       <h1 className="text-4xl font-semibold">Bienvenue sur Projet Genesis!</h1>

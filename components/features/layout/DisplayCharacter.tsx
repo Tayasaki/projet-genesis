@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { CharacterScenario } from "@/src/query/character.query";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Character } from "./Character";
 
 export const DisplayCharacter = ({
@@ -26,25 +26,21 @@ export const DisplayCharacter = ({
     sort: "",
   });
 
-  const filterCharacter = () => {
-    let list = characterList;
-    if (displayArgument.search) {
-      list = characterList.filter((c) =>
-        c.name
-          .toLocaleLowerCase()
-          .includes(displayArgument.search.toLocaleLowerCase()),
-      );
-    }
+  const filteredCharacters = useMemo(() => {
+    let list = displayArgument.search
+      ? characterList.filter((c) =>
+          c.name
+            .toLocaleLowerCase()
+            .includes(displayArgument.search.toLocaleLowerCase()),
+        )
+      : [...characterList];
     list.sort((a, b) => {
-      if (displayArgument.sort === "name") {
-        return a.name.localeCompare(b.name);
-      } else if (displayArgument.sort === "pj") {
-        return Number(a.pj) - Number(b.pj);
-      }
+      if (displayArgument.sort === "name") return a.name.localeCompare(b.name);
+      if (displayArgument.sort === "pj") return Number(a.pj) - Number(b.pj);
       return 0;
     });
     return list;
-  };
+  }, [characterList, displayArgument.search, displayArgument.sort]);
 
   return (
     <div>
@@ -78,7 +74,7 @@ export const DisplayCharacter = ({
       </div>
       <Separator orientation="horizontal" />
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {filterCharacter().map((c) => (
+        {filteredCharacters.map((c) => (
           <div key={c.id}>
             <Character character={c} />
           </div>
