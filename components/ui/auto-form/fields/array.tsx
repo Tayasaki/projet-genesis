@@ -28,7 +28,7 @@ export default function AutoFormArray({
     control: form.control,
     name,
   });
-  const title = item._def.description ?? beautifyObjectName(name);
+  const title = item.description ?? beautifyObjectName(name);
 
   return (
     <AccordionItem value={name} className="border-none">
@@ -39,7 +39,7 @@ export default function AutoFormArray({
           return (
             <div className="mt-4 flex flex-col" key={`${key}`}>
               <AutoFormObject
-                schema={item._def.type as z.ZodObject<any, any>}
+                schema={item.element as z.ZodObject<any, any>}
                 form={form}
                 fieldConfig={fieldConfig}
                 path={[...path, index.toString()]}
@@ -51,7 +51,7 @@ export default function AutoFormArray({
                   type="button"
                   onClick={() => remove(index)}
                 >
-                  <Trash className="size-4 " />
+                  <Trash className="size-4" />
                 </Button>
               </div>
 

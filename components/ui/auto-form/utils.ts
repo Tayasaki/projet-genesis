@@ -3,9 +3,8 @@ import { DefaultValues } from "react-hook-form";
 import { z } from "zod";
 
 // TODO: This should support recursive ZodEffects but TypeScript doesn't allow circular type definitions.
-export type ZodObjectOrWrapped =
-  | z.ZodObject<any, any>
-  | z.ZodEffects<z.ZodObject<any, any>>;
+// Zod v4: ZodEffects no longer exported, use ZodType as the wrapped variant.
+export type ZodObjectOrWrapped = z.ZodObject<any, any> | z.ZodType;
 
 /**
  * Beautify a camelCase string.
@@ -23,14 +22,14 @@ export function beautifyObjectName(string: string) {
  * This will unpack optionals, refinements, etc.
  */
 export function getBaseSchema<
-  ChildType extends z.ZodAny | z.AnyZodObject = z.ZodAny,
->(schema: ChildType | z.ZodEffects<ChildType>): ChildType | null {
+  ChildType extends z.ZodAny | z.ZodObject<any, any> = z.ZodAny,
+>(schema: ChildType | z.ZodType): ChildType | null {
   if (!schema) return null;
   if ("innerType" in schema._def) {
-    return getBaseSchema(schema._def.innerType as ChildType);
+    return getBaseSchema((schema._def as any).innerType as ChildType);
   }
   if ("schema" in schema._def) {
-    return getBaseSchema(schema._def.schema as ChildType);
+    return getBaseSchema((schema._def as any).schema as ChildType);
   }
 
   return schema as ChildType;
@@ -42,30 +41,27 @@ export function getBaseSchema<
  */
 export function getBaseType(schema: z.ZodAny): string {
   const baseSchema = getBaseSchema(schema);
-  return baseSchema ? baseSchema._def.typeName : "";
+  return baseSchema ? (baseSchema._def as any).typeName : "";
 }
 
 /**
- * Search for a "ZodDefult" in the Zod stack and return its value.
+ * Search for a "ZodDefault" in the Zod stack and return its value.
  */
 export function getDefaultValueInZodStack(schema: z.ZodAny): any {
   const typedSchema = schema as unknown as z.ZodDefault<
     z.ZodNumber | z.ZodString
   >;
+  const def = typedSchema._def as any;
 
-  if (typedSchema._def.typeName === "ZodDefault") {
-    return typedSchema._def.defaultValue();
+  if (def.typeName === "ZodDefault") {
+    return def.defaultValue();
   }
 
   if ("innerType" in typedSchema._def) {
-    return getDefaultValueInZodStack(
-      typedSchema._def.innerType as unknown as z.ZodAny,
-    );
+    return getDefaultValueInZodStack(def.innerType as z.ZodAny);
   }
   if ("schema" in typedSchema._def) {
-    return getDefaultValueInZodStack(
-      (typedSchema._def as any).schema as z.ZodAny,
-    );
+    return getDefaultValueInZodStack(def.schema as z.ZodAny);
   }
 
   return undefined;
@@ -94,7 +90,7 @@ export function getDefaultValues<Schema extends z.ZodObject<any, any>>(
       if (defaultItems !== null) {
         for (const defaultItemKey of Object.keys(defaultItems)) {
           const pathKey = `${key}.${defaultItemKey}` as keyof DefaultValuesType;
-          defaultValues[pathKey] = defaultItems[defaultItemKey];
+          defaultValues[pathKey] = defaultItems[defaultItemKey] as any;
         }
       }
     } else {
@@ -111,9 +107,8 @@ export function getDefaultValues<Schema extends z.ZodObject<any, any>>(
 export function getObjectFormSchema(
   schema: ZodObjectOrWrapped,
 ): z.ZodObject<any, any> {
-  if (schema?._def.typeName === "ZodEffects") {
-    const typedSchema = schema as z.ZodEffects<z.ZodObject<any, any>>;
-    return getObjectFormSchema(typedSchema._def.schema);
+  if ((schema?._def as any)?.typeName === "ZodEffects") {
+    return getObjectFormSchema((schema._def as any).schema);
   }
   return schema as z.ZodObject<any, any>;
 }
@@ -129,39 +124,41 @@ export function zodToHtmlInputProps(
     | z.ZodOptional<z.ZodNumber | z.ZodString>
     | any,
 ): React.InputHTMLAttributes<HTMLInputElement> {
-  if (["ZodOptional", "ZodNullable"].includes(schema._def.typeName)) {
-    const typedSchema = schema as z.ZodOptional<z.ZodNumber | z.ZodString>;
+  const schemaDef = schema._def as any;
+  if (["ZodOptional", "ZodNullable"].includes(schemaDef.typeName)) {
     return {
-      ...zodToHtmlInputProps(typedSchema._def.innerType),
+      ...zodToHtmlInputProps(schemaDef.innerType),
       required: false,
     };
   }
   const typedSchema = schema as z.ZodNumber | z.ZodString;
+  const typedDef = typedSchema._def as any;
 
-  if (!("checks" in typedSchema._def))
+  if (!typedDef.checks)
     return {
       required: true,
     };
 
-  const { checks } = typedSchema._def;
+  const checks = typedDef.checks as any[];
   const inputProps: React.InputHTMLAttributes<HTMLInputElement> = {
     required: true,
   };
   const type = getBaseType(schema);
 
   for (const check of checks) {
-    if (check.kind === "min") {
+    const c = check as any;
+    if (c.kind === "min") {
       if (type === "ZodString") {
-        inputProps.minLength = check.value;
+        inputProps.minLength = c.value;
       } else {
-        inputProps.min = check.value;
+        inputProps.min = c.value;
       }
     }
-    if (check.kind === "max") {
+    if (c.kind === "max") {
       if (type === "ZodString") {
-        inputProps.maxLength = check.value;
+        inputProps.maxLength = c.value;
       } else {
-        inputProps.max = check.value;
+        inputProps.max = c.value;
       }
     }
   }

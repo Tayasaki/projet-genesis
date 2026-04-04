@@ -48,31 +48,34 @@ function AutoForm<SchemaType extends ZodObjectOrWrapped>({
   onValuesChange?: (values: Partial<z.infer<SchemaType>>) => void;
   onParsedValuesChange?: (values: Partial<z.infer<SchemaType>>) => void;
   onSubmit?: (values: z.infer<SchemaType>) => void;
-  fieldConfig?: FieldConfig<z.infer<SchemaType>>;
+  fieldConfig?: FieldConfig<any>;
   children?: React.ReactNode;
   className?: string;
-  dependencies?: Dependency<z.infer<SchemaType>>[];
+  dependencies?: Dependency<any>[];
 }) {
   const objectFormSchema = getObjectFormSchema(formSchema);
-  const defaultValues: DefaultValues<z.infer<typeof objectFormSchema>> | null =
-    getDefaultValues(objectFormSchema);
+  const defaultValues = getDefaultValues(objectFormSchema) as DefaultValues<
+    Record<string, any>
+  > | null;
 
-  const form = useForm<z.infer<typeof objectFormSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: defaultValues ?? undefined,
-    values: valuesProp,
+  // Zod v4: z.infer output no longer satisfies Record<string, unknown>,
+  // so we cast at the boundaries to keep type-safety at call sites.
+  const form = useForm({
+    resolver: zodResolver(formSchema as any) as any,
+    defaultValues: (defaultValues ?? undefined) as any,
+    values: valuesProp as any,
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(values: Record<string, any>) {
     const parsedValues = formSchema.safeParse(values);
     if (parsedValues.success) {
-      onSubmitProp?.(parsedValues.data);
+      onSubmitProp?.(parsedValues.data as z.infer<SchemaType>);
     }
   }
 
   return (
     <div>
-      <Form {...form}>
+      <Form {...(form as any)}>
         <form
           onSubmit={(e) => {
             form.handleSubmit(onSubmit)(e);
@@ -80,19 +83,21 @@ function AutoForm<SchemaType extends ZodObjectOrWrapped>({
           }}
           onChange={() => {
             const values = form.getValues();
-            onValuesChangeProp?.(values);
+            onValuesChangeProp?.(values as Partial<z.infer<SchemaType>>);
             const parsedValues = formSchema.safeParse(values);
             if (parsedValues.success) {
-              onParsedValuesChange?.(parsedValues.data);
+              onParsedValuesChange?.(
+                parsedValues.data as Partial<z.infer<SchemaType>>,
+              );
             }
           }}
           className={cn("w-full space-y-5 rounded-md border p-4", className)}
         >
           <AutoFormObject
             schema={objectFormSchema}
-            form={form}
-            dependencies={dependencies}
-            fieldConfig={fieldConfig}
+            form={form as any}
+            dependencies={dependencies as any}
+            fieldConfig={fieldConfig as any}
           />
 
           {children}

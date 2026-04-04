@@ -31,7 +31,7 @@ export default function AutoFormObject<
   path = [],
   dependencies = [],
 }: {
-  schema: SchemaType | z.ZodEffects<SchemaType>;
+  schema: SchemaType | z.ZodType;
   form: ReturnType<typeof useForm>;
   fieldConfig?: FieldConfig<z.infer<SchemaType>>;
   path?: string[];
@@ -68,7 +68,7 @@ export default function AutoFormObject<
         let item = shape[name] as z.ZodAny;
         item = handleIfZodNumber(item) as z.ZodAny;
         const zodBaseType = getBaseType(item);
-        const itemName = item._def.description ?? beautifyObjectName(name);
+        const itemName = item.description ?? beautifyObjectName(name);
         const key = [...path, name].join(".");
 
         const {
@@ -127,7 +127,7 @@ export default function AutoFormObject<
 
         return (
           <FormField
-            control={form.control}
+            control={form.control as any}
             name={key}
             key={key}
             render={({ field }) => {

@@ -23,8 +23,9 @@ export default function AutoFormEnum({
   zodItem,
   fieldProps,
 }: AutoFormInputComponentProps) {
-  const baseValues = (getBaseSchema(zodItem) as unknown as z.ZodEnum<any>)._def
-    .values;
+  const baseValues = (
+    (getBaseSchema(zodItem) as unknown as z.ZodEnum<any>)._def as any
+  ).values;
 
   let values: [string, string][] = [];
   if (!Array.isArray(baseValues)) {

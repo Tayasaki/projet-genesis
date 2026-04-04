@@ -16,7 +16,7 @@ export type FieldConfigItem = {
   }) => React.ReactElement<any> | null;
 };
 
-export type FieldConfig<SchemaType extends z.infer<z.ZodObject<any, any>>> = {
+export type FieldConfig<SchemaType extends Record<string, any>> = {
   // If SchemaType.key is an object, create a nested FieldConfig, otherwise FieldConfigItem
   [Key in keyof SchemaType]?: SchemaType[Key] extends object
     ? FieldConfig<z.infer<SchemaType[Key]>>
@@ -30,14 +30,14 @@ export enum DependencyType {
   SETS_OPTIONS,
 }
 
-type BaseDependency<SchemaType extends z.infer<z.ZodObject<any, any>>> = {
+type BaseDependency<SchemaType extends Record<string, any>> = {
   sourceField: keyof SchemaType;
   type: DependencyType;
   targetField: keyof SchemaType;
   when: (sourceFieldValue: any, targetFieldValue: any) => boolean;
 };
 
-export type ValueDependency<SchemaType extends z.infer<z.ZodObject<any, any>>> =
+export type ValueDependency<SchemaType extends Record<string, any>> =
   BaseDependency<SchemaType> & {
     type:
       | DependencyType.DISABLES
@@ -47,16 +47,15 @@ export type ValueDependency<SchemaType extends z.infer<z.ZodObject<any, any>>> =
 
 export type EnumValues = readonly [string, ...string[]];
 
-export type OptionsDependency<
-  SchemaType extends z.infer<z.ZodObject<any, any>>,
-> = BaseDependency<SchemaType> & {
-  type: DependencyType.SETS_OPTIONS;
+export type OptionsDependency<SchemaType extends Record<string, any>> =
+  BaseDependency<SchemaType> & {
+    type: DependencyType.SETS_OPTIONS;
 
-  // Partial array of values from sourceField that will trigger the dependency
-  options: EnumValues;
-};
+    // Partial array of values from sourceField that will trigger the dependency
+    options: EnumValues;
+  };
 
-export type Dependency<SchemaType extends z.infer<z.ZodObject<any, any>>> =
+export type Dependency<SchemaType extends Record<string, any>> =
   | ValueDependency<SchemaType>
   | OptionsDependency<SchemaType>;
 

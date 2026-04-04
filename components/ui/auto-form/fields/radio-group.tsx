@@ -19,8 +19,9 @@ export default function AutoFormRadioGroup({
   fieldProps,
   fieldConfigItem,
 }: AutoFormInputComponentProps) {
-  const baseValues = (getBaseSchema(zodItem) as unknown as z.ZodEnum<any>)._def
-    .values;
+  const baseValues = (
+    (getBaseSchema(zodItem) as unknown as z.ZodEnum<any>)._def as any
+  ).values;
 
   let values: string[] = [];
   if (!Array.isArray(baseValues)) {
