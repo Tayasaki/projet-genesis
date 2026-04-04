@@ -8,7 +8,7 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { updateScenarioCharacter } from "@/src/actions/scenario.action";
 import { Character } from "@prisma/client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 type SelectableCharacter = Character & {
@@ -24,13 +24,7 @@ export const ImportCharacter = ({
 }) => {
   const [selectedCharacter, setSelectedCharacter] = useState<
     SelectableCharacter[]
-  >([]);
-
-  useEffect(() => {
-    setSelectedCharacter(() =>
-      characterList.map((c) => ({ ...c, selected: false })),
-    );
-  }, [characterList]);
+  >(() => characterList.map((c) => ({ ...c, selected: false })));
 
   function selectCharacter(character: Character) {
     const copySelectedCharacter = [...selectedCharacter];
@@ -63,7 +57,7 @@ export const ImportCharacter = ({
     <div>
       <ScrollArea className="h-72 w-full p-6">
         {selectedCharacter.length === 0 ? (
-          <p className="text-center text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-center text-sm">
             Aucun personnage trouvé
           </p>
         ) : (

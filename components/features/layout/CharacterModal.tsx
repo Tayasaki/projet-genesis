@@ -14,7 +14,7 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { CharacterScenario } from "@/src/query/character.query";
-import { AccordionContent } from "@radix-ui/react-accordion";
+import { AccordionContent } from "@/components/ui/accordion";
 import { PenLine } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -45,7 +45,7 @@ export const CharacterModal = ({
           <p className="text-lg">{character.pj ? "🧔" : "🤖"}</p>
           <Button
             variant={"outline"}
-            onClick={() => document.location.reload()}
+            onClick={() => router.push(`/characters/${character.id}/edit`)}
           >
             <PenLine size={16} className="mr-2" />
             Editer

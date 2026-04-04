@@ -12,12 +12,13 @@ import { UserProfile } from "./auth/UserProfile";
 
 export const Header = async () => {
   const session = await getAuthSession();
-  const user = await prisma.user.findUnique({
-    where: { id: session?.user?.id ?? "" },
-  });
+  const user = session?.user?.id
+    ? await prisma.user.findUnique({ where: { id: session.user.id } })
+    : null;
+  const role = user?.role;
 
   return (
-    <header className="fixed top-0 z-20 w-full border-b border-b-accent bg-background">
+    <header className="border-b-accent bg-background fixed top-0 z-20 w-full border-b">
       <div className="container m-auto flex items-center justify-between gap-1 py-2">
         <h1 className="text-2xl font-bold">
           <Link href="/" className="flex items-center gap-4">
@@ -32,7 +33,7 @@ export const Header = async () => {
           </Link>
         </h1>
         <nav className="flex items-center">
-          {(user?.role === "ADMIN" || user?.role === "SUPERUSER") && (
+          {(role === "ADMIN" || role === "SUPERUSER") && (
             <>
               <Link
                 className={cn(buttonVariants({ variant: "link" }))}
@@ -40,7 +41,7 @@ export const Header = async () => {
               >
                 Suggestions
               </Link>
-              <Slash className="size-4 text-muted" />
+              <Slash className="text-muted size-4" />
             </>
           )}
           <Link
@@ -49,7 +50,7 @@ export const Header = async () => {
           >
             Gestion
           </Link>
-          <Slash className="size-4 text-muted" />
+          <Slash className="text-muted size-4" />
           <Link
             className={cn(buttonVariants({ variant: "link" }))}
             href={"/characters"}

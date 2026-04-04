@@ -15,11 +15,18 @@ import { deleteScenario } from "@/src/actions/scenario.action";
 import { toast } from "sonner";
 
 export const ScenarioList = ({ scenario }: { scenario: Scenario[] }) => {
+  if (scenario.length === 0) {
+    return (
+      <p className="text-muted-foreground py-8 text-center">
+        Aucun scénario. Créez-en un pour commencer.
+      </p>
+    );
+  }
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
       {scenario.map((s) => (
         <div key={s.id}>
-          <Card className="max-w-md transition">
+          <Card className="transition">
             <CardHeader>
               <CardTitle>
                 <Link
@@ -31,11 +38,11 @@ export const ScenarioList = ({ scenario }: { scenario: Scenario[] }) => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <CardDescription className="text-wrap text-muted-foreground">
+              <CardDescription className="text-muted-foreground text-wrap">
                 {s.description}
               </CardDescription>
             </CardContent>
-            <CardFooter className="justify-between font-semibold italic text-primary">
+            <CardFooter className="text-primary justify-between font-semibold italic">
               {s.universe}
               <DeleteDialog
                 item={s.name}

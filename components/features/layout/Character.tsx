@@ -1,5 +1,6 @@
 "use client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   HoverCard,
@@ -11,7 +12,7 @@ import Link from "next/link";
 
 export const Character = ({ character }: { character: CharacterScenario }) => {
   return (
-    <Card className="max-w-md transition hover:scale-110 hover:ring-2 hover:ring-ring hover:ring-offset-2 active:scale-105">
+    <Card className="hover:ring-ring max-w-md transition hover:scale-105 hover:ring-2 hover:ring-offset-2 active:scale-102">
       <Link href={`/characters/${character.id}`}>
         <CardHeader className="flex flex-row">
           <Avatar>
@@ -24,7 +25,7 @@ export const Character = ({ character }: { character: CharacterScenario }) => {
             )}
           </Avatar>
           <CardTitle>{character.name}</CardTitle>
-          {character.pj ? "🧔" : "🤖"}
+          <Badge variant="outline">{character.pj ? "PJ" : "PNJ"}</Badge>
         </CardHeader>
         <div className="container space-y-3">
           {character.origin && <p>Origine: {character.origin}</p>}
