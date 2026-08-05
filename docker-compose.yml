@@ -19,8 +19,8 @@ services:
     command: sh -c "npx prisma db push --skip-generate && node server.js"
     environment:
       - DATABASE_URL=postgresql://postgres:mysecretpassword@db:5432/projet-genesis
-      - NEXTAUTH_URL=http://localhost:3000
-      - NEXTAUTH_SECRET=votresupersecret
+      - BETTER_AUTH_URL=http://localhost:3000
+      - BETTER_AUTH_SECRET=votresupersecret
       - AUTH_GITHUB_ID=votregithubid
       - AUTH_GITHUB_SECRET=votregithubsecret
       - AUTH_DISCORD_ID=votrediscordid
