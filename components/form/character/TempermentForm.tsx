@@ -1,17 +1,26 @@
 "use client";
+
 import {
   createTemperment,
   deleteTemperment,
 } from "@/src/actions/character/temperment.action";
-import { useState } from "react";
-import { toast } from "sonner";
+import { SuggestionType } from "@prisma/client";
 import { z } from "zod";
 import AutoForm, { AutoFormSubmit } from "../../ui/auto-form";
-import { createSuggestion } from "@/src/actions/suggestion.action";
-import { SuggestionType } from "@prisma/client";
+import { useAttributeSubmit } from "../attribute/use-attribute-submit";
 
 export const TempermentForm = ({ suggest }: { suggest: boolean }) => {
-  const [isLoading, setIsLoading] = useState(false);
+  const { isLoading, handleSubmit } = useAttributeSubmit({
+    suggest,
+    suggestionType: SuggestionType.Temperment,
+    createAction: createTemperment,
+    deleteAction: deleteTemperment,
+    labels: {
+      authError: "Vous devez être connecté pour créer un tempérament",
+      created: "Tempérament créé avec succès",
+      deleted: "Tempérament supprimé avec succès",
+    },
+  });
   return (
     <AutoForm
       formSchema={z.object({
@@ -35,47 +44,7 @@ export const TempermentForm = ({ suggest }: { suggest: boolean }) => {
           },
         },
       }}
-      onSubmit={async (data) => {
-        setIsLoading(true);
-        if (suggest) {
-          await createSuggestion({
-            type: SuggestionType.Temperment,
-            name: data.name,
-            description: data.description,
-          });
-          toast.info("Votre suggestion a été envoyée");
-          setIsLoading(false);
-          return;
-        }
-        const values = await createTemperment({
-          name: data.name,
-          description: data.description,
-        });
-
-        if (values?.validationErrors || values?.serverError) {
-          if (values?.validationErrors) {
-            toast.error("Veuillez remplir tous les champs");
-          }
-          if (values?.serverError) {
-            toast.error("Vous devez être connecté pour créer un tempérament");
-          }
-          setIsLoading(false);
-          return;
-        }
-
-        toast.success("Tempérament créé avec succès", {
-          action: {
-            label: "Annuler",
-            onClick: async () => {
-              await deleteTemperment({
-                name: data.name,
-              });
-              toast.success("Tempérament supprimé avec succès");
-            },
-          },
-        });
-        setIsLoading(false);
-      }}
+      onSubmit={handleSubmit}
     >
       <AutoFormSubmit isLoading={isLoading}>
         {suggest ? "Suggérer" : "Créer le tempérament"}
