@@ -20,17 +20,16 @@ import { notFound, redirect } from "next/navigation";
 import { getCharacters } from "../../../src/query/character.query";
 import { DisplayCharacter } from "@/components/features/layout/DisplayCharacter";
 
-export default async function ScenarioManage(
-  props: {
-    params: Promise<{ scenarioId: string }>;
-  }
-) {
+export default async function ScenarioManage(props: {
+  params: Promise<{ scenarioId: string }>;
+}) {
   const params = await props.params;
   const session = await getAuthSession();
   if (!session?.user?.id) redirect("/login");
   const scenario = await prisma.scenario.findUnique({
     where: {
       id: params.scenarioId,
+      userId: session.user.id,
     },
   });
 
@@ -48,8 +47,6 @@ export default async function ScenarioManage(
     })
   ).filter((c) => !scenarioCharacter.some((sc) => sc.id === c.id));
 
-  const characterToImport: string[] = [];
-
   scenarioCharacter.sort((a, b) => (a.pj === b.pj ? 0 : a.pj ? -1 : 1));
 
   return (
@@ -58,7 +55,7 @@ export default async function ScenarioManage(
         <h1 className="mb-8 text-3xl font-bold">
           {scenario.name} ({scenario.universe})
         </h1>
-        <span className=" italic text-muted-foreground">
+        <span className="text-muted-foreground italic">
           {scenario.description}
         </span>
       </div>
@@ -72,7 +69,7 @@ export default async function ScenarioManage(
               <Plus size={16} className="mr-2" />
               Importer
             </DialogTrigger>
-            <DialogContent className=" max-w-5xl">
+            <DialogContent className="max-w-5xl">
               <DialogHeader>
                 <DialogTitle>Importer un personnage</DialogTitle>
               </DialogHeader>

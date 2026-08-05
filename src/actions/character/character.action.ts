@@ -59,11 +59,19 @@ const systemPrompt = `
 
 export const createCharacter = authenticatedAction
   .schema(characterSchema)
-  .action(async ({ parsedInput }) => {
+  .action(async ({ parsedInput, ctx: { userId } }) => {
     parsedInput.strength = parsedInput.strength.filter((s) => s);
     parsedInput.weakness = parsedInput.weakness.filter((w) => w);
     parsedInput.skillSet = parsedInput.skillSet.filter((s) => s);
     parsedInput.weaponSet = parsedInput.weaponSet.filter((w) => w);
+    if (parsedInput.scenarioId) {
+      const scenario = await prisma.scenario.findUnique({
+        where: { id: parsedInput.scenarioId, userId },
+      });
+      if (!scenario) {
+        throw new Error("Scenario not found or not owned by user");
+      }
+    }
     await prisma.character.create({
       data: {
         name: parsedInput.name,
@@ -143,7 +151,7 @@ export const updateCharacter = authenticatedAction
       .omit({ scenarioId: true })
       .merge(z.object({ id: z.string().min(1) })),
   )
-  .action(async ({ parsedInput }) => {
+  .action(async ({ parsedInput, ctx: { userId } }) => {
     parsedInput.strength = parsedInput.strength.filter((s) => s);
     parsedInput.weakness = parsedInput.weakness.filter((w) => w);
     parsedInput.skillSet = parsedInput.skillSet.filter((s) => s);
@@ -151,6 +159,7 @@ export const updateCharacter = authenticatedAction
     await prisma.character.update({
       where: {
         id: parsedInput.id,
+        scenario: { some: { userId } },
       },
       data: {
         name: parsedInput.name,
@@ -194,10 +203,11 @@ export const updateCharacter = authenticatedAction
 
 export const deleteCharacter = authenticatedAction
   .schema(z.object({ id: z.string().min(1) }))
-  .action(async ({ parsedInput }) => {
+  .action(async ({ parsedInput, ctx: { userId } }) => {
     await prisma.character.delete({
       where: {
         id: parsedInput.id,
+        scenario: { some: { userId } },
       },
     });
     revalidatePath("/characters");

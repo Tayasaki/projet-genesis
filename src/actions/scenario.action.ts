@@ -33,6 +33,15 @@ export const updateScenarioCharacter = authenticatedAction
     }),
   )
   .action(async ({ parsedInput, ctx: { userId } }) => {
+    const character = await prisma.character.findUnique({
+      where: {
+        id: parsedInput.characterId,
+        scenario: { some: { userId } },
+      },
+    });
+    if (!character) {
+      throw new Error("Character not found or not owned by user");
+    }
     await prisma.scenario.update({
       where: { id: parsedInput.scenarioId, userId: userId },
       data: {
