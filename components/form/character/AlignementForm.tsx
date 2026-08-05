@@ -4,15 +4,23 @@ import {
   createAlignment,
   deleteAlignment,
 } from "@/src/actions/character/alignment.action";
-import { useState } from "react";
-import { toast } from "sonner";
+import { SuggestionType } from "@prisma/client";
 import { z } from "zod";
 import AutoForm, { AutoFormSubmit } from "../../ui/auto-form";
-import { createSuggestion } from "@/src/actions/suggestion.action";
-import { SuggestionType } from "@prisma/client";
+import { useAttributeSubmit } from "../attribute/use-attribute-submit";
 
 export const AlignementForm = ({ suggest }: { suggest: boolean }) => {
-  const [isLoading, setIsLoading] = useState(false);
+  const { isLoading, handleSubmit } = useAttributeSubmit({
+    suggest,
+    suggestionType: SuggestionType.Alignment,
+    createAction: createAlignment,
+    deleteAction: deleteAlignment,
+    labels: {
+      authError: "Vous devez être connecté pour créer un alignement",
+      created: "Alignement créé avec succès",
+      deleted: "Alignement supprimé avec succès",
+    },
+  });
   return (
     <AutoForm
       formSchema={z.object({
@@ -35,47 +43,7 @@ export const AlignementForm = ({ suggest }: { suggest: boolean }) => {
           },
         },
       }}
-      onSubmit={async (data) => {
-        setIsLoading(true);
-        if (suggest) {
-          await createSuggestion({
-            type: SuggestionType.Alignment,
-            name: data.name,
-            description: data.description,
-          });
-          toast.info("Votre suggestion a été envoyée");
-          setIsLoading(false);
-          return;
-        }
-        const values = await createAlignment({
-          name: data.name,
-          description: data.description,
-        });
-
-        if (values?.validationErrors || values?.serverError) {
-          if (values?.validationErrors) {
-            toast.error("Veuillez remplir tous les champs");
-          }
-          if (values?.serverError) {
-            toast.error("Vous devez être connecté pour créer un alignement");
-          }
-          setIsLoading(false);
-          return;
-        }
-
-        toast.success("Alignement créé avec succès", {
-          action: {
-            label: "Annuler",
-            onClick: async () => {
-              await deleteAlignment({
-                name: data.name,
-              });
-              toast.success("Alignement supprimé avec succès");
-            },
-          },
-        });
-        setIsLoading(false);
-      }}
+      onSubmit={handleSubmit}
     >
       <AutoFormSubmit isLoading={isLoading}>
         {suggest ? "Suggérer" : "Créer le alignement"}

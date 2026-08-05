@@ -12,6 +12,23 @@ import { ArrowUpDown } from "lucide-react";
 import { toast } from "sonner";
 import { CharacterAttributes } from "./page";
 
+// One entry per row (label + delete action) instead of a switch duplicated
+// across both the label cell and the delete handler — adding a new
+// attribute type is now a single new entry here.
+const WEAPON_ATTRIBUTE_CONFIG: Record<
+  string,
+  {
+    label: string;
+    delete: (name: string) => Promise<{ serverError?: unknown } | void>;
+  }
+> = {
+  ammo: { label: "munitions", delete: (name) => deleteAmmo({ name }) },
+  damage: { label: "dégâts", delete: (name) => deleteDamage({ name }) },
+  range: { label: "portée", delete: (name) => deleteRange({ name }) },
+  weight: { label: "poids", delete: (name) => deleteWeight({ name }) },
+  skill: { label: "compétence", delete: (name) => deleteWeaponSkill({ name }) },
+};
+
 export const columns: ColumnDef<CharacterAttributes>[] = [
   {
     accessorKey: "type",
@@ -26,25 +43,7 @@ export const columns: ColumnDef<CharacterAttributes>[] = [
       );
     },
     cell: ({ row }) => {
-      const r = row.original;
-      let type = "";
-      switch (r.type) {
-        case "ammo":
-          type = "munitions";
-          break;
-        case "damage":
-          type = "dégâts";
-          break;
-        case "range":
-          type = "portée";
-          break;
-        case "weight":
-          type = "poids";
-          break;
-        case "skill":
-          type = "compétence";
-          break;
-      }
+      const type = WEAPON_ATTRIBUTE_CONFIG[row.original.type]?.label ?? "";
       return <span className="capitalize">{type}</span>;
     },
   },
@@ -61,24 +60,7 @@ export const columns: ColumnDef<CharacterAttributes>[] = [
         <DeleteDialog
           item={row.original.name}
           deleteItem={async () => {
-            let value = null;
-            switch (r.type) {
-              case "ammo":
-                value = await deleteAmmo({ name: r.name });
-                break;
-              case "damage":
-                value = await deleteDamage({ name: r.name });
-                break;
-              case "range":
-                value = await deleteRange({ name: r.name });
-                break;
-              case "weight":
-                value = await deleteWeight({ name: r.name });
-                break;
-              case "skill":
-                value = await deleteWeaponSkill({ name: r.name });
-                break;
-            }
+            const value = await WEAPON_ATTRIBUTE_CONFIG[r.type]?.delete(r.name);
             if (value?.serverError) {
               toast.error(
                 "Vous n'êtes pas autorisé à supprimer ce type d'attribut",

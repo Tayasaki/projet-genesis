@@ -13,6 +13,33 @@ import { ArrowUpDown } from "lucide-react";
 import { CharacterAttributes } from "./page";
 import { toast } from "sonner";
 
+// One entry per row (label + delete action) instead of a switch duplicated
+// across both the label cell and the delete handler — adding a new
+// attribute type is now a single new entry here.
+const CHARACTER_ATTRIBUTE_CONFIG: Record<
+  string,
+  {
+    label: string;
+    delete: (name: string) => Promise<{ serverError?: unknown } | void>;
+  }
+> = {
+  temperment: {
+    label: "tempérament",
+    delete: (name) => deleteTemperment({ name }),
+  },
+  alignement: {
+    label: "alignement",
+    delete: (name) => deleteAlignment({ name }),
+  },
+  fortune: { label: "fortune", delete: (name) => deleteFortune({ name }) },
+  strength: { label: "force", delete: (name) => deleteStrength({ name }) },
+  weakness: { label: "faiblesse", delete: (name) => deleteWeakness({ name }) },
+  skill: {
+    label: "compétence",
+    delete: (name) => deleteCharacterSkill({ name }),
+  },
+};
+
 export const columns: ColumnDef<CharacterAttributes>[] = [
   {
     accessorKey: "type",
@@ -27,28 +54,7 @@ export const columns: ColumnDef<CharacterAttributes>[] = [
       );
     },
     cell: ({ row }) => {
-      const r = row.original;
-      let type = "";
-      switch (r.type) {
-        case "temperment":
-          type = "tempérament";
-          break;
-        case "alignement":
-          type = "alignement";
-          break;
-        case "fortune":
-          type = "fortune";
-          break;
-        case "strength":
-          type = "force";
-          break;
-        case "weakness":
-          type = "faiblesse";
-          break;
-        case "skill":
-          type = "compétence";
-          break;
-      }
+      const type = CHARACTER_ATTRIBUTE_CONFIG[row.original.type]?.label ?? "";
       return <span className="capitalize">{type}</span>;
     },
   },
@@ -78,27 +84,9 @@ export const columns: ColumnDef<CharacterAttributes>[] = [
         <DeleteDialog
           item={row.original.name}
           deleteItem={async () => {
-            let value = null;
-            switch (r.type) {
-              case "temperment":
-                value = await deleteTemperment({ name: r.name });
-                break;
-              case "alignement":
-                value = await deleteAlignment({ name: r.name });
-                break;
-              case "fortune":
-                value = await deleteFortune({ name: r.name });
-                break;
-              case "strength":
-                value = await deleteStrength({ name: r.name });
-                break;
-              case "weakness":
-                value = await deleteWeakness({ name: r.name });
-                break;
-              case "skill":
-                value = await deleteCharacterSkill({ name: r.name });
-                break;
-            }
+            const value = await CHARACTER_ATTRIBUTE_CONFIG[r.type]?.delete(
+              r.name,
+            );
             if (value?.serverError) {
               toast.error(
                 "Vous n'êtes pas autorisé à supprimer ce type d'attribut",
