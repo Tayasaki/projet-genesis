@@ -34,13 +34,13 @@ git clone https://github.com/Tayasaki/projet-genesis.git
 pnpm install
 ```
 
-3. Ajouter un fichier `.env` à la racine du projet avec les variables d'environnement suivantes
+3. Copier `.env.example` vers `.env` à la racine du projet et renseigner les variables d'environnement suivantes
 
 ```typescript
 DATABASE_URL = "postgresql://user:password@localhost:5432/database";
 
-NEXTAUTH_URL = "http://localhost:3000";
-AUTH_SECRET = "votresupersecret";
+BETTER_AUTH_URL = "http://localhost:3000";
+BETTER_AUTH_SECRET = "votresupersecret";
 
 AUTH_GITHUB_ID = "votreidgithub";
 AUTH_GITHUB_SECRET = "votresecretgithub";
@@ -92,8 +92,8 @@ app:
   command: sh -c "npx prisma db push --skip-generate && node server.js"
   environment:
     - DATABASE_URL=postgresql://postgres:mysecretpassword@db:5432/projet-genesis # Remplacer les valeurs par celles de votre base de données
-    - NEXTAUTH_URL=http://localhost:3000
-    - NEXTAUTH_SECRET=votresupersecret
+    - BETTER_AUTH_URL=http://localhost:3000
+    - BETTER_AUTH_SECRET=votresupersecret
     - AUTH_GITHUB_ID=votregithubid # Credentials pour les services d'authentification
     - AUTH_GITHUB_SECRET=votregithubsecret # Credentials pour les services d'authentification
     - AUTH_DISCORD_ID=votrediscordid # Credentials pour les services d'authentification
