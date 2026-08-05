@@ -56,7 +56,7 @@ export const createWeapon = authenticatedAction
 
 export const deleteWeapon = authenticatedAction
   .schema(z.object({ id: z.string() }))
-  .action(async ({ parsedInput }) => {
-    await prisma.weapon.delete({ where: { id: parsedInput.id } });
+  .action(async ({ parsedInput, ctx: { userId } }) => {
+    await prisma.weapon.delete({ where: { id: parsedInput.id, userId } });
     revalidatePath("/manage");
   });
