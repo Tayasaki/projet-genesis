@@ -1,6 +1,7 @@
 {
   "name": "projet-genesis",
   "version": "0.1.0",
+  "packageManager": "pnpm@10.24.0",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
@@ -9,7 +10,9 @@
     "start": "next start",
     "lint": "eslint .",
     "studio": "prisma studio",
-    "seed": "prisma db seed"
+    "seed": "prisma db seed",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@ai-sdk/openai": "^3.0.63",
@@ -60,13 +63,18 @@
   "devDependencies": {
     "@faker-js/faker": "^10.4.0",
     "@tailwindcss/postcss": "^4.2.4",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.7",
     "@types/node": "^25.6.2",
     "@types/pg": "^8.20.0",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "@typescript-eslint/parser": "^8.59.2",
+    "@vitejs/plugin-react": "^6.1.1",
     "eslint": "^9.39.4",
     "eslint-config-next": "16.2.6",
+    "jsdom": "^30.0.1",
     "postcss": "^8.5.14",
     "prettier": "^3.8.3",
     "prettier-plugin-tailwindcss": "^0.8.0",
@@ -74,7 +82,8 @@
     "tailwindcss": "^4.2.4",
     "ts-node": "^10.9.2",
     "tsx": "^4.21.0",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vitest": "^5.0.0"
   },
   "prisma": {
     "seed": "npx ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
