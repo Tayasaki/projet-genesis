@@ -75,10 +75,11 @@ export const WeaponForm = ({
             toast.error("Vous devez être connecté pour créer une arme");
           }
           setIsLoading(false);
-          return;
+          return values;
         }
         setIsLoading(false);
         toast.success("Arme créé avec succès");
+        return values;
       }}
       fieldConfig={{
         melee: {

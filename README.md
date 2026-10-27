@@ -84,43 +84,43 @@ pnpm test:watch  # mode watch
 
 ## Docker
 
-Dans le cadre de ce projet, une image Docker de l'application est disponible pour faciliter le déploiement. Pour lancer l'application avec Docker, suivez les instructions suivantes:
+`docker compose up --build` construit l'image de l'application depuis le `Dockerfile` du dépôt et démarre toute la pile en local : PostgreSQL, les migrations Prisma, puis l'application.
 
-### 1. Récupérer l'image Docker depuis la registry
+### Prérequis
 
-```bash
-docker pull ghcr.io/tayasaki/projet-genesis:latest
-```
+- Docker avec Docker Compose v2 (`docker compose`)
+- Les ports 3000 (application) et 5432 (PostgreSQL, exposé uniquement sur `127.0.0.1`) libres, ou d'autres valeurs via `APP_PORT` et `DB_PORT` dans `.env`
 
-### 2. Modifier les variables d'environnement si nécessaire
-
-```yml
-###...
-app:
-  container_name: projet-genesis-app
-  image: ghcr.io/tayasaki/projet-genesis:latest
-  ports:
-    - 3000:3000
-  command: sh -c "npx prisma db push --skip-generate && node server.js"
-  environment:
-    - DATABASE_URL=postgresql://postgres:mysecretpassword@db:5432/projet-genesis # Remplacer les valeurs par celles de votre base de données
-    - BETTER_AUTH_URL=http://localhost:3000
-    - BETTER_AUTH_SECRET=votresupersecret
-    - AUTH_GITHUB_ID=votregithubid # Credentials pour les services d'authentification
-    - AUTH_GITHUB_SECRET=votregithubsecret # Credentials pour les services d'authentification
-    - AUTH_DISCORD_ID=votrediscordid # Credentials pour les services d'authentification
-    - AUTH_DISCORD_SECRET=votrediscordsecret # Credentials pour les services d'authentification
-###...
-```
-
-### 2. Lancer le conteneur
+### 1. Configurer les variables d'environnement
 
 ```bash
-docker compose up
+cp .env.example .env
 ```
 
-L'application est maintenant accessible à l'adresse `http://localhost:3000`
+Compose lit automatiquement `.env`. Renseigner au minimum :
+
+- `BETTER_AUTH_SECRET` : générer avec `openssl rand -base64 32` (une valeur de développement par défaut est utilisée sinon, à ne jamais réutiliser ailleurs)
+- les identifiants OAuth (`AUTH_GITHUB_ID` / `AUTH_GITHUB_SECRET`, `AUTH_DISCORD_ID` / `AUTH_DISCORD_SECRET`, `AUTH_GOOGLE_ID` / `AUTH_GOOGLE_SECRET`) : l'application n'a pas de connexion par email, il faut donc configurer au moins un fournisseur (avec `http://localhost:3000/api/auth/callback/<fournisseur>` comme URL de callback) pour pouvoir se connecter
+
+`DATABASE_URL` est ignorée par Compose : la base est jointe via l'hôte `db`. Le mot de passe PostgreSQL de développement se change avec `POSTGRES_PASSWORD` (avant le premier démarrage, voir « Réinitialiser » ci-dessous). Si vous changez le port avec `APP_PORT`, adaptez aussi `BETTER_AUTH_URL`.
+
+### 2. Lancer la pile
+
+```bash
+docker compose up --build
+```
+
+Ordre de démarrage : `db` (attend `pg_isready`) → `migrate` (exécute `prisma migrate deploy` avec les migrations du dépôt, puis s'arrête) → `app`.
+
+L'application est accessible à l'adresse `http://localhost:3000`
+
+### 3. Arrêter et réinitialiser
+
+```bash
+docker compose down        # arrête les conteneurs, conserve la base de données
+docker compose down -v     # arrête et supprime aussi la base de données (volume db-data)
+```
 
 ## Troubleshooting
 
-A noter qu'il faut bien veilier à ce que le port 3000 ne soit pas déjà utilisé par une autre application. Aussi prenez soin de vérifier que vous aillez bien les droits pour accéder à l'image Docker dans la registry.
+A noter qu'il faut bien veiller à ce que les ports 3000 et 5432 ne soient pas déjà utilisés par une autre application (sinon définir `APP_PORT` / `DB_PORT` dans `.env`). Après modification du code, relancer `docker compose up --build` pour reconstruire l'image.

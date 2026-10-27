@@ -11,6 +11,8 @@ export default function AutoFormDate({
   fieldConfigItem,
   fieldProps,
 }: AutoFormInputComponentProps) {
+  // DatePicker forwards its ref to the popover content, not a focusable input.
+  const { ref: _ref, ...pickerProps } = fieldProps;
   return (
     <FormItem>
       <AutoFormLabel label={label} isRequired={isRequired} />
@@ -18,7 +20,7 @@ export default function AutoFormDate({
         <DatePicker
           date={field.value}
           setDate={field.onChange}
-          {...fieldProps}
+          {...pickerProps}
         />
       </FormControl>
       <AutoFormTooltip fieldConfigItem={fieldConfigItem} />

@@ -30,7 +30,8 @@ export function useAttributeSubmit<TInput extends AttributeInput>({
 }) {
   const [isLoading, setIsLoading] = useState(false);
 
-  async function handleSubmit(data: TInput) {
+  // Returns the action result so AutoForm keeps the typed values on rejection.
+  async function handleSubmit(data: TInput): Promise<SafeActionResult> {
     setIsLoading(true);
     if (suggest) {
       const suggested = await createSuggestion({
@@ -51,7 +52,7 @@ export function useAttributeSubmit<TInput extends AttributeInput>({
         toast.info("Votre suggestion a été envoyée");
       }
       setIsLoading(false);
-      return;
+      return suggested;
     }
 
     const result = await createAction(data);
@@ -63,7 +64,7 @@ export function useAttributeSubmit<TInput extends AttributeInput>({
         toast.error(labels.authError);
       }
       setIsLoading(false);
-      return;
+      return result;
     }
 
     toast.success(labels.created, {
@@ -76,6 +77,7 @@ export function useAttributeSubmit<TInput extends AttributeInput>({
       },
     });
     setIsLoading(false);
+    return result;
   }
 
   return { isLoading, handleSubmit };

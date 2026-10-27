@@ -1,6 +1,6 @@
 "use client";
 import { Form } from "@/components/ui/form";
-import React from "react";
+import React, { useRef } from "react";
 import { DefaultValues, useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import AutoFormObject from "./fields/object";
+import { isSuccess } from "./submit-result";
 import { Dependency, FieldConfig } from "./types";
 import {
   ZodObjectOrWrapped,
@@ -47,7 +48,8 @@ function AutoForm<SchemaType extends ZodObjectOrWrapped>({
   values?: Partial<z.infer<SchemaType>>;
   onValuesChange?: (values: Partial<z.infer<SchemaType>>) => void;
   onParsedValuesChange?: (values: Partial<z.infer<SchemaType>>) => void;
-  onSubmit?: (values: z.infer<SchemaType>) => void;
+  /** Resolve (or return) a failed action result, or throw, to keep the typed values. */
+  onSubmit?: (values: z.infer<SchemaType>) => void | Promise<unknown>;
   fieldConfig?: FieldConfig<any>;
   children?: React.ReactNode;
   className?: string;
@@ -66,11 +68,23 @@ function AutoForm<SchemaType extends ZodObjectOrWrapped>({
     values: valuesProp as any,
   });
 
-  function onSubmit(values: Record<string, any>) {
+  const isSubmitting = useRef(false);
+
+  async function onSubmit(values: Record<string, any>) {
     const parsedValues = formSchema.safeParse(values);
-    if (parsedValues.success) {
-      onSubmitProp?.(parsedValues.data as z.infer<SchemaType>);
-      form.reset();
+    if (!parsedValues.success || isSubmitting.current) {
+      return;
+    }
+    isSubmitting.current = true;
+    try {
+      const result = await onSubmitProp?.(
+        parsedValues.data as z.infer<SchemaType>,
+      );
+      if (isSuccess(result)) {
+        form.reset();
+      }
+    } finally {
+      isSubmitting.current = false;
     }
   }
 
@@ -79,7 +93,14 @@ function AutoForm<SchemaType extends ZodObjectOrWrapped>({
       <Form {...(form as any)}>
         <form
           noValidate
-          onSubmit={form.handleSubmit(onSubmit)}
+          onSubmit={(event) => {
+            // A second click while the handler is pending must not call it again.
+            if (isSubmitting.current) {
+              event.preventDefault();
+              return;
+            }
+            return form.handleSubmit(onSubmit)(event);
+          }}
           onChange={() => {
             const values = form.getValues();
             onValuesChangeProp?.(values as Partial<z.infer<SchemaType>>);

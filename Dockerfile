@@ -44,6 +44,17 @@ ENV DATABASE_URL=$DATABASE_URL \
 RUN corepack enable pnpm && pnpm prisma generate
 RUN corepack enable pnpm && pnpm run build
 
+# One-shot migration image (used by docker compose): the Prisma CLI plus the
+# committed migrations only. Not the default target, so a plain
+# `docker build .` still produces the runner image below.
+FROM base AS migrator
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY package.json prisma.config.ts ./
+COPY prisma ./prisma
+# DATABASE_URL is provided at runtime (see docker-compose.yml).
+CMD ["node_modules/.bin/prisma", "migrate", "deploy"]
+
 # Production image, copy all the files and run next
 FROM base AS runner
 WORKDIR /app

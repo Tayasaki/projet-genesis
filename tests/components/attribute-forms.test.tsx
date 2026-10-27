@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -128,5 +128,59 @@ describe("attribute forms: required name", () => {
       0,
     );
     expect(h.createScenario).not.toHaveBeenCalled();
+  });
+});
+
+describe("attribute forms: a rejected action keeps the typed values", () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it.each(attributeForms)(
+    "%s keeps the typed name after a serverError and clears it after success",
+    async (_name, Form) => {
+      const user = userEvent.setup();
+      render(<Form suggest={false} />);
+      const name = screen.getAllByRole("textbox")[0];
+
+      h.create.mockResolvedValueOnce({ serverError: "Nom déjà utilisé" });
+      await user.type(name, "Loyal");
+      await user.click(screen.getByRole("button", { name: /créer/i }));
+      await waitFor(() => expect(h.create).toHaveBeenCalledTimes(1));
+      await new Promise((r) => setTimeout(r, 50));
+      expect(name).toHaveValue("Loyal");
+
+      h.create.mockResolvedValueOnce(undefined);
+      await user.click(screen.getByRole("button", { name: /créer/i }));
+      await waitFor(() => expect(h.create).toHaveBeenCalledTimes(2));
+      await waitFor(() => expect(name).toHaveValue(""));
+    },
+  );
+
+  it("AlignementForm keeps the typed name when the suggestion is rejected", async () => {
+    const user = userEvent.setup();
+    render(<AlignementForm suggest />);
+    const name = screen.getAllByRole("textbox")[0];
+
+    h.createSuggestion.mockResolvedValueOnce({ serverError: "Trop" });
+    await user.type(name, "Loyal");
+    await user.click(screen.getByRole("button", { name: /.+/i }));
+    await waitFor(() => expect(h.createSuggestion).toHaveBeenCalledTimes(1));
+    await new Promise((r) => setTimeout(r, 50));
+
+    expect(name).toHaveValue("Loyal");
+  });
+
+  it("ScenarioForm keeps the typed values after validationErrors", async () => {
+    const user = userEvent.setup();
+    render(<ScenarioForm />);
+    const [name] = screen.getAllByRole("textbox");
+
+    h.createScenario.mockResolvedValueOnce({ validationErrors: {} });
+    await user.type(name, "Mon scénario");
+    await user.type(screen.getAllByRole("textbox")[1], "Univers");
+    await user.click(screen.getByRole("button", { name: /créer/i }));
+    await waitFor(() => expect(h.createScenario).toHaveBeenCalledTimes(1));
+    await new Promise((r) => setTimeout(r, 50));
+
+    expect(name).toHaveValue("Mon scénario");
   });
 });
