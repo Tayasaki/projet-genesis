@@ -3,7 +3,7 @@ type: reference
 status: active
 created: 2026-10-27
 last_updated: 2026-10-27
-review_trigger: "Any change to lib/safe-action.ts, the Role enum, an ownership relation in prisma/schema.prisma, or a server action / page that reads or writes user data; or when issues #21, #25, #27, #30 close."
+review_trigger: "Any change to lib/safe-action.ts, the Role enum, an ownership relation in prisma/schema.prisma, or a server action / page that reads or writes user data; or when issues #27, #30, #40 close."
 ---
 
 # Authorization model
@@ -36,7 +36,7 @@ Neither client scopes data to an owner. Every handler that touches user-owned ro
 | `Weapon` | `Weapon.userId` | `where: { id, userId }` |
 | `Character` | none directly; owned transitively through its scenarios (many-to-many `Character.scenario`) | `scenario: { some: { userId } }` |
 | Reference data (Temperment, Alignment, Fortune, Strength, Weakness, CharacterSkill, WeaponSkill, Ammo, Damage, Range, Weight) | global, not user-owned | none; writes are staff-only via `authorizedAction` |
-| `Suggestion` | global | see known gaps |
+| `Suggestion` | global; no author column | creation is login-only; deletion and the listing page are staff-only (see known gaps, #40) |
 
 Caveats on Character ownership:
 
@@ -46,20 +46,20 @@ Caveats on Character ownership:
 
 ## 4. Page-level pattern
 
-Pages under `app/` (except `/suggestions`, which has no check) call `getAuthSession()` and then:
+Pages under `app/` call `getAuthSession()` and then:
 
 1. No session: `redirect("/login")` (`app/login/page.tsx` does the inverse and redirects authenticated users to `/`).
 2. Owner-scoped lookup using the same predicates as section 3.
 3. Not found or not owned: `notFound()`. Using `notFound()` rather than a distinct "forbidden" avoids revealing that the id exists.
 
-Staff-only UI (`app/manage/page.tsx`) additionally loads the user and checks the role.
+Staff-only pages (`app/manage/page.tsx`, `app/suggestions/page.tsx`) additionally load the user and check the role. `app/suggestions/page.tsx` redirects anonymous callers to `/login` and calls `notFound()` for non-staff.
 
 ## 5. Writing a new action safely (checklist)
 
 1. Choose the client: global reference data goes through `authorizedAction`; per-user data through `authenticatedAction`.
 2. Define a zod `.schema(...)` for every input; never trust ids from the client.
 3. For every row you read, update or delete, put the ownership predicate in the Prisma `where` (preferably a single `update`/`delete`/`deleteMany` carrying the predicate; `updateScenarioCharacter` is a read-then-write exception where the ownership check precedes the write for the same owner).
-4. For every client-supplied id you `connect` to that points at a user-owned row (weapon ids, scenario ids), verify the caller owns it first; connecting an unverified id is an authorization bypass (open: #21). Reference data (skills, strengths, etc.) is connected by name to global rows and needs no ownership check.
+4. For every client-supplied id you `connect` to that points at a user-owned row (weapon ids, scenario ids), verify the caller owns it first; connecting an unverified id is an authorization bypass. `createCharacter` and `updateCharacter` do this through the file-private `assertOwnedWeapons` helper in `src/actions/character/character.action.ts` (one `weapon.count` with `{ id: { in }, userId }`; the same error for missing and foreign ids). Reference data (skills, strengths, etc.) is connected by name to global rows and needs no ownership check.
 5. Take the owner from `ctx.userId`, never from input.
 6. Call `revalidatePath` for affected routes.
 7. Add tests (section 6): an owner success case, an attacker rejection case, and the unauthenticated case.
@@ -68,6 +68,7 @@ Staff-only UI (`app/manage/page.tsx`) additionally loads the user and checks the
 
 - `tests/security/actions-ownership.test.ts` and `tests/security/pages-ownership.test.tsx`: exercise the real action clients and pages against an in-memory Prisma fake (`tests/security/ownership-fake.ts`) for owner, attacker and anonymous callers.
 - `tests/security/metadata-ownership.test.tsx`: `generateMetadata` titles for owner, non-owner and anonymous callers.
+- `tests/security/suggestions-authz.test.tsx`: `deleteSuggestion` staff gate and the `app/suggestions/page.tsx` anonymous / non-staff / staff paths.
 - `tests/actions/*.test.ts`: per-action behaviour and validation. They replace `@/lib/safe-action` with `createSafeActionMock()` and a Prisma spy from `createPrismaMock()` in `tests/helpers/action-mocks.ts` (fixed `TEST_USER_ID`); auth and ownership are deliberately not covered there.
 - Run with `pnpm test`.
 
@@ -80,14 +81,15 @@ Staff-only UI (`app/manage/page.tsx`) additionally loads the user and checks the
 | `createScenario` | authenticated | sets `userId` from ctx |
 | `updateScenarioCharacter` | authenticated | character via `scenario: { some: { userId } }`; scenario via `{ id, userId }` |
 | `deleteScenario` | authenticated | `deleteMany` with `{ id, userId }` |
-| `createCharacter` | authenticated | scenario checked with `{ id, userId }` when `scenarioId` given; client-supplied weapon ids not checked (#21) |
-| `updateCharacter` | authenticated | `scenario: { some: { userId } }`; client-supplied weapon ids not checked (#21) |
+| `createCharacter` | authenticated | scenario checked with `{ id, userId }` when `scenarioId` given; client-supplied weapon ids verified with `assertOwnedWeapons` (`userId`) before connect |
+| `updateCharacter` | authenticated | `scenario: { some: { userId } }`; client-supplied weapon ids verified with `assertOwnedWeapons` (`userId`) before `set` |
 | `deleteCharacter` | authenticated | `scenario: { some: { userId } }` |
 | `generateCharacter` | authenticated | none (no data access); no rate limit or input cap (#27) |
 | `createWeapon` | authenticated | sets owner from ctx; `ammo`/`weight`/`range`/`damage`/skills connected by name (reference data) |
 | `deleteWeapon` | authenticated | `{ id, userId }` |
 | `deleteAccount` | authenticated | everything keyed on ctx `userId`; input `sessionId` must equal it |
-| `createSuggestion`, `deleteSuggestion` | authenticated | none; suggestions are global, so any logged-in user can delete any suggestion (#25) |
+| `createSuggestion` | authenticated | none; suggestions are global and have no author; no rate limit (#40) |
+| `deleteSuggestion` | authorized | global data; staff-only |
 | `create*`/`delete*` for Temperment, Alignment, Fortune, Strength, Weakness, CharacterSkill (`src/actions/character/*`) | authorized | global reference data |
 | `create*`/`delete*` for Ammo, Damage, Range, Weight, WeaponSkill (`src/actions/weapon/*`) | authorized | global reference data |
 
@@ -107,13 +109,12 @@ Staff-only UI (`app/manage/page.tsx`) additionally loads the user and checks the
 | `app/[scenarioId]/characters/@modal/(...)characters/[characterId]/page.tsx` | login required | Character predicate, `notFound()` |
 | `app/[scenarioId]/character-generation/page.tsx` | login required | does not verify `scenarioId` ownership on render; `createCharacter` verifies it on submit; weapons by `userId` |
 | `app/manage/page.tsx` | login required; role read for UI | weapons by `userId`; mutations enforced by the action clients |
-| `app/suggestions/page.tsx` | none in the page itself | global data; destructive actions are the gap in #25 |
+| `app/suggestions/page.tsx` | login required (redirect to `/login`); role read, non-staff get `notFound()` | global data; staff-only listing |
 | `app/tos/page.tsx`, `app/privacy-policy/page.tsx` | login required (redirect) | n/a |
 | `app/[scenarioId]/characters/layout.tsx` | none in the layout itself (the pages it wraps redirect); `generateMetadata` looks up the scenario with `{ id, userId }` when a session exists and falls back to the generic title "Projet Genesis" otherwise or for non-owners; wraps `/[scenarioId]/characters` and its `@modal` route | scenario by `{ id, userId }` (metadata only) |
 
 ## 8. Known gaps (open issues, not fixed by this document)
 
-- #21: `createCharacter`/`updateCharacter` connect client-supplied weapon ids (`weaponSet`) without ownership checks.
-- #25: suggestion create/delete use `authenticatedAction`.
+- #40: `Suggestion` has no author (`userId`) and `createSuggestion` has no rate limit (remainder of #25; deletion and the listing page are now staff-only).
 - #27: `generateCharacter` has no rate limit or input cap.
 - #30: `Character` has no owner column; zero-scenario characters are orphaned.
