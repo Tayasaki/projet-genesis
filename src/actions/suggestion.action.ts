@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { authenticatedAction } from "@/lib/safe-action";
+import { authenticatedAction, authorizedAction } from "@/lib/safe-action";
 import { SuggestionType } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
@@ -37,7 +37,7 @@ export const createSuggestion = authenticatedAction
     revalidatePath("/suggestions");
   });
 
-export const deleteSuggestion = authenticatedAction
+export const deleteSuggestion = authorizedAction
   .schema(suggestionSchema.pick({ name: true }))
   .action(async ({ parsedInput }) => {
     await prisma.suggestion.delete({
