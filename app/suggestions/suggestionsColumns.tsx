@@ -18,6 +18,44 @@ import { Suggestion } from "@/src/query/suggestion.query";
 import { ColumnDef } from "@tanstack/react-table";
 import { toast } from "sonner";
 
+type ActionResult = { serverError?: unknown; validationErrors?: unknown };
+
+const hasActionError = (result: ActionResult | undefined) =>
+  !!result?.serverError || !!result?.validationErrors;
+
+/** Creates the catalog entry for a suggestion; the caller checks the result. */
+function createCatalogEntry({
+  type,
+  name,
+  description,
+}: Suggestion): Promise<ActionResult | undefined> {
+  const withDescription = { name, description: description ?? undefined };
+  switch (type) {
+    case "Alignment":
+      return createAlignment(withDescription);
+    case "Ammo":
+      return createAmmo({ name });
+    case "CharacterSkill":
+      return createCharacterSkill({ name });
+    case "Damage":
+      return createDamage({ name });
+    case "Fortune":
+      return createFortune(withDescription);
+    case "Range":
+      return createRange({ name });
+    case "Strength":
+      return createStrength({ name });
+    case "Temperment":
+      return createTemperment(withDescription);
+    case "Weakness":
+      return createWeakness({ name });
+    case "WeaponSkill":
+      return createWeaponSkill({ name });
+    case "Weight":
+      return createWeight({ name });
+  }
+}
+
 export const columns: ColumnDef<Suggestion>[] = [
   {
     accessorKey: "type",
@@ -38,63 +76,22 @@ export const columns: ColumnDef<Suggestion>[] = [
       return (
         <div className="flex items-center space-x-2">
           <Button
-            onClick={() => {
+            onClick={async () => {
               try {
-                switch (row.original.type) {
-                  case "Alignment":
-                    createAlignment({
-                      name: row.original.name,
-                      description: row.original.description as
-                        | string
-                        | undefined,
-                    });
-                    break;
-                  case "Ammo":
-                    createAmmo({
-                      name: row.original.name,
-                    });
-                    break;
-                  case "CharacterSkill":
-                    createCharacterSkill({ name: row.original.name });
-                    break;
-                  case "Damage":
-                    createDamage({ name: row.original.name });
-                    break;
-                  case "Fortune":
-                    createFortune({
-                      name: row.original.name,
-                      description: row.original.description as
-                        | string
-                        | undefined,
-                    });
-                    break;
-                  case "Range":
-                    createRange({ name: row.original.name });
-                    break;
-                  case "Strength":
-                    createStrength({ name: row.original.name });
-                    break;
-                  case "Temperment":
-                    createTemperment({
-                      name: row.original.name,
-                      description: row.original.description as
-                        | string
-                        | undefined,
-                    });
-                    break;
-                  case "Weakness":
-                    createWeakness({ name: row.original.name });
-                    break;
-                  case "WeaponSkill":
-                    createWeaponSkill({ name: row.original.name });
-                    break;
-                  case "Weight":
-                    createWeight({ name: row.original.name });
-                    break;
+                const created = await createCatalogEntry(row.original);
+                if (hasActionError(created)) {
+                  toast.error("Erreur lors de la création");
+                  return;
                 }
-                deleteSuggestion({ name: row.original.name });
+                const deleted = await deleteSuggestion({
+                  name: row.original.name,
+                });
+                if (hasActionError(deleted)) {
+                  toast.error("Créé, mais la suggestion n'a pas été supprimée");
+                  return;
+                }
                 toast.success("Suggestion acceptée");
-              } catch (error) {
+              } catch {
                 toast.error("Erreur inconnu");
               }
             }}
