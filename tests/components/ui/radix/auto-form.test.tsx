@@ -229,7 +229,7 @@ describe("AutoForm", () => {
       expect(await screen.findByRole("combobox")).toBeInTheDocument();
     });
 
-    it("unwraps a refined object schema and still renders typed fields", () => {
+    it("keeps detecting field kinds on a refined object schema", () => {
       setup(
         z
           .object({ a: z.number(), b: z.enum(["x", "y"]) })
@@ -238,6 +238,54 @@ describe("AutoForm", () => {
 
       expect(screen.getByRole("spinbutton")).toBeInTheDocument();
       expect(screen.getByRole("combobox")).toBeInTheDocument();
+    });
+
+    it("renders the element fields of an optional array of objects", async () => {
+      const user = userEvent.setup();
+      setup(
+        z.object({
+          tags: z
+            .array(z.object({ name: z.enum(["a", "b"]).optional() }))
+            .describe("Tags")
+            .optional(),
+        }),
+      );
+
+      await user.click(screen.getByRole("button", { name: /tags/i }));
+      await user.click(screen.getByRole("button", { name: /add/i }));
+      expect(await screen.findByRole("combobox")).toBeInTheDocument();
+    });
+
+    it("renders typed fields for an object schema piped through transform()", () => {
+      setup(
+        z
+          .object({ a: z.number(), b: z.enum(["x", "y"]) })
+          .transform((v) => ({ ...v, sum: v.a })) as never,
+      );
+
+      expect(screen.getByRole("spinbutton")).toBeInTheDocument();
+      expect(screen.getByRole("combobox")).toBeInTheDocument();
+    });
+
+    it("applies maxlength and drops required for a nullable string", () => {
+      setup(z.object({ code: z.string().min(2).max(5).nullable() }));
+
+      const input = screen.getByLabelText(/code/i);
+      expect(input).toHaveAttribute("minlength", "2");
+      expect(input).toHaveAttribute("maxlength", "5");
+      expect(input).not.toBeRequired();
+    });
+
+    it("prefills defaults declared inside a nested object", async () => {
+      const user = userEvent.setup();
+      setup(
+        z.object({
+          stats: z.object({ level: z.number().default(3) }),
+        }),
+      );
+
+      await user.click(screen.getByRole("button", { name: /stats/i }));
+      expect(await screen.findByRole("spinbutton")).toHaveValue(3);
     });
 
     it("renders the weapon-form schema shape with typed fields", () => {
