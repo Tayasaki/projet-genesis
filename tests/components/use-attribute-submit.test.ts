@@ -136,3 +136,32 @@ describe("useAttributeSubmit", () => {
     expect(result.current.isLoading).toBe(false);
   });
 });
+
+describe("useAttributeSubmit: return value drives AutoForm reset", () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it("returns the create action result on failure", async () => {
+    const failure = { serverError: "boom" };
+    const { result } = setup(false, failure);
+
+    let returned: unknown;
+    await act(async () => {
+      returned = await result.current.handleSubmit(input);
+    });
+
+    expect(returned).toBe(failure);
+  });
+
+  it("returns the suggestion result on the suggest path", async () => {
+    const failure = { serverError: "Trop" };
+    vi.mocked(createSuggestion).mockResolvedValueOnce(failure as never);
+    const { result } = setup(true);
+
+    let returned: unknown;
+    await act(async () => {
+      returned = await result.current.handleSubmit(input);
+    });
+
+    expect(returned).toBe(failure);
+  });
+});

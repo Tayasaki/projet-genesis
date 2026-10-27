@@ -449,3 +449,302 @@ describe("AutoForm", () => {
     });
   });
 });
+
+describe("AutoForm: accessibility of a blocked submit", () => {
+  const a11ySchema = z.object({
+    title: z.string().min(5, "Title too short"),
+    role: z.enum(["warrior", "mage"], "Veuillez choisir une valeur"),
+  });
+
+  function renderA11y(schemaToUse: z.ZodObject<z.ZodRawShape> = a11ySchema) {
+    render(
+      <AutoForm formSchema={schemaToUse} onSubmit={vi.fn()}>
+        <AutoFormSubmit isLoading={false}>Save</AutoFormSubmit>
+      </AutoForm>,
+    );
+  }
+
+  it("moves focus to the first invalid text field", async () => {
+    const user = userEvent.setup();
+    renderA11y();
+
+    await user.type(screen.getByLabelText(/title/i), "abc");
+    await user.click(screen.getByRole("button", { name: "Save" }));
+    await screen.findByText("Title too short");
+
+    await waitFor(() => expect(screen.getByLabelText(/title/i)).toHaveFocus());
+  });
+
+  it("moves focus to the first invalid number field", async () => {
+    const user = userEvent.setup();
+    renderA11y(
+      z.object({
+        age: z.number({ error: "Nombre requis" }),
+        bio: z.string().min(3, "Bio too short"),
+      }),
+    );
+
+    await user.click(screen.getByRole("button", { name: "Save" }));
+    await screen.findByText("Nombre requis");
+
+    await waitFor(() => expect(screen.getByRole("spinbutton")).toHaveFocus());
+  });
+
+  it("moves focus to the select trigger when it is the first invalid field", async () => {
+    const user = userEvent.setup();
+    renderA11y(
+      z.object({
+        role: z.enum(["warrior", "mage"], "Veuillez choisir une valeur"),
+        title: z.string().min(5, "Title too short"),
+      }),
+    );
+
+    await user.click(screen.getByRole("button", { name: "Save" }));
+    await screen.findByText("Veuillez choisir une valeur");
+
+    await waitFor(() => expect(screen.getByRole("combobox")).toHaveFocus());
+  });
+
+  it("skips valid fields and focuses the first invalid one", async () => {
+    const user = userEvent.setup();
+    renderA11y();
+
+    await user.type(screen.getByLabelText(/title/i), "long enough");
+    await user.click(screen.getByRole("button", { name: "Save" }));
+    await screen.findByText("Veuillez choisir une valeur");
+
+    await waitFor(() => expect(screen.getByRole("combobox")).toHaveFocus());
+  });
+
+  it("announces each error through exactly one role=alert element", async () => {
+    const user = userEvent.setup();
+    renderA11y();
+
+    await user.type(screen.getByLabelText(/title/i), "abc");
+    await user.click(screen.getByRole("button", { name: "Save" }));
+    await screen.findAllByRole("alert");
+
+    expect(screen.getAllByRole("alert").map((a) => a.textContent)).toEqual([
+      "Title too short",
+      "Veuillez choisir une valeur",
+    ]);
+  });
+
+  it("focuses the first radio of an invalid radio group", async () => {
+    const user = userEvent.setup();
+    render(
+      <AutoForm
+        formSchema={z.object({
+          mount: z.enum(["horse", "wolf"], "Veuillez choisir une valeur"),
+        })}
+        fieldConfig={{ mount: { fieldType: "radio" } }}
+      >
+        <AutoFormSubmit isLoading={false}>Save</AutoFormSubmit>
+      </AutoForm>,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Save" }));
+    await screen.findByText("Veuillez choisir une valeur");
+
+    await waitFor(() => expect(screen.getAllByRole("radio")[0]).toHaveFocus());
+  });
+
+  it("associates the label with the select trigger", () => {
+    renderA11y();
+
+    expect(screen.getByLabelText(/role/i)).toBe(screen.getByRole("combobox"));
+  });
+
+  it("reports a blocked date field without opening the calendar", async () => {
+    const user = userEvent.setup();
+    render(
+      <AutoForm
+        formSchema={z.object({ when: z.date({ error: "Date requise" }) })}
+      >
+        <AutoFormSubmit isLoading={false}>Save</AutoFormSubmit>
+      </AutoForm>,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Save" }));
+    await screen.findByText("Date requise");
+
+    // Not observable in jsdom: DatePicker ignores every fieldProps entry but
+    // the ref, which would only land on the unmounted popover content.
+    expect(screen.queryByRole("grid")).not.toBeInTheDocument();
+  });
+
+  it("renders no alert while the form is valid", () => {
+    renderA11y();
+
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+  });
+
+  it("flags the invalid select trigger and points it at its error message", async () => {
+    const user = userEvent.setup();
+    renderA11y();
+
+    const trigger = screen.getByRole("combobox");
+    expect(trigger).toHaveAttribute("aria-invalid", "false");
+
+    await user.click(screen.getByRole("button", { name: "Save" }));
+    const message = await screen.findByText("Veuillez choisir une valeur");
+
+    expect(trigger).toHaveAttribute("aria-invalid", "true");
+    expect(message.id).not.toBe("");
+    expect(trigger.getAttribute("aria-describedby")).toContain(message.id);
+  });
+
+  it("flags the invalid text input and points it at its error message", async () => {
+    const user = userEvent.setup();
+    renderA11y();
+
+    await user.type(screen.getByLabelText(/title/i), "abc");
+    await user.click(screen.getByRole("button", { name: "Save" }));
+    const message = await screen.findByText("Title too short");
+
+    const input = screen.getByLabelText(/title/i);
+    expect(input).toHaveAttribute("aria-invalid", "true");
+    expect(input.getAttribute("aria-describedby")).toContain(message.id);
+  });
+});
+
+describe("AutoForm: reset only after a successful submit", () => {
+  const titleSchema = z.object({ title: z.string().min(1) });
+
+  async function fillAndSubmit(
+    onSubmit: (v: { title: string }) => void | Promise<unknown>,
+  ) {
+    const user = userEvent.setup();
+    render(
+      <AutoForm formSchema={titleSchema} onSubmit={onSubmit}>
+        <AutoFormSubmit isLoading={false}>Save</AutoFormSubmit>
+      </AutoForm>,
+    );
+    await user.type(screen.getByLabelText(/title/i), "Hello");
+    await user.click(screen.getByRole("button", { name: "Save" }));
+    return user;
+  }
+
+  async function settle() {
+    await new Promise((r) => setTimeout(r, 50));
+  }
+
+  it.each([
+    ["a serverError", { serverError: "Nom déjà utilisé" }],
+    ["validationErrors", { validationErrors: { title: ["bad"] } }],
+  ])("keeps the typed values when the action returns %s", async (_, result) => {
+    const onSubmit = vi.fn().mockResolvedValue(result);
+
+    await fillAndSubmit(onSubmit);
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await settle();
+
+    expect(screen.getByLabelText(/title/i)).toHaveValue("Hello");
+  });
+
+  it("keeps the typed values when the handler throws", async () => {
+    const onSubmit = vi.fn().mockRejectedValue(new Error("boom"));
+    const unhandled = vi.fn();
+    process.on("unhandledRejection", unhandled);
+
+    await fillAndSubmit(onSubmit);
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await settle();
+    process.off("unhandledRejection", unhandled);
+
+    expect(screen.getByLabelText(/title/i)).toHaveValue("Hello");
+  });
+
+  it.each([
+    ["an action result without errors", { data: { id: 1 } }],
+    ["an empty action result", {}],
+    ["undefined", undefined],
+  ])(
+    "resets the fields when the action resolves with %s",
+    async (_, result) => {
+      const onSubmit = vi.fn().mockResolvedValue(result);
+
+      await fillAndSubmit(onSubmit);
+
+      await waitFor(() =>
+        expect(screen.getByLabelText(/title/i)).toHaveValue(""),
+      );
+    },
+  );
+
+  it("resets the fields after a synchronous void handler", async () => {
+    await fillAndSubmit(() => {});
+
+    await waitFor(() =>
+      expect(screen.getByLabelText(/title/i)).toHaveValue(""),
+    );
+  });
+
+  it("awaits an async handler: no reset until it resolves", async () => {
+    let resolve!: (v: unknown) => void;
+    const onSubmit = vi.fn(() => new Promise((r) => (resolve = r)));
+
+    await fillAndSubmit(onSubmit);
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await settle();
+    expect(screen.getByLabelText(/title/i)).toHaveValue("Hello");
+
+    resolve(undefined);
+
+    await waitFor(() =>
+      expect(screen.getByLabelText(/title/i)).toHaveValue(""),
+    );
+  });
+
+  it("calls the handler once on a double submit while it is pending", async () => {
+    let resolve!: (v: unknown) => void;
+    const onSubmit = vi.fn(() => new Promise((r) => (resolve = r)));
+
+    const user = await fillAndSubmit(onSubmit);
+    await user.click(screen.getByRole("button", { name: "Save" }));
+    await settle();
+
+    expect(onSubmit).toHaveBeenCalledTimes(1);
+    resolve(undefined);
+    await waitFor(() =>
+      expect(screen.getByLabelText(/title/i)).toHaveValue(""),
+    );
+  });
+
+  it("releases the in-flight guard when the handler throws, so a retry runs", async () => {
+    const onSubmit = vi
+      .fn()
+      .mockRejectedValueOnce(new Error("boom"))
+      .mockResolvedValueOnce({ data: {} });
+    const swallow = () => {};
+    process.on("unhandledRejection", swallow);
+
+    const user = await fillAndSubmit(onSubmit);
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await settle();
+    await user.click(screen.getByRole("button", { name: "Save" }));
+
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(2));
+    process.off("unhandledRejection", swallow);
+    await waitFor(() =>
+      expect(screen.getByLabelText(/title/i)).toHaveValue(""),
+    );
+  });
+
+  it("accepts a retry after a rejected submit", async () => {
+    const onSubmit = vi
+      .fn()
+      .mockResolvedValueOnce({ serverError: "x" })
+      .mockResolvedValueOnce({ data: {} });
+
+    const user = await fillAndSubmit(onSubmit);
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await settle();
+    await user.click(screen.getByRole("button", { name: "Save" }));
+
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(2));
+    await waitFor(() =>
+      expect(screen.getByLabelText(/title/i)).toHaveValue(""),
+    );
+  });
+});
