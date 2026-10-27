@@ -2,6 +2,7 @@
 
 import { DeleteDialog } from "@/components/features/layout/DeleteDialog";
 import { Button } from "@/components/ui/button";
+import { type ActionErrorFields, hasActionError } from "@/lib/action-result";
 import { createAlignment } from "@/src/actions/character/alignment.action";
 import { createCharacterSkill } from "@/src/actions/character/characterSkill.action";
 import { createFortune } from "@/src/actions/character/fortune.action";
@@ -19,17 +20,12 @@ import { ColumnDef } from "@tanstack/react-table";
 import { useState } from "react";
 import { toast } from "sonner";
 
-type ActionResult = { serverError?: unknown; validationErrors?: unknown };
-
-const hasActionError = (result: ActionResult | undefined) =>
-  !!result?.serverError || !!result?.validationErrors;
-
 /** Creates the catalog entry for a suggestion; the caller checks the result. */
 function createCatalogEntry({
   type,
   name,
   description,
-}: Suggestion): Promise<ActionResult | undefined> {
+}: Suggestion): Promise<ActionErrorFields | undefined> {
   const withDescription = { name, description: description ?? undefined };
   switch (type) {
     case "Alignment":

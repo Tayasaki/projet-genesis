@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DialogClose, DialogFooter } from "@/components/ui/dialog";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { hasActionError } from "@/lib/action-result";
 import { cn } from "@/lib/utils";
 import { updateScenarioCharacter } from "@/src/actions/scenario.action";
 import { Character } from "@prisma/client";
@@ -45,7 +46,7 @@ export const ImportCharacter = ({
         scenarioId: scenarioId,
         characterId: character.id,
       });
-      if (value?.validationErrors || value?.serverError) {
+      if (hasActionError(value)) {
         toast.error("Une erreur est survenue");
       } else {
         toast.success(`${character.name} a été importé avec succès 🧙`);
