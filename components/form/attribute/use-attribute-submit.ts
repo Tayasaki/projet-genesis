@@ -12,11 +12,8 @@ type SafeActionResult = {
   serverError?: unknown;
 } | void;
 
-// Shared "suggest vs create, then toast + undo-delete" submit logic behind
-// the 11 attribute forms (alignment, temperment, fortune, strength,
-// weakness, characterSkill, ammo, damage, range, weaponSkill, weight).
-// Each form keeps its own schema/fieldConfig/copy — only this logic,
-// which was byte-for-byte identical across all 11, is shared.
+// "Suggest vs create, then toast + undo-delete" submit logic shared by the
+// attribute forms. Each form owns its schema, fieldConfig and copy.
 export function useAttributeSubmit<TInput extends AttributeInput>({
   suggest,
   suggestionType,

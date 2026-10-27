@@ -12,9 +12,7 @@ import { ArrowUpDown } from "lucide-react";
 import { toast } from "sonner";
 import { CharacterAttributes } from "./page";
 
-// One entry per row (label + delete action) instead of a switch duplicated
-// across both the label cell and the delete handler — adding a new
-// attribute type is now a single new entry here.
+// One entry per attribute type, holding both its row label and delete action.
 const WEAPON_ATTRIBUTE_CONFIG: Record<
   string,
   {

@@ -7,11 +7,9 @@ type NameAttributeDelegate = {
   delete: (args: { where: { name: string } }) => Promise<unknown>;
 };
 
-// Shared body for the 11 "name (+ optional description)" reference-table
-// entities (alignment, temperment, fortune, strength, weakness,
-// characterSkill, ammo, damage, range, weaponSkill, weight). Each entity's
-// `*.action.ts` file still declares its own authorizedAction/schema pair —
-// this only removes the duplicated Prisma call + revalidatePath body.
+// Prisma call + revalidation for "name (+ optional description)" reference
+// tables. Auth-agnostic: callers must wrap these in authorizedAction (each
+// entity's `*.action.ts` owns its schema and auth).
 export async function createNameAttribute(
   delegate: NameAttributeDelegate,
   input: NameAttributeInput,
