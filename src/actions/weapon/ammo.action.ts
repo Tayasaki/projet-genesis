@@ -2,8 +2,8 @@
 
 import { prisma } from "@/lib/prisma";
 import { authorizedAction } from "@/lib/safe-action";
-import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { createNameAttribute, deleteNameAttribute } from "../attribute-crud";
 
 const ammoSchema = z.object({
   name: z.string().min(1).max(50),
@@ -11,22 +11,12 @@ const ammoSchema = z.object({
 
 export const createAmmo = authorizedAction
   .schema(ammoSchema)
-  .action(async ({ parsedInput }) => {
-    await prisma.ammo.create({
-      data: {
-        name: parsedInput.name,
-      },
-    });
-    revalidatePath("/manage");
-  });
+  .action(async ({ parsedInput }) =>
+    createNameAttribute(prisma.ammo, parsedInput),
+  );
 
 export const deleteAmmo = authorizedAction
   .schema(ammoSchema)
-  .action(async ({ parsedInput }) => {
-    await prisma.ammo.delete({
-      where: {
-        name: parsedInput.name,
-      },
-    });
-    revalidatePath("/manage");
-  });
+  .action(async ({ parsedInput }) =>
+    deleteNameAttribute(prisma.ammo, parsedInput.name),
+  );

@@ -2,8 +2,8 @@
 
 import { prisma } from "@/lib/prisma";
 import { authorizedAction } from "@/lib/safe-action";
-import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { createNameAttribute, deleteNameAttribute } from "../attribute-crud";
 
 const strengthSchema = z.object({
   name: z.string().min(1).max(50),
@@ -11,22 +11,12 @@ const strengthSchema = z.object({
 
 export const createStrength = authorizedAction
   .schema(strengthSchema)
-  .action(async ({ parsedInput }) => {
-    await prisma.strength.create({
-      data: {
-        name: parsedInput.name,
-      },
-    });
-    revalidatePath("/manage");
-  });
+  .action(async ({ parsedInput }) =>
+    createNameAttribute(prisma.strength, parsedInput),
+  );
 
 export const deleteStrength = authorizedAction
   .schema(strengthSchema)
-  .action(async ({ parsedInput }) => {
-    await prisma.strength.delete({
-      where: {
-        name: parsedInput.name,
-      },
-    });
-    revalidatePath("/manage");
-  });
+  .action(async ({ parsedInput }) =>
+    deleteNameAttribute(prisma.strength, parsedInput.name),
+  );

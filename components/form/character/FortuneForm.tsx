@@ -2,15 +2,23 @@ import {
   createFortune,
   deleteFortune,
 } from "@/src/actions/character/fortune.action";
-import { useState } from "react";
-import { toast } from "sonner";
+import { SuggestionType } from "@prisma/client";
 import { z } from "zod";
 import AutoForm, { AutoFormSubmit } from "../../ui/auto-form";
-import { createSuggestion } from "@/src/actions/suggestion.action";
-import { SuggestionType } from "@prisma/client";
+import { useAttributeSubmit } from "../attribute/use-attribute-submit";
 
 export const FortuneForm = ({ suggest }: { suggest: boolean }) => {
-  const [isLoading, setIsLoading] = useState(false);
+  const { isLoading, handleSubmit } = useAttributeSubmit({
+    suggest,
+    suggestionType: SuggestionType.Fortune,
+    createAction: createFortune,
+    deleteAction: deleteFortune,
+    labels: {
+      authError: "Vous devez être connecté pour créer une richesse",
+      created: "Richesse créé avec succès",
+      deleted: "Richesse supprimée avec succès",
+    },
+  });
   return (
     <AutoForm
       formSchema={z.object({
@@ -33,47 +41,7 @@ export const FortuneForm = ({ suggest }: { suggest: boolean }) => {
           },
         },
       }}
-      onSubmit={async (data) => {
-        setIsLoading(true);
-        if (suggest) {
-          await createSuggestion({
-            type: SuggestionType.Fortune,
-            name: data.name,
-            description: data.description,
-          });
-          toast.info("Votre suggestion a été envoyée");
-          setIsLoading(false);
-          return;
-        }
-        const values = await createFortune({
-          name: data.name,
-          description: data.description,
-        });
-
-        if (values?.validationErrors || values?.serverError) {
-          if (values?.validationErrors) {
-            toast.error("Veuillez remplir tous les champs");
-          }
-          if (values?.serverError) {
-            toast.error("Vous devez être connecté pour créer une richesse");
-          }
-          setIsLoading(false);
-          return;
-        }
-
-        toast.success("Richesse créé avec succès", {
-          action: {
-            label: "Annuler",
-            onClick: async () => {
-              await deleteFortune({
-                name: data.name,
-              });
-              toast.success("Richesse supprimée avec succès");
-            },
-          },
-        });
-        setIsLoading(false);
-      }}
+      onSubmit={handleSubmit}
     >
       <AutoFormSubmit isLoading={isLoading}>
         {suggest ? "Suggérer" : "Créer la fortune"}
