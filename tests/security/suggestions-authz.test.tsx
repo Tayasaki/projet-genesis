@@ -13,6 +13,23 @@ const h = vi.hoisted(() => ({
 
 vi.mock("@/lib/prisma", () => ({ prisma: h.prisma }));
 vi.mock("@/lib/auth", () => ({ getAuthSession: async () => h.session }));
+vi.mock("@prisma/client", () => ({
+  SuggestionType: Object.fromEntries(
+    [
+      "Alignment",
+      "Ammo",
+      "CharacterSkill",
+      "Damage",
+      "Fortune",
+      "Range",
+      "Strength",
+      "Temperment",
+      "Weakness",
+      "WeaponSkill",
+      "Weight",
+    ].map((k) => [k, k]),
+  ),
+}));
 vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));
 vi.mock("next/navigation", () => ({
   notFound: () => {
