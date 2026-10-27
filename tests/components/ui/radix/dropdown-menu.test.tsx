@@ -12,12 +12,19 @@ import { installRadixJsdomStubs } from "../../../helpers/radix-jsdom";
 
 installRadixJsdomStubs();
 
-function Example({ onEdit }: { onEdit?: () => void }) {
+function Example({
+  onEdit,
+  onDuplicate,
+}: {
+  onEdit?: () => void;
+  onDuplicate?: () => void;
+}) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>Actions</DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuItem onSelect={onEdit}>Edit</DropdownMenuItem>
+        <DropdownMenuItem onSelect={onDuplicate}>Duplicate</DropdownMenuItem>
         <DropdownMenuItem disabled>Delete</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -48,14 +55,16 @@ describe("DropdownMenu", () => {
   it("navigates with the keyboard and closes on Escape", async () => {
     const user = userEvent.setup();
     const onEdit = vi.fn();
-    render(<Example onEdit={onEdit} />);
+    const onDuplicate = vi.fn();
+    render(<Example onEdit={onEdit} onDuplicate={onDuplicate} />);
 
     screen.getByRole("button", { name: "Actions" }).focus();
     await user.keyboard("{Enter}");
     expect(await screen.findByRole("menu")).toBeInTheDocument();
 
     await user.keyboard("{ArrowDown}{Enter}");
-    expect(onEdit).toHaveBeenCalledTimes(1);
+    expect(onDuplicate).toHaveBeenCalledTimes(1);
+    expect(onEdit).not.toHaveBeenCalled();
 
     await user.keyboard("{Enter}");
     expect(await screen.findByRole("menu")).toBeInTheDocument();
