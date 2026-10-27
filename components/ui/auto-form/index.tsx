@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import AutoFormObject from "./fields/object";
-import { isSuccess } from "./submit-result";
+import { isSuccess } from "@/lib/action-result";
 import { Dependency, FieldConfig } from "./types";
 import {
   ZodObjectOrWrapped,

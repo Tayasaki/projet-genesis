@@ -12,7 +12,12 @@ export default defineConfig({
     testTimeout: 15000,
     coverage: {
       provider: "v8",
-      include: ["lib/utils.ts", "lib/ownership.ts", "src/actions/**/*.ts"],
+      include: [
+        "lib/utils.ts",
+        "lib/ownership.ts",
+        "lib/action-result.ts",
+        "src/actions/**/*.ts",
+      ],
       reporter: ["text", "text-summary"],
       thresholds: { statements: 95, branches: 90, functions: 95, lines: 95 },
     },

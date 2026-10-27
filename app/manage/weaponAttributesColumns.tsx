@@ -2,6 +2,7 @@
 
 import { DeleteDialog } from "@/components/features/layout/DeleteDialog";
 import { Button } from "@/components/ui/button";
+import { hasActionError } from "@/lib/action-result";
 import { deleteAmmo } from "@/src/actions/weapon/ammo.action";
 import { deleteDamage } from "@/src/actions/weapon/damage.action";
 import { deleteRange } from "@/src/actions/weapon/range.action";
@@ -59,7 +60,7 @@ export const columns: ColumnDef<CharacterAttributes>[] = [
           item={row.original.name}
           deleteItem={async () => {
             const value = await WEAPON_ATTRIBUTE_CONFIG[r.type]?.delete(r.name);
-            if (value?.serverError) {
+            if (hasActionError(value)) {
               toast.error(
                 "Vous n'êtes pas autorisé à supprimer ce type d'attribut",
               );
