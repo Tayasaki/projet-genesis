@@ -19,6 +19,8 @@ All server actions are built on `next-safe-action` clients exported from `lib/sa
 | `authenticatedAction` | Rejects when there is no `session.user.id`; passes `ctx.userId`. | The caller is logged in. | Anything about which rows the caller may touch. |
 | `authorizedAction` | Same login check, then loads the `User` row and rejects unless `role` is `ADMIN` or `SUPERUSER`. Passes `ctx.userId`. | The caller is logged in and is staff (role read from the DB on every call). | Ownership scoping; it is used for global reference data only. |
 
+Only `ActionError` messages reach clients; every other thrown error is masked, so `ActionError` messages must be static, user-safe strings and never interpolate caught error messages or data.
+
 Neither client scopes data to an owner. Every handler that touches user-owned rows must add the ownership predicate itself (section 3).
 
 ## 2. Role model

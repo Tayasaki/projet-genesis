@@ -1,4 +1,5 @@
 import { act, renderHook } from "@testing-library/react";
+import { DEFAULT_SERVER_ERROR_MESSAGE } from "next-safe-action";
 import { toast } from "sonner";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -57,8 +58,13 @@ describe("useAttributeSubmit", () => {
   it.each([
     [
       "the server message",
-      { serverError: "Too many suggestions" },
-      "Too many suggestions",
+      { serverError: "Trop de suggestions" },
+      "Trop de suggestions",
+    ],
+    [
+      "the French fallback for the masked default message",
+      { serverError: DEFAULT_SERVER_ERROR_MESSAGE },
+      "Votre suggestion n'a pas pu être envoyée",
     ],
     [
       "a French fallback",

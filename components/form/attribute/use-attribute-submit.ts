@@ -2,6 +2,7 @@
 
 import { createSuggestion } from "@/src/actions/suggestion.action";
 import { SuggestionType } from "@prisma/client";
+import { DEFAULT_SERVER_ERROR_MESSAGE } from "next-safe-action";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -41,7 +42,8 @@ export function useAttributeSubmit<TInput extends AttributeInput>({
         toast.error("Veuillez remplir tous les champs");
       } else if (suggested?.serverError) {
         toast.error(
-          typeof suggested.serverError === "string"
+          typeof suggested.serverError === "string" &&
+            suggested.serverError !== DEFAULT_SERVER_ERROR_MESSAGE
             ? suggested.serverError
             : "Votre suggestion n'a pas pu être envoyée",
         );

@@ -5,6 +5,11 @@ import {
 } from "next-safe-action";
 import { getAuthSession } from "./auth";
 
+/**
+ * The only error whose message reaches clients (see `handleServerError`), so
+ * its message must be a static, user-safe string: never interpolate a caught
+ * error's message or any data.
+ */
 export class ActionError extends Error {
   constructor(message: string) {
     super(message);
@@ -12,6 +17,10 @@ export class ActionError extends Error {
   }
 }
 
+/**
+ * Returns `ActionError` messages to the client; any other error is masked with
+ * `DEFAULT_SERVER_ERROR_MESSAGE` so internal details never leak.
+ */
 export const action = createSafeActionClient({
   handleServerError: (error) =>
     error instanceof ActionError ? error.message : DEFAULT_SERVER_ERROR_MESSAGE,

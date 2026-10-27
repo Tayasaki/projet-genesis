@@ -11,7 +11,8 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 const SUGGESTION_RATE_LIMIT = { max: 5, windowMs: 60 * 60 * 1000 };
-const SUGGESTION_NAME_MAX = 100;
+// Matches the name cap of every catalog create schema, so an accepted suggestion can always be created.
+const SUGGESTION_NAME_MAX = 50;
 const UNIQUE_VIOLATION = "P2002";
 
 const suggestionSchema = z.object({
@@ -65,14 +66,14 @@ export const createSuggestion = authenticatedAction
             },
           });
           if (recent >= SUGGESTION_RATE_LIMIT.max) {
-            throw new ActionError("Too many suggestions, try again later");
+            throw new ActionError("Trop de suggestions, réessayez plus tard.");
           }
         }
         await tx.suggestion.create({ data });
       });
     } catch (error) {
       if ((error as { code?: string })?.code === UNIQUE_VIOLATION) {
-        throw new ActionError("This suggestion already exists");
+        throw new ActionError("Cette suggestion existe déjà.");
       }
       throw error;
     }
