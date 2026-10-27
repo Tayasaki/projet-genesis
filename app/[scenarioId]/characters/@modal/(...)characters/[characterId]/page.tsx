@@ -1,5 +1,6 @@
 import { CharacterModal } from "@/components/features/layout/CharacterModal";
 import { getAuthSession } from "@/lib/auth";
+import { characterOwnedBy } from "@/lib/ownership";
 import { prisma } from "@/lib/prisma";
 import { notFound, redirect } from "next/navigation";
 
@@ -11,16 +12,7 @@ export default async function ModalCharacter(props: {
   if (!session?.user?.id) redirect("/login");
 
   const character = await prisma.character.findUnique({
-    where: {
-      id: params.characterId,
-      scenario: {
-        some: {
-          user: {
-            id: session.user.id,
-          },
-        },
-      },
-    },
+    where: characterOwnedBy(params.characterId, session.user.id),
     include: {
       temperment: true,
       alignment: true,

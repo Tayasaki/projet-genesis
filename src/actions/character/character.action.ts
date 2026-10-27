@@ -1,11 +1,23 @@
 "use server";
 
+import {
+  assertOwnedScenario,
+  assertOwnedWeapons,
+  characterOwnedBy,
+} from "@/lib/ownership";
 import { prisma } from "@/lib/prisma";
 import { authenticatedAction } from "@/lib/safe-action";
 import { openai } from "@ai-sdk/openai";
 import { generateText, NoObjectGeneratedError, Output } from "ai";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+
+import {
+  GENERATION_MAX_OUTPUT_TOKENS,
+  GENERATION_RATE_LIMIT,
+  GENERATION_WINDOW_MS,
+  MAX_GENERATION_PROMPT_LENGTH,
+} from "./generation-limits";
 
 const characterSchema = z.object({
   name: z.string().min(1).max(50),
@@ -57,19 +69,6 @@ const systemPrompt = `
   You reply with the generated object that match the schema.
   `;
 
-// Same error for missing and foreign ids so the response is not an existence oracle.
-async function assertOwnedWeapons(userId: string, ids: string[]) {
-  const weaponIds = [...new Set(ids)];
-  if (
-    weaponIds.length > 0 &&
-    (await prisma.weapon.count({
-      where: { id: { in: weaponIds }, userId },
-    })) !== weaponIds.length
-  ) {
-    throw new Error("Weapon not found or not owned by user");
-  }
-}
-
 export const createCharacter = authenticatedAction
   .schema(characterSchema)
   .action(async ({ parsedInput, ctx: { userId } }) => {
@@ -78,12 +77,7 @@ export const createCharacter = authenticatedAction
     parsedInput.skillSet = parsedInput.skillSet.filter((s) => s);
     parsedInput.weaponSet = parsedInput.weaponSet.filter((w) => w);
     if (parsedInput.scenarioId) {
-      const scenario = await prisma.scenario.findUnique({
-        where: { id: parsedInput.scenarioId, userId },
-      });
-      if (!scenario) {
-        throw new Error("Scenario not found or not owned by user");
-      }
+      await assertOwnedScenario(userId, parsedInput.scenarioId);
     }
     await assertOwnedWeapons(userId, parsedInput.weaponSet as string[]);
     await prisma.character.create({
@@ -95,6 +89,7 @@ export const createCharacter = authenticatedAction
         age: parsedInput.age ?? null,
         injury: parsedInput.injury ?? null,
         extra: parsedInput.extra ?? null,
+        user: { connect: { id: userId } },
         scenario: {
           connect: {
             id: parsedInput.scenarioId,
@@ -132,19 +127,55 @@ export const createCharacter = authenticatedAction
     revalidatePath(`/${parsedInput.scenarioId}`);
   });
 
+// Counts the attempt before the OpenAI call is made, so failed calls still
+// consume quota (no refund abuse). The per-user advisory lock serialises
+// concurrent requests of one user, which makes count-then-insert atomic.
+async function reserveGenerationSlot(userId: string): Promise<boolean> {
+  return prisma.$transaction(async (tx) => {
+    await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${userId}))`;
+    const recent = await tx.generationLog.count({
+      where: {
+        userId,
+        createdAt: { gte: new Date(Date.now() - GENERATION_WINDOW_MS) },
+      },
+    });
+    if (recent >= GENERATION_RATE_LIMIT) {
+      return false;
+    }
+    await tx.generationLog.create({ data: { userId } });
+    return true;
+  });
+}
+
 export const generateCharacter = authenticatedAction
   .schema(
     z.object({
-      message: z.string().min(1),
+      message: z
+        .string()
+        .min(1)
+        .max(
+          MAX_GENERATION_PROMPT_LENGTH,
+          `Message must be at most ${MAX_GENERATION_PROMPT_LENGTH} characters`,
+        ),
     }),
   )
-  .action(async ({ parsedInput }) => {
+  .action(async ({ parsedInput, ctx: { userId } }) => {
+    // Same role set as authorizedAction in lib/safe-action.ts.
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { role: true },
+    });
+    const exempt = user?.role === "ADMIN" || user?.role === "SUPERUSER";
+    if (!exempt && !(await reserveGenerationSlot(userId))) {
+      return { type: "rate-limited" };
+    }
     try {
       const { output } = await generateText({
         model: openai("gpt-4o"),
         output: Output.object({ schema: characterIASchema }),
         system: systemPrompt,
         prompt: parsedInput.message,
+        maxOutputTokens: GENERATION_MAX_OUTPUT_TOKENS,
       });
       return { type: "success", character: output };
     } catch (error) {
@@ -172,10 +203,7 @@ export const updateCharacter = authenticatedAction
     parsedInput.weaponSet = parsedInput.weaponSet.filter((w) => w);
     await assertOwnedWeapons(userId, parsedInput.weaponSet as string[]);
     await prisma.character.update({
-      where: {
-        id: parsedInput.id,
-        scenario: { some: { userId } },
-      },
+      where: characterOwnedBy(parsedInput.id, userId),
       data: {
         name: parsedInput.name,
         pj: parsedInput.pj ?? false,
@@ -220,10 +248,7 @@ export const deleteCharacter = authenticatedAction
   .schema(z.object({ id: z.string().min(1) }))
   .action(async ({ parsedInput, ctx: { userId } }) => {
     await prisma.character.delete({
-      where: {
-        id: parsedInput.id,
-        scenario: { some: { userId } },
-      },
+      where: characterOwnedBy(parsedInput.id, userId),
     });
     revalidatePath("/characters");
   });

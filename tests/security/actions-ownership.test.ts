@@ -57,7 +57,7 @@ describe("updateCharacter", () => {
     expect(h.prisma.character.update).toHaveBeenCalledOnce();
     expect(h.prisma.character.update.mock.calls[0][0].where).toEqual({
       id: "character-1",
-      scenario: { some: { userId: OWNER } },
+      userId: OWNER,
     });
   });
 
@@ -67,7 +67,7 @@ describe("updateCharacter", () => {
 
     expect(res?.serverError).toBeDefined();
     expect(h.prisma.character.update.mock.calls[0][0].where).toMatchObject({
-      scenario: { some: { userId: ATTACKER } },
+      userId: ATTACKER,
     });
   });
 });
@@ -79,7 +79,7 @@ describe("deleteCharacter", () => {
     expect(res?.serverError).toBeUndefined();
     expect(h.prisma.character.delete.mock.calls[0][0].where).toEqual({
       id: "character-1",
-      scenario: { some: { userId: OWNER } },
+      userId: OWNER,
     });
   });
 
@@ -89,7 +89,7 @@ describe("deleteCharacter", () => {
 
     expect(res?.serverError).toBeDefined();
     expect(h.prisma.character.delete.mock.calls[0][0].where).toMatchObject({
-      scenario: { some: { userId: ATTACKER } },
+      userId: ATTACKER,
     });
   });
 });
@@ -122,6 +122,69 @@ describe("createCharacter", () => {
       userId: ATTACKER,
     });
     expect(h.prisma.character.create).not.toHaveBeenCalled();
+  });
+});
+
+describe("Character.userId ownership", () => {
+  const data = () =>
+    (
+      h.prisma.character.create.mock.calls as unknown as [
+        { data: Record<string, unknown> },
+      ][]
+    )[0][0].data;
+
+  it("createCharacter records the caller as owner", async () => {
+    const res = await createCharacter({
+      ...characterInput,
+      scenarioId: "scenario-1",
+    });
+
+    expect(res?.serverError).toBeUndefined();
+    expect(data().user).toEqual({ connect: { id: OWNER } });
+  });
+
+  it("createCharacter takes the owner from the session, not the input", async () => {
+    actAs(ATTACKER);
+    await createCharacter({ ...characterInput });
+
+    expect(data().user).toEqual({ connect: { id: ATTACKER } });
+  });
+
+  it.each([
+    [
+      "updateCharacter",
+      () => updateCharacter({ ...characterInput, id: "character-unowned" }),
+    ],
+    ["deleteCharacter", () => deleteCharacter({ id: "character-unowned" })],
+  ])(
+    "%s fails closed on a character with no owner, even in the caller's own scenario",
+    async (_name, call) => {
+      const res = await call();
+
+      expect(res?.serverError).toBeDefined();
+    },
+  );
+
+  it("updateCharacter and deleteCharacter reject a character owned by someone else although it is linked to the caller's scenario", async () => {
+    const upd = await updateCharacter({
+      ...characterInput,
+      id: "character-foreign",
+    });
+    const del = await deleteCharacter({ id: "character-foreign" });
+
+    expect(upd?.serverError).toBeDefined();
+    expect(del?.serverError).toBeDefined();
+  });
+
+  it("updateScenarioCharacter refuses to link a character the caller does not own", async () => {
+    for (const characterId of ["character-unowned", "character-foreign"]) {
+      const res = await updateScenarioCharacter({
+        scenarioId: "scenario-1",
+        characterId,
+      });
+      expect(res?.serverError).toBeDefined();
+    }
+    expect(h.prisma.scenario.update).not.toHaveBeenCalled();
   });
 });
 
@@ -309,7 +372,7 @@ describe("updateScenarioCharacter", () => {
     expect(res?.serverError).toBeUndefined();
     expect(h.prisma.character.findUnique.mock.calls[0][0].where).toEqual({
       id: "character-1",
-      scenario: { some: { userId: OWNER } },
+      userId: OWNER,
     });
     expect(h.prisma.scenario.update.mock.calls[0][0].where).toEqual({
       id: "scenario-1",
@@ -323,7 +386,7 @@ describe("updateScenarioCharacter", () => {
 
     expect(res?.serverError).toBeDefined();
     expect(h.prisma.character.findUnique.mock.calls[0][0].where).toMatchObject({
-      scenario: { some: { userId: ATTACKER } },
+      userId: ATTACKER,
     });
     expect(h.prisma.scenario.update).not.toHaveBeenCalled();
   });
