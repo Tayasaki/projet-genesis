@@ -3,12 +3,12 @@ type: reference
 status: active
 created: 2026-10-27
 last_updated: 2026-10-27
-review_trigger: "Any change to lib/safe-action.ts, the Role enum, an ownership relation in prisma/schema.prisma, or a server action / page that reads or writes user data; or when issues #25, #27, #29, #30 close."
+review_trigger: "Any change to lib/safe-action.ts, the Role enum, an ownership relation in prisma/schema.prisma, or a server action / page that reads or writes user data; or when issues #21, #25, #27, #29, #30 close."
 ---
 
 # Authorization model
 
-How authentication, role checks and data ownership work in this app. Statements here are derived from the code; paths are cited instead of line numbers so they do not rot. The "Known gaps" section lists open issues and is not a claim that they are fixed.
+How authentication, role checks and data ownership work in this app. Statements here are derived from the code; paths are cited instead of line numbers so they do not rot. The "Known gaps" section lists open issues and is not a claim that they are fixed. Section 8 (known gaps) is the volatile section; sections 1-6 are the stable ones.
 
 ## 1. Two action clients (`lib/safe-action.ts`)
 
@@ -25,7 +25,7 @@ Neither client scopes data to an owner. Every handler that touches user-owned ro
 
 - `enum Role { USER, SUPERUSER, ADMIN }` in `prisma/schema.prisma`; `User.role` defaults to `USER`.
 - No code path assigns `SUPERUSER` or `ADMIN`: roles are changed directly in the database. Treat promotion as an operator task.
-- `ADMIN` and `SUPERUSER` are treated identically everywhere (`lib/safe-action.ts`, `app/manage/page.tsx`).
+- `ADMIN` and `SUPERUSER` are treated identically in all three role checks (`lib/safe-action.ts`, `app/manage/page.tsx`, `components/features/layout/Header.tsx`).
 - `app/manage/page.tsx` also computes `isAuthorized` from the role to decide which management UI to show. That is presentation only; the server actions enforce the real check.
 
 ## 3. Ownership model
@@ -46,7 +46,7 @@ Caveats on Character ownership:
 
 ## 4. Page-level pattern
 
-Pages under `app/` call `getAuthSession()` and then:
+Pages under `app/` (except `/suggestions`, which has no check) call `getAuthSession()` and then:
 
 1. No session: `redirect("/login")` (`app/login/page.tsx` does the inverse and redirects authenticated users to `/`).
 2. Owner-scoped lookup using the same predicates as section 3.
@@ -58,8 +58,8 @@ Staff-only UI (`app/manage/page.tsx`) additionally loads the user and checks the
 
 1. Choose the client: global reference data goes through `authorizedAction`; per-user data through `authenticatedAction`.
 2. Define a zod `.schema(...)` for every input; never trust ids from the client.
-3. For every row you read, update or delete, put the ownership predicate in the Prisma `where` (a single `update`/`delete`/`deleteMany` with the predicate, not a read-then-write).
-4. For every client-supplied id you `connect` to (weapons, skills, scenarios), verify it is owned by or visible to the caller first; connecting an unverified id is an authorization bypass (open: #21).
+3. For every row you read, update or delete, put the ownership predicate in the Prisma `where` (preferably a single `update`/`delete`/`deleteMany` carrying the predicate; `updateScenarioCharacter` is a read-then-write exception where the ownership check precedes the write for the same owner).
+4. For every client-supplied id you `connect` to that points at a user-owned row (weapon ids, scenario ids), verify the caller owns it first; connecting an unverified id is an authorization bypass (open: #21). Reference data (skills, strengths, etc.) is connected by name to global rows and needs no ownership check.
 5. Take the owner from `ctx.userId`, never from input.
 6. Call `revalidatePath` for affected routes.
 7. Add tests (section 6): an owner success case, an attacker rejection case, and the unauthenticated case.
@@ -79,8 +79,8 @@ Staff-only UI (`app/manage/page.tsx`) additionally loads the user and checks the
 | `createScenario` | authenticated | sets `userId` from ctx |
 | `updateScenarioCharacter` | authenticated | character via `scenario: { some: { userId } }`; scenario via `{ id, userId }` |
 | `deleteScenario` | authenticated | `deleteMany` with `{ id, userId }` |
-| `createCharacter` | authenticated | scenario checked with `{ id, userId }` when `scenarioId` given; connected weapon/skill ids not checked (#21) |
-| `updateCharacter` | authenticated | `scenario: { some: { userId } }`; connected ids not checked (#21) |
+| `createCharacter` | authenticated | scenario checked with `{ id, userId }` when `scenarioId` given; client-supplied weapon ids not checked (#21) |
+| `updateCharacter` | authenticated | `scenario: { some: { userId } }`; client-supplied weapon ids not checked (#21) |
 | `deleteCharacter` | authenticated | `scenario: { some: { userId } }` |
 | `generateCharacter` | authenticated | none (no data access); no rate limit or input cap (#27) |
 | `createWeapon` | authenticated | sets owner from ctx; `ammo`/`weight`/`range`/`damage`/skills connected by name (reference data) |
@@ -107,12 +107,13 @@ Staff-only UI (`app/manage/page.tsx`) additionally loads the user and checks the
 | `app/[scenarioId]/character-generation/page.tsx` | login required | does not verify `scenarioId` ownership on render; `createCharacter` verifies it on submit; weapons by `userId` |
 | `app/manage/page.tsx` | login required; role read for UI | weapons by `userId`; mutations enforced by the action clients |
 | `app/suggestions/page.tsx` | none in the page itself | global data; destructive actions are the gap in #25 |
-| `app/tos/page.tsx`, `app/privacy-policy/page.tsx` | public | n/a |
+| `app/tos/page.tsx`, `app/privacy-policy/page.tsx` | login required (redirect) | n/a |
+| `app/[scenarioId]/characters/layout.tsx` | none: `generateMetadata` runs `scenario.findUniqueOrThrow({ where: { id } })` with no session or ownership check; wraps `/[scenarioId]/characters` and its `@modal` route (#29) | n/a |
 
 ## 8. Known gaps (open issues, not fixed by this document)
 
-- #21: `createCharacter`/`updateCharacter` connect client-supplied weapon and skill-set ids without ownership checks.
+- #21: `createCharacter`/`updateCharacter` connect client-supplied weapon ids (`weaponSet`) without ownership checks.
 - #25: suggestion create/delete use `authenticatedAction`.
 - #27: `generateCharacter` has no rate limit or input cap.
-- #29: `generateMetadata` on `app/characters/[characterId]/page.tsx` leaks names to non-owners.
+- #29: `generateMetadata` leaks names to non-owners: the character name via `app/characters/[characterId]/page.tsx` and the scenario name via `app/[scenarioId]/characters/layout.tsx`. The `/[scenarioId]/characters` route is therefore not fully scoped.
 - #30: `Character` has no owner column; zero-scenario characters are orphaned.
