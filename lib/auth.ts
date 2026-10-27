@@ -3,32 +3,25 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { headers } from "next/headers";
 import { env } from "./env";
 import { prisma } from "./prisma";
+import { buildSocialProviders } from "./social-providers";
+import { parseOriginList } from "./trusted-origins.mjs";
+
+// better-auth already trusts baseURL's own origin automatically — this list
+// is only for *additional* origins (e.g. a local /etc/hosts dev alias).
+// Configure via TRUSTED_ORIGINS (comma-separated) instead of hardcoding one.
+const trustedOrigins = parseOriginList(env.TRUSTED_ORIGINS);
+const socialProviders = buildSocialProviders(env);
 
 export const auth = betterAuth({
   baseURL: env.BETTER_AUTH_URL,
-  trustedOrigins: ["http://app.dev.local"],
+  trustedOrigins,
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
   emailAndPassword: {
     enabled: false,
   },
-  socialProviders: {
-    github: {
-      clientId: env.GITHUB_ID,
-      clientSecret: env.GITHUB_SECRET,
-    },
-    discord: {
-      clientId: env.DISCORD_ID,
-      clientSecret: env.DISCORD_SECRET,
-    },
-    google: {
-      prompt: "select_account consent",
-      accessType: "offline",
-      clientId: env.GOOGLE_ID,
-      clientSecret: env.GOOGLE_SECRET,
-    },
-  },
+  socialProviders,
   session: {
     fields: {
       expiresAt: "expires",

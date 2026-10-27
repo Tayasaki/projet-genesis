@@ -2,15 +2,23 @@ import {
   createWeakness,
   deleteWeakness,
 } from "@/src/actions/character/weakness.action";
-import { createSuggestion } from "@/src/actions/suggestion.action";
 import { SuggestionType } from "@prisma/client";
-import { useState } from "react";
-import { toast } from "sonner";
 import { z } from "zod";
 import AutoForm, { AutoFormSubmit } from "../../ui/auto-form";
+import { useAttributeSubmit } from "../attribute/use-attribute-submit";
 
 export const WeaknessForm = ({ suggest }: { suggest: boolean }) => {
-  const [isLoading, setIsLoading] = useState(false);
+  const { isLoading, handleSubmit } = useAttributeSubmit({
+    suggest,
+    suggestionType: SuggestionType.Weakness,
+    createAction: createWeakness,
+    deleteAction: deleteWeakness,
+    labels: {
+      authError: "Vous devez être connecté pour créer une faiblesse",
+      created: "Faiblesse créé avec succès",
+      deleted: "Faiblesse supprimée avec succès",
+    },
+  });
   return (
     <AutoForm
       formSchema={z.object({
@@ -23,45 +31,7 @@ export const WeaknessForm = ({ suggest }: { suggest: boolean }) => {
           },
         },
       }}
-      onSubmit={async (data) => {
-        setIsLoading(true);
-        if (suggest) {
-          await createSuggestion({
-            type: SuggestionType.Weakness,
-            name: data.name,
-          });
-          toast.info("Votre suggestion a été envoyée");
-          setIsLoading(false);
-          return;
-        }
-        const values = await createWeakness({
-          name: data.name,
-        });
-
-        if (values?.validationErrors || values?.serverError) {
-          if (values?.validationErrors) {
-            toast.error("Veuillez remplir tous les champs");
-          }
-          if (values?.serverError) {
-            toast.error("Vous devez être connecté pour créer une faiblesse");
-          }
-          setIsLoading(false);
-          return;
-        }
-
-        toast.success("Faiblesse créé avec succès", {
-          action: {
-            label: "Annuler",
-            onClick: async () => {
-              await deleteWeakness({
-                name: data.name,
-              });
-              toast.success("Faiblesse supprimée avec succès");
-            },
-          },
-        });
-        setIsLoading(false);
-      }}
+      onSubmit={handleSubmit}
     >
       <AutoFormSubmit isLoading={isLoading}>
         {suggest ? "Suggérer" : "Créer la faiblesse"}

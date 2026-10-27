@@ -2,8 +2,8 @@
 
 import { prisma } from "@/lib/prisma";
 import { authorizedAction } from "@/lib/safe-action";
-import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { createNameAttribute, deleteNameAttribute } from "../attribute-crud";
 
 const fortuneSchema = z.object({
   name: z.string().min(1).max(50),
@@ -12,23 +12,12 @@ const fortuneSchema = z.object({
 
 export const createFortune = authorizedAction
   .schema(fortuneSchema)
-  .action(async ({ parsedInput }) => {
-    await prisma.fortune.create({
-      data: {
-        name: parsedInput.name,
-        description: parsedInput.description,
-      },
-    });
-    revalidatePath("/manage");
-  });
+  .action(async ({ parsedInput }) =>
+    createNameAttribute(prisma.fortune, parsedInput),
+  );
 
 export const deleteFortune = authorizedAction
   .schema(fortuneSchema.pick({ name: true }))
-  .action(async ({ parsedInput }) => {
-    await prisma.fortune.delete({
-      where: {
-        name: parsedInput.name,
-      },
-    });
-    revalidatePath("/manage");
-  });
+  .action(async ({ parsedInput }) =>
+    deleteNameAttribute(prisma.fortune, parsedInput.name),
+  );

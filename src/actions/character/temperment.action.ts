@@ -2,8 +2,8 @@
 
 import { prisma } from "@/lib/prisma";
 import { authorizedAction } from "@/lib/safe-action";
-import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { createNameAttribute, deleteNameAttribute } from "../attribute-crud";
 
 const tempermentSchema = z.object({
   name: z.string().min(1).max(50),
@@ -12,23 +12,12 @@ const tempermentSchema = z.object({
 
 export const createTemperment = authorizedAction
   .schema(tempermentSchema)
-  .action(async ({ parsedInput }) => {
-    await prisma.temperment.create({
-      data: {
-        name: parsedInput.name,
-        description: parsedInput.description,
-      },
-    });
-    revalidatePath("/manage");
-  });
+  .action(async ({ parsedInput }) =>
+    createNameAttribute(prisma.temperment, parsedInput),
+  );
 
 export const deleteTemperment = authorizedAction
   .schema(tempermentSchema.pick({ name: true }))
-  .action(async ({ parsedInput }) => {
-    await prisma.temperment.delete({
-      where: {
-        name: parsedInput.name,
-      },
-    });
-    revalidatePath("/manage");
-  });
+  .action(async ({ parsedInput }) =>
+    deleteNameAttribute(prisma.temperment, parsedInput.name),
+  );

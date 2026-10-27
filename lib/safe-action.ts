@@ -11,6 +11,13 @@ class ActionError extends Error {
   }
 }
 
+/**
+ * Requires a logged-in user and exposes `ctx.userId`. That is all it
+ * guarantees: any logged-in user passes, and nothing here scopes data to an
+ * owner. Handlers must add the ownership predicate themselves (for example
+ * `where: { id, userId }`, or `scenario: { some: { userId } }` for a
+ * Character). See documentation/reference/authorization-model.md.
+ */
 export const authenticatedAction = action.use(async ({ next }) => {
   const session = await getAuthSession();
   if (!session?.user?.id) {
@@ -19,6 +26,11 @@ export const authenticatedAction = action.use(async ({ next }) => {
   return next({ ctx: { userId: session.user.id } });
 });
 
+/**
+ * Requires a logged-in user whose `User.role` is ADMIN or SUPERUSER, checked
+ * against the database on every call. Like `authenticatedAction`, it does not
+ * scope data to an owner; use it for global reference data, not user-owned rows.
+ */
 export const authorizedAction = action.use(async ({ next }) => {
   const session = await getAuthSession();
   if (!session?.user?.id) {

@@ -57,13 +57,35 @@ const systemPrompt = `
   You reply with the generated object that match the schema.
   `;
 
+// Same error for missing and foreign ids so the response is not an existence oracle.
+async function assertOwnedWeapons(userId: string, ids: string[]) {
+  const weaponIds = [...new Set(ids)];
+  if (
+    weaponIds.length > 0 &&
+    (await prisma.weapon.count({
+      where: { id: { in: weaponIds }, userId },
+    })) !== weaponIds.length
+  ) {
+    throw new Error("Weapon not found or not owned by user");
+  }
+}
+
 export const createCharacter = authenticatedAction
   .schema(characterSchema)
-  .action(async ({ parsedInput }) => {
+  .action(async ({ parsedInput, ctx: { userId } }) => {
     parsedInput.strength = parsedInput.strength.filter((s) => s);
     parsedInput.weakness = parsedInput.weakness.filter((w) => w);
     parsedInput.skillSet = parsedInput.skillSet.filter((s) => s);
     parsedInput.weaponSet = parsedInput.weaponSet.filter((w) => w);
+    if (parsedInput.scenarioId) {
+      const scenario = await prisma.scenario.findUnique({
+        where: { id: parsedInput.scenarioId, userId },
+      });
+      if (!scenario) {
+        throw new Error("Scenario not found or not owned by user");
+      }
+    }
+    await assertOwnedWeapons(userId, parsedInput.weaponSet as string[]);
     await prisma.character.create({
       data: {
         name: parsedInput.name,
@@ -143,14 +165,16 @@ export const updateCharacter = authenticatedAction
       .omit({ scenarioId: true })
       .merge(z.object({ id: z.string().min(1) })),
   )
-  .action(async ({ parsedInput }) => {
+  .action(async ({ parsedInput, ctx: { userId } }) => {
     parsedInput.strength = parsedInput.strength.filter((s) => s);
     parsedInput.weakness = parsedInput.weakness.filter((w) => w);
     parsedInput.skillSet = parsedInput.skillSet.filter((s) => s);
     parsedInput.weaponSet = parsedInput.weaponSet.filter((w) => w);
+    await assertOwnedWeapons(userId, parsedInput.weaponSet as string[]);
     await prisma.character.update({
       where: {
         id: parsedInput.id,
+        scenario: { some: { userId } },
       },
       data: {
         name: parsedInput.name,
@@ -194,10 +218,11 @@ export const updateCharacter = authenticatedAction
 
 export const deleteCharacter = authenticatedAction
   .schema(z.object({ id: z.string().min(1) }))
-  .action(async ({ parsedInput }) => {
+  .action(async ({ parsedInput, ctx: { userId } }) => {
     await prisma.character.delete({
       where: {
         id: parsedInput.id,
+        scenario: { some: { userId } },
       },
     });
     revalidatePath("/characters");

@@ -1,15 +1,23 @@
 "use client";
 
 import AutoForm, { AutoFormSubmit } from "@/components/ui/auto-form";
-import { createSuggestion } from "@/src/actions/suggestion.action";
 import { createDamage, deleteDamage } from "@/src/actions/weapon/damage.action";
 import { SuggestionType } from "@prisma/client";
-import { useState } from "react";
-import { toast } from "sonner";
 import { z } from "zod";
+import { useAttributeSubmit } from "../attribute/use-attribute-submit";
 
 export const DamageForm = ({ suggest }: { suggest: boolean }) => {
-  const [isLoading, setIsLoading] = useState(false);
+  const { isLoading, handleSubmit } = useAttributeSubmit({
+    suggest,
+    suggestionType: SuggestionType.Damage,
+    createAction: createDamage,
+    deleteAction: deleteDamage,
+    labels: {
+      authError: "Vous devez être connecté pour créer un dégât",
+      created: "Dégât créé avec succès",
+      deleted: "Dégât supprimé avec succès",
+    },
+  });
   return (
     <AutoForm
       formSchema={z.object({
@@ -22,45 +30,7 @@ export const DamageForm = ({ suggest }: { suggest: boolean }) => {
           },
         },
       }}
-      onSubmit={async (data) => {
-        setIsLoading(true);
-        if (suggest) {
-          await createSuggestion({
-            type: SuggestionType.Damage,
-            name: data.name,
-          });
-          toast.info("Votre suggestion a été envoyée");
-          setIsLoading(false);
-          return;
-        }
-        const values = await createDamage({
-          name: data.name,
-        });
-
-        if (values?.validationErrors || values?.serverError) {
-          if (values?.validationErrors) {
-            toast.error("Veuillez remplir tous les champs");
-          }
-          if (values?.serverError) {
-            toast.error("Vous devez être connecté pour créer un dégât");
-          }
-          setIsLoading(false);
-          return;
-        }
-
-        toast.success("Dégât créé avec succès", {
-          action: {
-            label: "Annuler",
-            onClick: async () => {
-              await deleteDamage({
-                name: data.name,
-              });
-              toast.success("Dégât supprimé avec succès");
-            },
-          },
-        });
-        setIsLoading(false);
-      }}
+      onSubmit={handleSubmit}
     >
       <AutoFormSubmit isLoading={isLoading}>
         {suggest ? "Suggérer" : "Créer le dégât"}
