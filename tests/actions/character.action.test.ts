@@ -32,6 +32,7 @@ beforeEach(() => {
   // Tolerate ownership pre-checks (covered in tests/security): resolve to an owned row.
   prisma.scenario.findUnique.mockResolvedValue({ id: "owned" });
   prisma.character.findUnique.mockResolvedValue({ id: "owned" });
+  prisma.weapon.count.mockResolvedValue(1);
 });
 
 import { NoObjectGeneratedError } from "ai";

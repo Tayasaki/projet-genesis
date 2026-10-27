@@ -46,6 +46,7 @@ export const characterRow = {
 };
 
 export const weaponRow = { id: "weapon-1", userId: OWNER };
+export const attackerWeaponRow = { id: "weapon-2", userId: ATTACKER };
 
 export function makePrismaFake() {
   const notFound = () => {
@@ -62,7 +63,7 @@ export function makePrismaFake() {
 
   const characters: Row[] = [characterRow];
   const scenarios: Row[] = [scenarioRow];
-  const weapons: Row[] = [weaponRow];
+  const weapons: Row[] = [weaponRow, attackerWeaponRow];
 
   return {
     character: {
@@ -78,6 +79,16 @@ export function makePrismaFake() {
       findUnique: vi.fn(async (a: { where: Row }) => byWhere(scenarios)(a)),
       update: mutate(scenarios),
     },
-    weapon: { delete: mutate(weapons) },
+    weapon: {
+      delete: mutate(weapons),
+      count: vi.fn(
+        async (a: { where: { id: { in: string[] }; userId: string } }) =>
+          weapons.filter(
+            (w) =>
+              a.where.id.in.includes(w.id as string) &&
+              w.userId === a.where.userId,
+          ).length,
+      ),
+    },
   };
 }
