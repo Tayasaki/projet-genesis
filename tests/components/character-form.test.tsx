@@ -187,4 +187,37 @@ describe("CharacterForm", () => {
       within(document.body).queryByText("Veuillez choisir une valeur"),
     ).toBeNull();
   });
+
+  it.each([
+    ["a serverError", { serverError: "Non autorisé" }],
+    ["validationErrors", { validationErrors: { name: ["bad"] } }],
+  ])(
+    "keeps the typed values and does not navigate when create returns %s",
+    async (_, result) => {
+      const user = userEvent.setup();
+      h.createCharacter.mockResolvedValue(result);
+      render(<CharacterForm {...props()} />);
+
+      await user.type(screen.getByLabelText(/nom du personnage/i), "Eric");
+      await choose(user, 0, "Colérique");
+      await choose(user, 1, "Chaotique");
+      await choose(user, 2, "Riche");
+      await user.click(
+        screen.getByRole("button", { name: "Créer votre personnage" }),
+      );
+
+      await waitFor(() => expect(h.createCharacter).toHaveBeenCalledTimes(1));
+      await new Promise((r) => setTimeout(r, 100));
+
+      expect(screen.getByLabelText(/nom du personnage/i)).toHaveValue("Eric");
+      const [temperment, alignment, fortune] = screen.getAllByRole("combobox");
+      expect(temperment).toHaveTextContent("Colérique");
+      expect(alignment).toHaveTextContent("Chaotique");
+      expect(fortune).toHaveTextContent("Riche");
+      // CharacterForm re-feeds `values`, so a reset would restore the same
+      // data: only the missing navigation distinguishes the rejection here.
+      expect(h.push).not.toHaveBeenCalled();
+    },
+    30000,
+  );
 });

@@ -530,6 +530,49 @@ describe("AutoForm: accessibility of a blocked submit", () => {
     ]);
   });
 
+  it("focuses the first radio of an invalid radio group", async () => {
+    const user = userEvent.setup();
+    render(
+      <AutoForm
+        formSchema={z.object({
+          mount: z.enum(["horse", "wolf"], "Veuillez choisir une valeur"),
+        })}
+        fieldConfig={{ mount: { fieldType: "radio" } }}
+      >
+        <AutoFormSubmit isLoading={false}>Save</AutoFormSubmit>
+      </AutoForm>,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Save" }));
+    await screen.findByText("Veuillez choisir une valeur");
+
+    await waitFor(() => expect(screen.getAllByRole("radio")[0]).toHaveFocus());
+  });
+
+  it("associates the label with the select trigger", () => {
+    renderA11y();
+
+    expect(screen.getByLabelText(/role/i)).toBe(screen.getByRole("combobox"));
+  });
+
+  it("reports a blocked date field without opening the calendar", async () => {
+    const user = userEvent.setup();
+    render(
+      <AutoForm
+        formSchema={z.object({ when: z.date({ error: "Date requise" }) })}
+      >
+        <AutoFormSubmit isLoading={false}>Save</AutoFormSubmit>
+      </AutoForm>,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Save" }));
+    await screen.findByText("Date requise");
+
+    // Not observable in jsdom: DatePicker ignores every fieldProps entry but
+    // the ref, which would only land on the unmounted popover content.
+    expect(screen.queryByRole("grid")).not.toBeInTheDocument();
+  });
+
   it("renders no alert while the form is valid", () => {
     renderA11y();
 
@@ -663,6 +706,26 @@ describe("AutoForm: reset only after a successful submit", () => {
 
     expect(onSubmit).toHaveBeenCalledTimes(1);
     resolve(undefined);
+    await waitFor(() =>
+      expect(screen.getByLabelText(/title/i)).toHaveValue(""),
+    );
+  });
+
+  it("releases the in-flight guard when the handler throws, so a retry runs", async () => {
+    const onSubmit = vi
+      .fn()
+      .mockRejectedValueOnce(new Error("boom"))
+      .mockResolvedValueOnce({ data: {} });
+    const swallow = () => {};
+    process.on("unhandledRejection", swallow);
+
+    const user = await fillAndSubmit(onSubmit);
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await settle();
+    await user.click(screen.getByRole("button", { name: "Save" }));
+
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(2));
+    process.off("unhandledRejection", swallow);
     await waitFor(() =>
       expect(screen.getByLabelText(/title/i)).toHaveValue(""),
     );
