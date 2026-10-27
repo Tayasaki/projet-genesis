@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { z } from "zod";
 
+import { requiredString } from "@/components/form/required-string";
 import AutoForm, { AutoFormSubmit } from "@/components/ui/auto-form";
 import { installRadixJsdomStubs } from "../../../helpers/radix-jsdom";
 
@@ -198,19 +199,15 @@ describe("AutoForm", () => {
 
     it("fails an empty required number instead of coercing it to 0", async () => {
       const user = userEvent.setup();
-      const onSubmit = setup(z.object({ age: z.number().min(1) }));
+      // 0 is a valid number here: only "empty -> undefined" can fail it.
+      const onSubmit = setup(
+        z.object({ age: z.number({ error: "Nombre requis" }) }),
+      );
 
       await user.click(screen.getByRole("button", { name: "Save" }));
 
-      await waitFor(() =>
-        expect(
-          screen.getByRole("spinbutton").closest("div")?.textContent,
-        ).toMatch(/\S/),
-      );
+      expect(await screen.findByText("Nombre requis")).toBeInTheDocument();
       expect(onSubmit).not.toHaveBeenCalled();
-      expect(
-        document.querySelector("[id$='-form-item-message']"),
-      ).not.toBeNull();
     });
 
     it("accepts an empty optional number and omits it from the payload", async () => {
@@ -228,18 +225,49 @@ describe("AutoForm", () => {
 
     it("clearing a typed number makes a required number fail again", async () => {
       const user = userEvent.setup();
-      const onSubmit = setup(z.object({ age: z.number() }));
+      const onSubmit = setup(
+        z.object({ age: z.number({ error: "Nombre requis" }) }),
+      );
 
       const input = screen.getByRole("spinbutton");
       await user.type(input, "5");
       await user.clear(input);
       await user.click(screen.getByRole("button", { name: "Save" }));
 
-      await waitFor(() =>
-        expect(
-          document.querySelector("[id$='-form-item-message']"),
-        ).not.toBeNull(),
+      expect(await screen.findByText("Nombre requis")).toBeInTheDocument();
+      expect(onSubmit).not.toHaveBeenCalled();
+    });
+
+    it("blocks an emptied required name with the French message and keeps the description", async () => {
+      const user = userEvent.setup();
+      const onSubmit = setup(
+        z.object({
+          name: requiredString(50).describe("Nom"),
+          description: z.string().max(200).describe("Description").optional(),
+        }),
       );
+
+      await user.type(screen.getByLabelText(/^nom/i), "Loyal");
+      await user.clear(screen.getByLabelText(/^nom/i));
+      await user.type(screen.getByLabelText(/description/i), "Un texte");
+      await user.click(screen.getByRole("button", { name: "Save" }));
+
+      expect(
+        await screen.findByText("Ce champ est requis"),
+      ).toBeInTheDocument();
+      expect(onSubmit).not.toHaveBeenCalled();
+      expect(screen.getByLabelText(/description/i)).toHaveValue("Un texte");
+    });
+
+    it("shows the French message for a required string that was never touched", async () => {
+      const user = userEvent.setup();
+      const onSubmit = setup(z.object({ name: requiredString(50) }));
+
+      await user.click(screen.getByRole("button", { name: "Save" }));
+
+      expect(
+        await screen.findByText("Ce champ est requis"),
+      ).toBeInTheDocument();
       expect(onSubmit).not.toHaveBeenCalled();
     });
 

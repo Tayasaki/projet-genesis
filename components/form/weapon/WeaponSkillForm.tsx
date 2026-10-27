@@ -6,6 +6,7 @@ import {
   deleteWeaponSkill,
 } from "@/src/actions/weapon/weaponSkill.action";
 import { SuggestionType } from "@prisma/client";
+import { requiredString } from "@/components/form/required-string";
 import { z } from "zod";
 import { useAttributeSubmit } from "../attribute/use-attribute-submit";
 
@@ -24,7 +25,7 @@ export const WeaponSkillForm = ({ suggest }: { suggest: boolean }) => {
   return (
     <AutoForm
       formSchema={z.object({
-        name: z.string().max(50).describe("Nom de la compétence"),
+        name: requiredString(50).describe("Nom de la compétence"),
       })}
       fieldConfig={{
         name: {

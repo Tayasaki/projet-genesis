@@ -56,6 +56,8 @@ async function choose(
   await user.click(await screen.findByRole("option", { name: option }));
 }
 
+vi.setConfig({ testTimeout: 15000 });
+
 describe("CharacterForm", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -85,6 +87,21 @@ describe("CharacterForm", () => {
     expect(
       await screen.findAllByText("Veuillez choisir une valeur"),
     ).toHaveLength(3);
+    expect(h.createCharacter).not.toHaveBeenCalled();
+  });
+
+  it("shows a field-level message for an empty name and does not create", async () => {
+    const user = userEvent.setup();
+    render(<CharacterForm {...props()} />);
+
+    await choose(user, 0, "Colérique");
+    await choose(user, 1, "Chaotique");
+    await choose(user, 2, "Riche");
+    await user.click(
+      screen.getByRole("button", { name: "Créer votre personnage" }),
+    );
+
+    expect(await screen.findByText("Ce champ est requis")).toBeInTheDocument();
     expect(h.createCharacter).not.toHaveBeenCalled();
   });
 

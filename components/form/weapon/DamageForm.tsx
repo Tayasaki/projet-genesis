@@ -3,6 +3,7 @@
 import AutoForm, { AutoFormSubmit } from "@/components/ui/auto-form";
 import { createDamage, deleteDamage } from "@/src/actions/weapon/damage.action";
 import { SuggestionType } from "@prisma/client";
+import { requiredString } from "@/components/form/required-string";
 import { z } from "zod";
 import { useAttributeSubmit } from "../attribute/use-attribute-submit";
 
@@ -21,7 +22,7 @@ export const DamageForm = ({ suggest }: { suggest: boolean }) => {
   return (
     <AutoForm
       formSchema={z.object({
-        name: z.string().max(50).describe("Nom du dégât"),
+        name: requiredString(50).describe("Nom du dégât"),
       })}
       fieldConfig={{
         name: {

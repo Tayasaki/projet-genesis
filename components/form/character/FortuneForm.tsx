@@ -3,6 +3,7 @@ import {
   deleteFortune,
 } from "@/src/actions/character/fortune.action";
 import { SuggestionType } from "@prisma/client";
+import { requiredString } from "@/components/form/required-string";
 import { z } from "zod";
 import AutoForm, { AutoFormSubmit } from "../../ui/auto-form";
 import { useAttributeSubmit } from "../attribute/use-attribute-submit";
@@ -22,7 +23,7 @@ export const FortuneForm = ({ suggest }: { suggest: boolean }) => {
   return (
     <AutoForm
       formSchema={z.object({
-        name: z.string().max(50).describe("Nom de la richesse"),
+        name: requiredString(50).describe("Nom de la richesse"),
         description: z
           .string()
           .max(200)

@@ -34,6 +34,7 @@ import { Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
+import { requiredString } from "@/components/form/required-string";
 import { z } from "zod";
 
 const REQUIRED_CHOICE_MESSAGE = "Veuillez choisir une valeur";
@@ -100,9 +101,7 @@ export const CharacterForm = ({
   const weaponNames = weapons.map((w) => w.name) as [string, ...string[]];
 
   const characterFormSchema = z.object({
-    name: z
-      .string()
-      .max(50)
+    name: requiredString(50)
       .describe("Nom du personnage")
       .default(character?.name ?? ""),
     pj: z
