@@ -32,7 +32,7 @@ export default async function ScenarioManage(props: {
   });
 
   if (!scenario) notFound();
-  const scenarioCharacter = await getCharacters(params.scenarioId);
+  const scenarioCharacter = await getCharacters(params.scenarioId, session.user.id);
   const userCharacter = (
     await prisma.character.findMany({
       where: charactersOwnedBy(session.user.id),

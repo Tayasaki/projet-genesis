@@ -7,19 +7,27 @@ type Row = Record<string, unknown>;
 
 /**
  * Evaluates a Prisma-style `where` against an in-memory row. Supports scalar
- * equality, nested relation objects and `{ some: ... }` on to-many relations,
- * which is all the ownership predicates use. An unknown key fails closed.
+ * equality, `{ not }`, `OR`, nested relation objects and `{ some, none }` on
+ * to-many relations, which is all the ownership predicates use. An unknown key fails closed.
  */
 export function matches(row: Row, where: Row): boolean {
   return Object.entries(where).every(([key, expected]) => {
+    if (key === "OR") {
+      return (expected as Row[]).some((branch) => matches(row, branch));
+    }
     const actual = row[key];
     if (expected === undefined) return true;
     if (expected !== null && typeof expected === "object") {
       const spec = expected as Row;
-      if ("some" in spec) {
+      if ("not" in spec) return actual !== spec.not;
+      if ("some" in spec || "none" in spec) {
+        const children = Array.isArray(actual) ? (actual as Row[]) : null;
+        if (!children) return false;
         return (
-          Array.isArray(actual) &&
-          actual.some((child) => matches(child as Row, spec.some as Row))
+          (!("some" in spec) ||
+            children.some((child) => matches(child, spec.some as Row))) &&
+          (!("none" in spec) ||
+            !children.some((child) => matches(child, spec.none as Row)))
         );
       }
       return (
