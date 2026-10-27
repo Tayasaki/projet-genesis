@@ -1,4 +1,4 @@
-FROM node:18-alpine AS base
+FROM node:22-alpine AS base
 
 # Install dependencies only when needed
 FROM base AS deps
@@ -21,6 +21,25 @@ COPY . .
 # Learn more here: https://nextjs.org/telemetry
 # Uncomment the following line in case you want to disable telemetry during the build.
 # ENV NEXT_TELEMETRY_DISABLED 1
+
+# Build-time placeholders only (builder stage; not inherited by the runner stage).
+# Override with --build-arg; real values must be supplied at runtime.
+ARG DATABASE_URL=postgresql://build:build@localhost:5432/build
+ARG BETTER_AUTH_URL=http://localhost:3000
+ARG AUTH_GITHUB_ID=build-placeholder
+ARG AUTH_GITHUB_SECRET=build-placeholder
+ARG AUTH_DISCORD_ID=build-placeholder
+ARG AUTH_DISCORD_SECRET=build-placeholder
+ARG AUTH_GOOGLE_ID=build-placeholder
+ARG AUTH_GOOGLE_SECRET=build-placeholder
+ENV DATABASE_URL=$DATABASE_URL \
+    BETTER_AUTH_URL=$BETTER_AUTH_URL \
+    AUTH_GITHUB_ID=$AUTH_GITHUB_ID \
+    AUTH_GITHUB_SECRET=$AUTH_GITHUB_SECRET \
+    AUTH_DISCORD_ID=$AUTH_DISCORD_ID \
+    AUTH_DISCORD_SECRET=$AUTH_DISCORD_SECRET \
+    AUTH_GOOGLE_ID=$AUTH_GOOGLE_ID \
+    AUTH_GOOGLE_SECRET=$AUTH_GOOGLE_SECRET
 
 RUN corepack enable pnpm && pnpm prisma generate
 RUN corepack enable pnpm && pnpm run build
