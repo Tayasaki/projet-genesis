@@ -70,6 +70,13 @@ pnpm dev
 
 Vous pouvez maintenant accéder à l'application à l'adresse `http://localhost:3000`
 
+6. Lancer les tests
+
+```bash
+pnpm test        # exécution unique
+pnpm test:watch  # mode watch
+```
+
 ## Docker
 
 Dans le cadre de ce projet, une image Docker de l'application est disponible pour faciliter le déploiement. Pour lancer l'application avec Docker, suivez les instructions suivantes:
