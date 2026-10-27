@@ -1,5 +1,10 @@
 "use server";
 
+import {
+  assertOwnedScenario,
+  assertOwnedWeapons,
+  characterOwnedBy,
+} from "@/lib/ownership";
 import { prisma } from "@/lib/prisma";
 import { authenticatedAction } from "@/lib/safe-action";
 import { openai } from "@ai-sdk/openai";
@@ -64,19 +69,6 @@ const systemPrompt = `
   You reply with the generated object that match the schema.
   `;
 
-// Same error for missing and foreign ids so the response is not an existence oracle.
-async function assertOwnedWeapons(userId: string, ids: string[]) {
-  const weaponIds = [...new Set(ids)];
-  if (
-    weaponIds.length > 0 &&
-    (await prisma.weapon.count({
-      where: { id: { in: weaponIds }, userId },
-    })) !== weaponIds.length
-  ) {
-    throw new Error("Weapon not found or not owned by user");
-  }
-}
-
 export const createCharacter = authenticatedAction
   .schema(characterSchema)
   .action(async ({ parsedInput, ctx: { userId } }) => {
@@ -85,12 +77,7 @@ export const createCharacter = authenticatedAction
     parsedInput.skillSet = parsedInput.skillSet.filter((s) => s);
     parsedInput.weaponSet = parsedInput.weaponSet.filter((w) => w);
     if (parsedInput.scenarioId) {
-      const scenario = await prisma.scenario.findUnique({
-        where: { id: parsedInput.scenarioId, userId },
-      });
-      if (!scenario) {
-        throw new Error("Scenario not found or not owned by user");
-      }
+      await assertOwnedScenario(userId, parsedInput.scenarioId);
     }
     await assertOwnedWeapons(userId, parsedInput.weaponSet as string[]);
     await prisma.character.create({
@@ -102,6 +89,7 @@ export const createCharacter = authenticatedAction
         age: parsedInput.age ?? null,
         injury: parsedInput.injury ?? null,
         extra: parsedInput.extra ?? null,
+        user: { connect: { id: userId } },
         scenario: {
           connect: {
             id: parsedInput.scenarioId,
@@ -215,10 +203,7 @@ export const updateCharacter = authenticatedAction
     parsedInput.weaponSet = parsedInput.weaponSet.filter((w) => w);
     await assertOwnedWeapons(userId, parsedInput.weaponSet as string[]);
     await prisma.character.update({
-      where: {
-        id: parsedInput.id,
-        scenario: { some: { userId } },
-      },
+      where: characterOwnedBy(parsedInput.id, userId),
       data: {
         name: parsedInput.name,
         pj: parsedInput.pj ?? false,
@@ -263,10 +248,7 @@ export const deleteCharacter = authenticatedAction
   .schema(z.object({ id: z.string().min(1) }))
   .action(async ({ parsedInput, ctx: { userId } }) => {
     await prisma.character.delete({
-      where: {
-        id: parsedInput.id,
-        scenario: { some: { userId } },
-      },
+      where: characterOwnedBy(parsedInput.id, userId),
     });
     revalidatePath("/characters");
   });

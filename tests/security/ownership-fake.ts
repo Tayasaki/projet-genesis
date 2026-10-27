@@ -7,19 +7,27 @@ type Row = Record<string, unknown>;
 
 /**
  * Evaluates a Prisma-style `where` against an in-memory row. Supports scalar
- * equality, nested relation objects and `{ some: ... }` on to-many relations,
- * which is all the ownership predicates use. An unknown key fails closed.
+ * equality, `{ not }`, `OR`, nested relation objects and `{ some, none }` on
+ * to-many relations, which is all the ownership predicates use. An unknown key fails closed.
  */
 export function matches(row: Row, where: Row): boolean {
   return Object.entries(where).every(([key, expected]) => {
+    if (key === "OR") {
+      return (expected as Row[]).some((branch) => matches(row, branch));
+    }
     const actual = row[key];
     if (expected === undefined) return true;
     if (expected !== null && typeof expected === "object") {
       const spec = expected as Row;
-      if ("some" in spec) {
+      if ("not" in spec) return actual !== spec.not;
+      if ("some" in spec || "none" in spec) {
+        const children = Array.isArray(actual) ? (actual as Row[]) : null;
+        if (!children) return false;
         return (
-          Array.isArray(actual) &&
-          actual.some((child) => matches(child as Row, spec.some as Row))
+          (!("some" in spec) ||
+            children.some((child) => matches(child, spec.some as Row))) &&
+          (!("none" in spec) ||
+            !children.some((child) => matches(child, spec.none as Row)))
         );
       }
       return (
@@ -42,6 +50,23 @@ export const scenarioRow = {
 export const characterRow = {
   id: "character-1",
   name: "Alice",
+  userId: OWNER,
+  scenario: [scenarioRow],
+};
+
+/** Legacy row the backfill left unattributed: linked to OWNER's scenario, no owner. */
+export const unownedCharacterRow = {
+  id: "character-unowned",
+  name: "Nobody",
+  userId: null,
+  scenario: [scenarioRow],
+};
+
+/** Owned by ATTACKER but (stale data) linked to OWNER's scenario. */
+export const foreignCharacterRow = {
+  id: "character-foreign",
+  name: "Mallory",
+  userId: ATTACKER,
   scenario: [scenarioRow],
 };
 
@@ -61,7 +86,11 @@ export function makePrismaFake() {
       return hit;
     });
 
-  const characters: Row[] = [characterRow];
+  const characters: Row[] = [
+    characterRow,
+    unownedCharacterRow,
+    foreignCharacterRow,
+  ];
   const scenarios: Row[] = [scenarioRow];
   const weapons: Row[] = [weaponRow, attackerWeaponRow];
 

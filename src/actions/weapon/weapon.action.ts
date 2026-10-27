@@ -1,5 +1,6 @@
 "use server";
 
+import { weaponOwnedBy } from "@/lib/ownership";
 import { prisma } from "@/lib/prisma";
 import { authenticatedAction } from "@/lib/safe-action";
 import { revalidatePath } from "next/cache";
@@ -57,6 +58,6 @@ export const createWeapon = authenticatedAction
 export const deleteWeapon = authenticatedAction
   .schema(z.object({ id: z.string() }))
   .action(async ({ parsedInput, ctx: { userId } }) => {
-    await prisma.weapon.delete({ where: { id: parsedInput.id, userId } });
+    await prisma.weapon.delete({ where: weaponOwnedBy(parsedInput.id, userId) });
     revalidatePath("/manage");
   });

@@ -4,6 +4,7 @@ import {
 } from "@/components/features/layout/auth/LogoutButton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getAuthSession } from "@/lib/auth";
+import { charactersOwnedBy } from "@/lib/ownership";
 import { prisma } from "@/lib/prisma";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
@@ -26,13 +27,7 @@ export default async function Profile() {
     where: { userId: user.id },
   });
   const nbCharacter = await prisma.character.count({
-    where: {
-      scenario: {
-        some: {
-          userId: user.id,
-        },
-      },
-    },
+    where: charactersOwnedBy(user.id),
   });
   const nbWeapon = await prisma.weapon.count({
     where: {

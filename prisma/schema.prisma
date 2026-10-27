@@ -60,6 +60,7 @@ model User {
 	sessions      Session[]
 	Scenario      Scenario[]
 	Weapon				Weapon[]
+	Character     Character[]
 	Suggestion		Suggestion[]
 	GenerationLog GenerationLog[]
 }
@@ -103,6 +104,11 @@ model Character {
 	injury      String?
 	extra       String?
 
+	// Owner. NULL only on legacy rows the backfill could not attribute; such rows
+	// match no ownership predicate (fail-closed). See lib/ownership.ts.
+	userId      String?
+	user        User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
 	weapon      Weapon[]
 	skillSet    CharacterSkill[]
 	scenario    Scenario[]
@@ -117,6 +123,8 @@ model Character {
 
 	tempermentId String?
 	temperment   Temperment? @relation(fields: [tempermentId], references: [id], onDelete: SetNull)
+
+	@@index([userId])
 }
 
 model CharacterSkill {

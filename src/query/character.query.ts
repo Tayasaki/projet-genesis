@@ -1,7 +1,8 @@
+import { charactersOwnedBy } from "@/lib/ownership";
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 
-export const getCharacters = (scenarioId: string) =>
+export const getCharacters = (scenarioId: string, userId: string) =>
   prisma.character.findMany({
     where: {
       scenario: {
@@ -9,6 +10,7 @@ export const getCharacters = (scenarioId: string) =>
           id: scenarioId,
         },
       },
+      ...charactersOwnedBy(userId),
     },
     include: {
       temperment: true,
