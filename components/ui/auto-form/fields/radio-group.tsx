@@ -5,11 +5,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import * as z from "zod";
 import AutoFormLabel from "../common/label";
 import AutoFormTooltip from "../common/tooltip";
 import { AutoFormInputComponentProps } from "../types";
-import { getBaseSchema } from "../utils";
+import { getEnumOptions } from "../utils";
 
 export default function AutoFormRadioGroup({
   label,
@@ -19,16 +18,7 @@ export default function AutoFormRadioGroup({
   fieldProps,
   fieldConfigItem,
 }: AutoFormInputComponentProps) {
-  const baseValues = (
-    (getBaseSchema(zodItem) as unknown as z.ZodEnum<any>)._def as any
-  ).values;
-
-  let values: string[] = [];
-  if (!Array.isArray(baseValues)) {
-    values = Object.entries(baseValues).map((item) => item[0]);
-  } else {
-    values = baseValues;
-  }
+  const values = getEnumOptions(zodItem);
 
   return (
     <div>

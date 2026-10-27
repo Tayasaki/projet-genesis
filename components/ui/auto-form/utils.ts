@@ -17,54 +17,92 @@ export function beautifyObjectName(string: string) {
   return output;
 }
 
+type ZodSchema = z.core.$ZodType;
+
+/**
+ * Zod 4 stores the schema kind in `_zod.def.type` (lowercase, e.g. "enum").
+ * The handler tables in `config.ts` keep their historical `Zod*` keys, so
+ * every kind lookup goes through this one mapping instead of reading zod
+ * internals at each call site.
+ */
+export function getSchemaKind(schema: ZodSchema): string {
+  const { type } = schema._zod.def;
+  return `Zod${type.charAt(0).toUpperCase()}${type.slice(1)}`;
+}
+
+/**
+ * The schema wrapped by a modifier (optional, nullable, default, readonly,
+ * catch, pipe/transform input, ...), or null for a base schema.
+ * Refinements are checks in zod 4 and never wrap the schema.
+ */
+function getWrappedSchema(schema: ZodSchema): ZodSchema | null {
+  const def = schema._zod.def;
+  if ("innerType" in def) return def.innerType as ZodSchema;
+  if (def.type === "pipe") return (def as z.core.$ZodPipeDef).in;
+  return null;
+}
+
 /**
  * Get the lowest level Zod type.
- * This will unpack optionals, refinements, etc.
+ * This will unpack optionals, defaults, transforms, etc.
  */
 export function getBaseSchema<
   ChildType extends z.ZodAny | z.ZodObject<any, any> = z.ZodAny,
 >(schema: ChildType | z.ZodType): ChildType | null {
   if (!schema) return null;
-  if ("innerType" in schema._def) {
-    return getBaseSchema((schema._def as any).innerType as ChildType);
-  }
-  if ("schema" in schema._def) {
-    return getBaseSchema((schema._def as any).schema as ChildType);
-  }
-
-  return schema as ChildType;
+  const wrapped = getWrappedSchema(schema);
+  return wrapped ? getBaseSchema(wrapped as ChildType) : (schema as ChildType);
 }
 
 /**
- * Get the type name of the lowest level Zod type.
- * This will unpack optionals, refinements, etc.
+ * Get the kind ("ZodEnum", "ZodNumber", ...) of the lowest level Zod type.
  */
 export function getBaseType(schema: z.ZodAny): string {
   const baseSchema = getBaseSchema(schema);
-  return baseSchema ? (baseSchema._def as any).typeName : "";
+  return baseSchema ? getSchemaKind(baseSchema) : "";
 }
 
 /**
- * Search for a "ZodDefault" in the Zod stack and return its value.
+ * `.describe("x").optional()` wraps a described schema in a fresh one that
+ * carries no metadata, so the label has to be searched down the wrapper chain.
  */
-export function getDefaultValueInZodStack(schema: z.ZodAny): any {
-  const typedSchema = schema as unknown as z.ZodDefault<
-    z.ZodNumber | z.ZodString
-  >;
-  const def = typedSchema._def as any;
+export function getSchemaDescription(schema: ZodSchema): string | undefined {
+  const own = (schema as z.ZodType).description;
+  if (own !== undefined) return own;
+  const wrapped = getWrappedSchema(schema);
+  return wrapped ? getSchemaDescription(wrapped) : undefined;
+}
 
-  if (def.typeName === "ZodDefault") {
-    return def.defaultValue();
-  }
+/**
+ * Options of an enum schema, whatever wrappers surround it.
+ */
+export function getEnumOptions(schema: z.ZodType): string[] {
+  const base = getBaseSchema(schema as z.ZodAny);
+  return base && getSchemaKind(base) === "ZodEnum"
+    ? ((base as unknown as z.ZodEnum).options as string[])
+    : [];
+}
 
-  if ("innerType" in typedSchema._def) {
-    return getDefaultValueInZodStack(def.innerType as z.ZodAny);
+/**
+ * Number inputs yield strings: turn on zod's own coercion for the underlying
+ * number schema so the resolver validates (and submits) a number.
+ */
+export function enableNumberCoercion(schema: z.ZodType): void {
+  const base = getBaseSchema(schema as z.ZodAny);
+  if (base && getSchemaKind(base) === "ZodNumber") {
+    (base._zod.def as { coerce?: boolean }).coerce = true;
   }
-  if ("schema" in typedSchema._def) {
-    return getDefaultValueInZodStack(def.schema as z.ZodAny);
-  }
+}
 
-  return undefined;
+/**
+ * Search for a "default" in the Zod stack and return its value.
+ */
+export function getDefaultValueInZodStack(schema: ZodSchema): any {
+  if (schema._zod.def.type === "default") {
+    return (schema._zod.def as z.core.$ZodDefaultDef).defaultValue;
+  }
+  const wrapped = getWrappedSchema(schema);
+  return wrapped ? getDefaultValueInZodStack(wrapped) : undefined;
 }
 
 /**
@@ -107,10 +145,8 @@ export function getDefaultValues<Schema extends z.ZodObject<any, any>>(
 export function getObjectFormSchema(
   schema: ZodObjectOrWrapped,
 ): z.ZodObject<any, any> {
-  if ((schema?._def as any)?.typeName === "ZodEffects") {
-    return getObjectFormSchema((schema._def as any).schema);
-  }
-  return schema as z.ZodObject<any, any>;
+  return (getBaseSchema(schema as z.ZodAny) ??
+    schema) as unknown as z.ZodObject<any, any>;
 }
 
 /**
@@ -118,48 +154,44 @@ export function getObjectFormSchema(
  * Once submitted, the schema will be validated completely.
  */
 export function zodToHtmlInputProps(
-  schema:
-    | z.ZodNumber
-    | z.ZodString
-    | z.ZodOptional<z.ZodNumber | z.ZodString>
-    | any,
+  schema: z.ZodType,
 ): React.InputHTMLAttributes<HTMLInputElement> {
-  const schemaDef = schema._def as any;
-  if (["ZodOptional", "ZodNullable"].includes(schemaDef.typeName)) {
+  const def = schema._zod.def;
+  if (def.type === "optional" || def.type === "nullable") {
     return {
-      ...zodToHtmlInputProps(schemaDef.innerType),
+      ...zodToHtmlInputProps(
+        (def as z.core.$ZodOptionalDef).innerType as z.ZodType,
+      ),
       required: false,
     };
   }
-  const typedSchema = schema as z.ZodNumber | z.ZodString;
-  const typedDef = typedSchema._def as any;
 
-  if (!typedDef.checks)
-    return {
-      required: true,
-    };
-
-  const checks = typedDef.checks as any[];
   const inputProps: React.InputHTMLAttributes<HTMLInputElement> = {
     required: true,
   };
-  const type = getBaseType(schema);
+  const checks = (def as z.core.$ZodStringDef | z.core.$ZodNumberDef).checks;
+  const isString = def.type === "string";
 
-  for (const check of checks) {
-    const c = check as any;
-    if (c.kind === "min") {
-      if (type === "ZodString") {
-        inputProps.minLength = c.value;
-      } else {
-        inputProps.min = c.value;
-      }
-    }
-    if (c.kind === "max") {
-      if (type === "ZodString") {
-        inputProps.maxLength = c.value;
-      } else {
-        inputProps.max = c.value;
-      }
+  for (const check of checks ?? []) {
+    const checkDef = check._zod.def as {
+      check: string;
+      value?: number;
+      minimum?: number;
+      maximum?: number;
+    };
+    switch (checkDef.check) {
+      case "min_length":
+        inputProps.minLength = checkDef.minimum;
+        break;
+      case "max_length":
+        inputProps.maxLength = checkDef.maximum;
+        break;
+      case "greater_than":
+        if (!isString) inputProps.min = checkDef.value;
+        break;
+      case "less_than":
+        if (!isString) inputProps.max = checkDef.value;
+        break;
     }
   }
 

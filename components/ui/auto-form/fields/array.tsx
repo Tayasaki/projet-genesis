@@ -8,7 +8,11 @@ import { Separator } from "@/components/ui/separator";
 import { Plus, Trash } from "lucide-react";
 import { useFieldArray, useForm } from "react-hook-form";
 import * as z from "zod";
-import { beautifyObjectName } from "../utils";
+import {
+  beautifyObjectName,
+  getBaseSchema,
+  getSchemaDescription,
+} from "../utils";
 import AutoFormObject from "./object";
 
 export default function AutoFormArray({
@@ -28,7 +32,9 @@ export default function AutoFormArray({
     control: form.control,
     name,
   });
-  const title = item.description ?? beautifyObjectName(name);
+  const elementSchema = (getBaseSchema(item) as unknown as z.ZodArray<any>)
+    .element as z.ZodObject<any, any>;
+  const title = getSchemaDescription(item) ?? beautifyObjectName(name);
 
   return (
     <AccordionItem value={name} className="border-none">
@@ -39,7 +45,7 @@ export default function AutoFormArray({
           return (
             <div className="mt-4 flex flex-col" key={`${key}`}>
               <AutoFormObject
-                schema={item.element as z.ZodObject<any, any>}
+                schema={elementSchema}
                 form={form}
                 fieldConfig={fieldConfig}
                 path={[...path, index.toString()]}
