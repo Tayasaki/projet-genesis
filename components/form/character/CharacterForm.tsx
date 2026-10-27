@@ -314,7 +314,7 @@ export const CharacterForm = ({
               toast.error("Vous devez être connecté pour créer un personnage");
             }
             setIsLoading(false);
-            return;
+            return values;
           }
           if (modify) {
             toast.success("Personnage modifié");
@@ -323,6 +323,7 @@ export const CharacterForm = ({
             toast.success("Personnage créé avec succès");
             router.push(`/${scenarioId}/characters`);
           }
+          return values;
         }}
         fieldConfig={{
           name: {

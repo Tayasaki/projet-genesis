@@ -36,11 +36,12 @@ export const ScenarioForm = () => {
             toast.error("Vous devez être connecté pour créer un scénario");
           }
           setIsLoading(false);
-          return;
+          return values;
         }
 
         toast.success("Scénario créé avec succès");
         setIsLoading(false);
+        return values;
       }}
       fieldConfig={{
         name: {

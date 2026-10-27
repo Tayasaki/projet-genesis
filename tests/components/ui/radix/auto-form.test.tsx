@@ -564,3 +564,124 @@ describe("AutoForm: accessibility of a blocked submit", () => {
     expect(input.getAttribute("aria-describedby")).toContain(message.id);
   });
 });
+
+describe("AutoForm: reset only after a successful submit", () => {
+  const titleSchema = z.object({ title: z.string().min(1) });
+
+  async function fillAndSubmit(
+    onSubmit: (v: { title: string }) => void | Promise<unknown>,
+  ) {
+    const user = userEvent.setup();
+    render(
+      <AutoForm formSchema={titleSchema} onSubmit={onSubmit}>
+        <AutoFormSubmit isLoading={false}>Save</AutoFormSubmit>
+      </AutoForm>,
+    );
+    await user.type(screen.getByLabelText(/title/i), "Hello");
+    await user.click(screen.getByRole("button", { name: "Save" }));
+    return user;
+  }
+
+  async function settle() {
+    await new Promise((r) => setTimeout(r, 50));
+  }
+
+  it.each([
+    ["a serverError", { serverError: "Nom déjà utilisé" }],
+    ["validationErrors", { validationErrors: { title: ["bad"] } }],
+  ])("keeps the typed values when the action returns %s", async (_, result) => {
+    const onSubmit = vi.fn().mockResolvedValue(result);
+
+    await fillAndSubmit(onSubmit);
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await settle();
+
+    expect(screen.getByLabelText(/title/i)).toHaveValue("Hello");
+  });
+
+  it("keeps the typed values when the handler throws", async () => {
+    const onSubmit = vi.fn().mockRejectedValue(new Error("boom"));
+    const unhandled = vi.fn();
+    process.on("unhandledRejection", unhandled);
+
+    await fillAndSubmit(onSubmit);
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await settle();
+    process.off("unhandledRejection", unhandled);
+
+    expect(screen.getByLabelText(/title/i)).toHaveValue("Hello");
+  });
+
+  it.each([
+    ["an action result without errors", { data: { id: 1 } }],
+    ["an empty action result", {}],
+    ["undefined", undefined],
+  ])(
+    "resets the fields when the action resolves with %s",
+    async (_, result) => {
+      const onSubmit = vi.fn().mockResolvedValue(result);
+
+      await fillAndSubmit(onSubmit);
+
+      await waitFor(() =>
+        expect(screen.getByLabelText(/title/i)).toHaveValue(""),
+      );
+    },
+  );
+
+  it("resets the fields after a synchronous void handler", async () => {
+    await fillAndSubmit(() => {});
+
+    await waitFor(() =>
+      expect(screen.getByLabelText(/title/i)).toHaveValue(""),
+    );
+  });
+
+  it("awaits an async handler: no reset until it resolves", async () => {
+    let resolve!: (v: unknown) => void;
+    const onSubmit = vi.fn(() => new Promise((r) => (resolve = r)));
+
+    await fillAndSubmit(onSubmit);
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await settle();
+    expect(screen.getByLabelText(/title/i)).toHaveValue("Hello");
+
+    resolve(undefined);
+
+    await waitFor(() =>
+      expect(screen.getByLabelText(/title/i)).toHaveValue(""),
+    );
+  });
+
+  it("calls the handler once on a double submit while it is pending", async () => {
+    let resolve!: (v: unknown) => void;
+    const onSubmit = vi.fn(() => new Promise((r) => (resolve = r)));
+
+    const user = await fillAndSubmit(onSubmit);
+    await user.click(screen.getByRole("button", { name: "Save" }));
+    await settle();
+
+    expect(onSubmit).toHaveBeenCalledTimes(1);
+    resolve(undefined);
+    await waitFor(() =>
+      expect(screen.getByLabelText(/title/i)).toHaveValue(""),
+    );
+  });
+
+  it("accepts a retry after a rejected submit", async () => {
+    const onSubmit = vi
+      .fn()
+      .mockResolvedValueOnce({ serverError: "x" })
+      .mockResolvedValueOnce({ data: {} });
+
+    const user = await fillAndSubmit(onSubmit);
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await settle();
+    await user.click(screen.getByRole("button", { name: "Save" }));
+
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(2));
+    await waitFor(() =>
+      expect(screen.getByLabelText(/title/i)).toHaveValue(""),
+    );
+  });
+});
