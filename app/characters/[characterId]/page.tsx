@@ -20,13 +20,19 @@ type Props = {
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
   const params = await props.params;
-  const character = await prisma.character.findUniqueOrThrow({
-    where: { id: params.characterId },
-    select: { name: true },
-  });
+  const session = await getAuthSession();
+  const character = session?.user?.id
+    ? await prisma.character.findUnique({
+        where: {
+          id: params.characterId,
+          scenario: { some: { userId: session.user.id } },
+        },
+        select: { name: true },
+      })
+    : null;
 
   return {
-    title: "Projet Genesis - " + character.name,
+    title: character ? "Projet Genesis - " + character.name : "Projet Genesis",
     description:
       "Création de scénarios pour jeux de rôle | Générateur de fiche de personnage",
   };
