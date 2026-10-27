@@ -112,6 +112,10 @@ describe("generateCharacter rate limit", () => {
 
     expect(res?.serverError).toBeDefined();
     expect(fake.rows).toHaveLength(1);
+    expect(fake.tx.generationLog.delete).not.toHaveBeenCalled();
+    expect(fake.tx.generationLog.deleteMany).not.toHaveBeenCalled();
+    expect(prisma.generationLog.delete).not.toHaveBeenCalled();
+    expect(prisma.generationLog.deleteMany).not.toHaveBeenCalled();
   });
 
   it("does not count rows older than the window", async () => {

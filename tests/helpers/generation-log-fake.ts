@@ -34,6 +34,8 @@ export function attachGenerationLogFake(prisma: PrismaMock) {
           ).length;
         },
       ),
+      delete: vi.fn(),
+      deleteMany: vi.fn(),
       create: vi.fn(async ({ data }: { data: { userId: string } }) => {
         events.push("create");
         const row = {
