@@ -1,15 +1,30 @@
 import { prisma } from "@/lib/prisma";
-import { createSafeActionClient } from "next-safe-action";
+import {
+  createSafeActionClient,
+  DEFAULT_SERVER_ERROR_MESSAGE,
+} from "next-safe-action";
 import { getAuthSession } from "./auth";
 
-export const action = createSafeActionClient();
-
-class ActionError extends Error {
+/**
+ * The only error whose message reaches clients (see `handleServerError`), so
+ * its message must be a static, user-safe string: never interpolate a caught
+ * error's message or any data.
+ */
+export class ActionError extends Error {
   constructor(message: string) {
     super(message);
     this.name = "ActionError";
   }
 }
+
+/**
+ * Returns `ActionError` messages to the client; any other error is masked with
+ * `DEFAULT_SERVER_ERROR_MESSAGE` so internal details never leak.
+ */
+export const action = createSafeActionClient({
+  handleServerError: (error) =>
+    error instanceof ActionError ? error.message : DEFAULT_SERVER_ERROR_MESSAGE,
+});
 
 /**
  * Requires a logged-in user and exposes `ctx.userId`. That is all it

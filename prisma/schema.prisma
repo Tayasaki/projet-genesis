@@ -61,6 +61,19 @@ model User {
 	Scenario      Scenario[]
 	Weapon				Weapon[]
 	Character     Character[]
+	Suggestion		Suggestion[]
+	GenerationLog GenerationLog[]
+}
+
+// One row per accepted AI character generation attempt (no prompt text).
+// Backs the per-user rate limit in generateCharacter.
+model GenerationLog {
+	id        String   @id @default(cuid())
+	userId    String
+	user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+	createdAt DateTime @default(now())
+
+	@@index([userId, createdAt])
 }
 
 enum Role {
@@ -211,6 +224,11 @@ model Suggestion {
 	type				SuggestionType
 	name				String @id
 	description	String?
+	userId			String?
+	user				User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+	createdAt		DateTime @default(now())
+
+	@@index([userId, createdAt])
 }
 
 enum SuggestionType {

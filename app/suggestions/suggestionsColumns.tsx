@@ -16,7 +16,77 @@ import { createWeaponSkill } from "@/src/actions/weapon/weaponSkill.action";
 import { createWeight } from "@/src/actions/weapon/weight.action";
 import { Suggestion } from "@/src/query/suggestion.query";
 import { ColumnDef } from "@tanstack/react-table";
+import { useState } from "react";
 import { toast } from "sonner";
+
+type ActionResult = { serverError?: unknown; validationErrors?: unknown };
+
+const hasActionError = (result: ActionResult | undefined) =>
+  !!result?.serverError || !!result?.validationErrors;
+
+/** Creates the catalog entry for a suggestion; the caller checks the result. */
+function createCatalogEntry({
+  type,
+  name,
+  description,
+}: Suggestion): Promise<ActionResult | undefined> {
+  const withDescription = { name, description: description ?? undefined };
+  switch (type) {
+    case "Alignment":
+      return createAlignment(withDescription);
+    case "Ammo":
+      return createAmmo({ name });
+    case "CharacterSkill":
+      return createCharacterSkill({ name });
+    case "Damage":
+      return createDamage({ name });
+    case "Fortune":
+      return createFortune(withDescription);
+    case "Range":
+      return createRange({ name });
+    case "Strength":
+      return createStrength({ name });
+    case "Temperment":
+      return createTemperment(withDescription);
+    case "Weakness":
+      return createWeakness({ name });
+    case "WeaponSkill":
+      return createWeaponSkill({ name });
+    case "Weight":
+      return createWeight({ name });
+  }
+}
+
+function AcceptButton({ suggestion }: { suggestion: Suggestion }) {
+  const [pending, setPending] = useState(false);
+
+  async function accept() {
+    setPending(true);
+    try {
+      const created = await createCatalogEntry(suggestion);
+      if (hasActionError(created)) {
+        toast.error("Erreur lors de la création");
+        return;
+      }
+      const deleted = await deleteSuggestion({ name: suggestion.name });
+      if (hasActionError(deleted)) {
+        toast.error("Créé, mais la suggestion n'a pas été supprimée");
+        return;
+      }
+      toast.success("Suggestion acceptée");
+    } catch {
+      toast.error("Erreur inconnu");
+    } finally {
+      setPending(false);
+    }
+  }
+
+  return (
+    <Button onClick={accept} disabled={pending}>
+      Accepter
+    </Button>
+  );
+}
 
 export const columns: ColumnDef<Suggestion>[] = [
   {
@@ -37,75 +107,22 @@ export const columns: ColumnDef<Suggestion>[] = [
     cell: ({ row }) => {
       return (
         <div className="flex items-center space-x-2">
-          <Button
-            onClick={() => {
-              try {
-                switch (row.original.type) {
-                  case "Alignment":
-                    createAlignment({
-                      name: row.original.name,
-                      description: row.original.description as
-                        | string
-                        | undefined,
-                    });
-                    break;
-                  case "Ammo":
-                    createAmmo({
-                      name: row.original.name,
-                    });
-                    break;
-                  case "CharacterSkill":
-                    createCharacterSkill({ name: row.original.name });
-                    break;
-                  case "Damage":
-                    createDamage({ name: row.original.name });
-                    break;
-                  case "Fortune":
-                    createFortune({
-                      name: row.original.name,
-                      description: row.original.description as
-                        | string
-                        | undefined,
-                    });
-                    break;
-                  case "Range":
-                    createRange({ name: row.original.name });
-                    break;
-                  case "Strength":
-                    createStrength({ name: row.original.name });
-                    break;
-                  case "Temperment":
-                    createTemperment({
-                      name: row.original.name,
-                      description: row.original.description as
-                        | string
-                        | undefined,
-                    });
-                    break;
-                  case "Weakness":
-                    createWeakness({ name: row.original.name });
-                    break;
-                  case "WeaponSkill":
-                    createWeaponSkill({ name: row.original.name });
-                    break;
-                  case "Weight":
-                    createWeight({ name: row.original.name });
-                    break;
-                }
-                deleteSuggestion({ name: row.original.name });
-                toast.success("Suggestion acceptée");
-              } catch (error) {
-                toast.error("Erreur inconnu");
-              }
-            }}
-          >
-            Accepter
-          </Button>
+          <AcceptButton suggestion={row.original} />
           <DeleteDialog
             item={row.original.name}
             deleteItem={async () => {
-              await deleteSuggestion({ name: row.original.name });
-              toast.success(`${row.original.name} supprimé`);
+              try {
+                const deleted = await deleteSuggestion({
+                  name: row.original.name,
+                });
+                if (hasActionError(deleted)) {
+                  toast.error("Erreur lors de la suppression");
+                  return;
+                }
+                toast.success(`${row.original.name} supprimé`);
+              } catch {
+                toast.error("Erreur inconnu");
+              }
             }}
           />
         </div>

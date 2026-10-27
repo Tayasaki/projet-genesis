@@ -3,7 +3,7 @@ type: reference
 status: active
 created: 2026-10-27
 last_updated: 2026-10-27
-review_trigger: "Any change to lib/safe-action.ts, lib/ownership.ts, the Role enum, an ownership column or relation in prisma/schema.prisma, or a server action / page that reads or writes user data; or when issues #27, #40 close or the NULL-owner Character rows are resolved."
+review_trigger: "Any change to lib/safe-action.ts, lib/ownership.ts, the Role enum, an ownership column or relation in prisma/schema.prisma, or a server action / page that reads or writes user data; or when the NULL-owner Character rows are resolved."
 ---
 
 # Authorization model
@@ -18,6 +18,8 @@ All server actions are built on `next-safe-action` clients exported from `lib/sa
 |---|---|---|---|
 | `authenticatedAction` | Rejects when there is no `session.user.id`; passes `ctx.userId`. | The caller is logged in. | Anything about which rows the caller may touch. |
 | `authorizedAction` | Same login check, then loads the `User` row and rejects unless `role` is `ADMIN` or `SUPERUSER`. Passes `ctx.userId`. | The caller is logged in and is staff (role read from the DB on every call). | Ownership scoping; it is used for global reference data only. |
+
+Only `ActionError` messages reach clients; every other thrown error is masked, so `ActionError` messages must be static, user-safe strings and never interpolate caught error messages or data.
 
 Neither client scopes data to an owner. Every handler that touches user-owned rows must add the ownership predicate itself (section 3).
 
@@ -38,7 +40,7 @@ Every predicate and ownership assertion lives in `lib/ownership.ts` (`scenarioOw
 | `Weapon` | `Weapon.userId` | `weaponOwnedBy(id, userId)` = `{ id, userId }` |
 | `Character` | `Character.userId` (nullable, `onDelete: Cascade`, indexed) | `characterOwnedBy(id, userId)` = `{ id, userId }`; lists use `charactersOwnedBy(userId)` = `{ userId }` |
 | Reference data (Temperment, Alignment, Fortune, Strength, Weakness, CharacterSkill, WeaponSkill, Ammo, Damage, Range, Weight) | global, not user-owned | none; writes are staff-only via `authorizedAction` |
-| `Suggestion` | global; no author column | creation is login-only; deletion and the listing page are staff-only (see known gaps, #40) |
+| `Suggestion` | global; `Suggestion.userId` records the author | creation is login-only and rate-limited; deletion and the listing page are staff-only |
 
 Caveats on Character ownership:
 
@@ -88,11 +90,11 @@ Staff-only pages (`app/manage/page.tsx`, `app/suggestions/page.tsx`) additionall
 | `createCharacter` | authenticated | sets `Character.userId` from ctx; scenario checked with `assertOwnedScenario` when `scenarioId` given; client-supplied weapon ids verified with `assertOwnedWeapons` before connect |
 | `updateCharacter` | authenticated | `characterOwnedBy` (`Character.userId`); client-supplied weapon ids verified with `assertOwnedWeapons` before `set` |
 | `deleteCharacter` | authenticated | `characterOwnedBy` (`Character.userId`) |
-| `generateCharacter` | authenticated | none (no data access); no rate limit or input cap (#27) |
+| `generateCharacter` | authenticated | none (no user-owned data read); input capped at 2000 chars, `maxOutputTokens` 600, and 10 attempts per user per rolling hour counted in `GenerationLog` (userId + createdAt, no prompt text; ADMIN/SUPERUSER exempt); over-limit returns `{ type: "rate-limited" }` before any OpenAI call |
 | `createWeapon` | authenticated | sets owner from ctx; `ammo`/`weight`/`range`/`damage`/skills connected by name (reference data) |
 | `deleteWeapon` | authenticated | `weaponOwnedBy` |
 | `deleteAccount` | authenticated | everything keyed on ctx `userId` (characters via `charactersErasedWithUser`); input `sessionId` must equal it |
-| `createSuggestion` | authenticated | none; suggestions are global and have no author; no rate limit (#40) |
+| `createSuggestion` | authenticated | none; suggestions are global; each row records its author (`userId`); non-staff are limited to 5 per rolling hour (advisory-lock transaction), ADMIN/SUPERUSER exempt |
 | `deleteSuggestion` | authorized | global data; staff-only |
 | `create*`/`delete*` for Temperment, Alignment, Fortune, Strength, Weakness, CharacterSkill (`src/actions/character/*`) | authorized | global reference data |
 | `create*`/`delete*` for Ammo, Damage, Range, Weight, WeaponSkill (`src/actions/weapon/*`) | authorized | global reference data |
@@ -119,6 +121,4 @@ Staff-only pages (`app/manage/page.tsx`, `app/suggestions/page.tsx`) additionall
 
 ## 8. Known gaps (open issues, not fixed by this document)
 
-- #40: `Suggestion` has no author (`userId`) and `createSuggestion` has no rate limit (remainder of #25; deletion and the listing page are now staff-only).
-- #27: `generateCharacter` has no rate limit or input cap.
 - Legacy `Character` rows with a `NULL` owner (cross-linked or zero-scenario at migration time) are unreachable until an operator assigns an owner (see section 3). The audit query lists them.
