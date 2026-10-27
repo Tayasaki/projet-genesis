@@ -62,6 +62,8 @@ OPENAI_API_KEY = "votreapikeyopenai"; // Optionnel
 pnpx prisma migrate dev
 ```
 
+> Il n'existe pas de script de seed : la base de données démarre vide. Les données de test se créent via l'application.
+
 5. Lancer le serveur de développement
 
 ```bash
@@ -69,6 +71,13 @@ pnpm dev
 ```
 
 Vous pouvez maintenant accéder à l'application à l'adresse `http://localhost:3000`
+
+6. Lancer les tests
+
+```bash
+pnpm test        # exécution unique
+pnpm test:watch  # mode watch
+```
 
 ## Docker
 
