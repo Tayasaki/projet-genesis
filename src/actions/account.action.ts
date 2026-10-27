@@ -1,6 +1,6 @@
 "use server";
 
-import { charactersOwnedBy } from "@/lib/ownership";
+import { charactersErasedWithUser } from "@/lib/ownership";
 import { prisma } from "@/lib/prisma";
 import { authenticatedAction } from "@/lib/safe-action";
 import { z } from "zod";
@@ -17,7 +17,7 @@ export const deleteAccount = authenticatedAction
       where: { userId: userId },
     });
     await prisma.character.deleteMany({
-      where: charactersOwnedBy(userId),
+      where: charactersErasedWithUser(userId),
     });
     await prisma.weapon.deleteMany({
       where: { userId: userId },

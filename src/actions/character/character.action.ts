@@ -82,6 +82,7 @@ export const createCharacter = authenticatedAction
         age: parsedInput.age ?? null,
         injury: parsedInput.injury ?? null,
         extra: parsedInput.extra ?? null,
+        user: { connect: { id: userId } },
         scenario: {
           connect: {
             id: parsedInput.scenarioId,

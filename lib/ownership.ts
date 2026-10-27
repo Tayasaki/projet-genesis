@@ -15,9 +15,28 @@ export const scenarioOwnedBy = (id: string, userId: string) => ({
 
 export const weaponOwnedBy = (id: string, userId: string) => ({ id, userId });
 
-/** Character has no owner column: it belongs to whoever owns one of its scenarios. */
+/**
+ * A character belongs to `Character.userId`. Rows whose `userId` is NULL
+ * (legacy data the migration could not attribute) match no user, so they are
+ * unreachable: fail-closed until an operator assigns an owner.
+ */
 export const charactersOwnedBy = (userId: string) =>
-  ({ scenario: { some: { userId } } }) satisfies Prisma.CharacterWhereInput;
+  ({ userId }) satisfies Prisma.CharacterWhereInput;
+
+/**
+ * Characters deleted together with their user: the owned ones, plus unowned
+ * legacy rows linked only to this user's scenarios (nobody else can claim them).
+ */
+export const charactersErasedWithUser = (userId: string) =>
+  ({
+    OR: [
+      charactersOwnedBy(userId),
+      {
+        userId: null,
+        scenario: { some: { userId }, none: { userId: { not: userId } } },
+      },
+    ],
+  }) satisfies Prisma.CharacterWhereInput;
 
 export const characterOwnedBy = (id: string, userId: string) => ({
   id,

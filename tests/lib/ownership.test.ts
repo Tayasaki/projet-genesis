@@ -12,6 +12,7 @@ import {
   assertOwnedScenario,
   assertOwnedWeapons,
   characterOwnedBy,
+  charactersErasedWithUser,
   charactersOwnedBy,
   scenarioOwnedBy,
   weaponOwnedBy,
@@ -30,9 +31,19 @@ describe("ownership predicates", () => {
     expect(weaponOwnedBy("w1", "u1")).toEqual({ id: "w1", userId: "u1" });
   });
 
-  it("scopes characters to those reachable through one of the user's scenarios", () => {
-    expect(charactersOwnedBy("u1")).toEqual({
-      scenario: { some: { userId: "u1" } },
+  it("scopes characters to the Character.userId column", () => {
+    expect(charactersOwnedBy("u1")).toEqual({ userId: "u1" });
+  });
+
+  it("scopes account erasure to owned rows plus unowned rows linked only to the user's scenarios", () => {
+    expect(charactersErasedWithUser("u1")).toEqual({
+      OR: [
+        { userId: "u1" },
+        {
+          userId: null,
+          scenario: { some: { userId: "u1" }, none: { userId: { not: "u1" } } },
+        },
+      ],
     });
   });
 

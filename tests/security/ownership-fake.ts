@@ -42,6 +42,23 @@ export const scenarioRow = {
 export const characterRow = {
   id: "character-1",
   name: "Alice",
+  userId: OWNER,
+  scenario: [scenarioRow],
+};
+
+/** Legacy row the backfill left unattributed: linked to OWNER's scenario, no owner. */
+export const unownedCharacterRow = {
+  id: "character-unowned",
+  name: "Nobody",
+  userId: null,
+  scenario: [scenarioRow],
+};
+
+/** Owned by ATTACKER but (stale data) linked to OWNER's scenario. */
+export const foreignCharacterRow = {
+  id: "character-foreign",
+  name: "Mallory",
+  userId: ATTACKER,
   scenario: [scenarioRow],
 };
 
@@ -61,7 +78,11 @@ export function makePrismaFake() {
       return hit;
     });
 
-  const characters: Row[] = [characterRow];
+  const characters: Row[] = [
+    characterRow,
+    unownedCharacterRow,
+    foreignCharacterRow,
+  ];
   const scenarios: Row[] = [scenarioRow];
   const weapons: Row[] = [weaponRow, attackerWeaponRow];
 

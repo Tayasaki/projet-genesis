@@ -5,6 +5,7 @@ import {
   characterRow,
   makePrismaFake,
   OWNER,
+  unownedCharacterRow,
 } from "./ownership-fake";
 
 const h = vi.hoisted(() => ({
@@ -68,7 +69,7 @@ describe("ScenarioManage page", () => {
       userId: OWNER,
     });
     expect(h.prisma.character.findMany.mock.calls[0][0].where).toEqual({
-      scenario: { some: { userId: OWNER } },
+      userId: OWNER,
     });
   });
 
@@ -83,9 +84,7 @@ describe("ScenarioManage page", () => {
 
   it("redirects anonymous visitors to /login", async () => {
     h.session = null;
-    await expect(ScenarioManage(props)).rejects.toThrow(
-      "NEXT_REDIRECT:/login",
-    );
+    await expect(ScenarioManage(props)).rejects.toThrow("NEXT_REDIRECT:/login");
   });
 });
 
@@ -99,7 +98,7 @@ describe("@modal character page", () => {
 
     expect(h.prisma.character.findUnique.mock.calls[0][0].where).toEqual({
       id: "character-1",
-      scenario: { some: { userId: OWNER } },
+      userId: OWNER,
     });
   });
 
@@ -107,8 +106,16 @@ describe("@modal character page", () => {
     actAs(ATTACKER);
     await expect(ModalCharacter(props)).rejects.toThrow("NEXT_NOT_FOUND");
     expect(h.prisma.character.findUnique.mock.calls[0][0].where).toMatchObject({
-      scenario: { some: { userId: ATTACKER } },
+      userId: ATTACKER,
     });
+  });
+
+  it("returns notFound for a character with no owner, even in the viewer's own scenario", async () => {
+    await expect(
+      ModalCharacter({
+        params: Promise.resolve({ characterId: unownedCharacterRow.id }),
+      }),
+    ).rejects.toThrow("NEXT_NOT_FOUND");
   });
 
   it("redirects anonymous visitors to /login", async () => {

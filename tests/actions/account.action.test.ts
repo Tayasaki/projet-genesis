@@ -64,7 +64,18 @@ describe("deleteAccount", () => {
       where: { userId: TEST_USER_ID },
     });
     expect(prisma.character.deleteMany).toHaveBeenCalledWith({
-      where: { scenario: { some: { userId: TEST_USER_ID } } },
+      where: {
+        OR: [
+          { userId: TEST_USER_ID },
+          {
+            userId: null,
+            scenario: {
+              some: { userId: TEST_USER_ID },
+              none: { userId: { not: TEST_USER_ID } },
+            },
+          },
+        ],
+      },
     });
     expect(prisma.weapon.deleteMany).toHaveBeenCalledWith({
       where: { userId: TEST_USER_ID },
