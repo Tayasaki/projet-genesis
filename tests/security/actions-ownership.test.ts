@@ -170,7 +170,7 @@ describe("character weapon attachment", () => {
     expect(h.prisma.character.create).not.toHaveBeenCalled();
   });
 
-  it("createCharacter answers a missing id exactly like a foreign id", async () => {
+  it("createCharacter treats a missing id exactly like a foreign id", async () => {
     const foreign = await createCharacter({
       ...characterInput,
       weaponSet: [FOREIGN],
@@ -181,6 +181,15 @@ describe("character weapon attachment", () => {
     });
 
     expect(missing?.serverError).toBe(foreign?.serverError);
+    expect(missing?.serverError).toBeDefined();
+    const calls = h.prisma.weapon.count.mock.calls as unknown as [
+      { where: { id: { in: string[] }; userId: string } },
+    ][];
+    expect(calls).toHaveLength(2);
+    expect(calls[0][0].where.userId).toBe(calls[1][0].where.userId);
+    expect(calls[0][0].where.id.in).toHaveLength(
+      calls[1][0].where.id.in.length,
+    );
     expect(h.prisma.character.create).not.toHaveBeenCalled();
   });
 
@@ -236,6 +245,35 @@ describe("character weapon attachment", () => {
     expect(h.prisma.weapon.count).toHaveBeenCalledWith({
       where: { id: { in: [FOREIGN] }, userId: ATTACKER },
     });
+  });
+});
+
+describe("unauthenticated character writes", () => {
+  beforeEach(() => {
+    h.session = null;
+  });
+
+  it("createCharacter is rejected before any Prisma call", async () => {
+    const res = await createCharacter({
+      ...characterInput,
+      weaponSet: ["weapon-1"],
+    });
+
+    expect(res?.serverError).toBeDefined();
+    expect(h.prisma.weapon.count).not.toHaveBeenCalled();
+    expect(h.prisma.character.create).not.toHaveBeenCalled();
+  });
+
+  it("updateCharacter is rejected before any Prisma call", async () => {
+    const res = await updateCharacter({
+      ...characterInput,
+      id: "character-1",
+      weaponSet: ["weapon-1"],
+    });
+
+    expect(res?.serverError).toBeDefined();
+    expect(h.prisma.weapon.count).not.toHaveBeenCalled();
+    expect(h.prisma.character.update).not.toHaveBeenCalled();
   });
 });
 

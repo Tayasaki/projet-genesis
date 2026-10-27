@@ -57,6 +57,19 @@ const systemPrompt = `
   You reply with the generated object that match the schema.
   `;
 
+// Same error for missing and foreign ids so the response is not an existence oracle.
+async function assertOwnedWeapons(userId: string, ids: string[]) {
+  const weaponIds = [...new Set(ids)];
+  if (
+    weaponIds.length > 0 &&
+    (await prisma.weapon.count({
+      where: { id: { in: weaponIds }, userId },
+    })) !== weaponIds.length
+  ) {
+    throw new Error("Weapon not found or not owned by user");
+  }
+}
+
 export const createCharacter = authenticatedAction
   .schema(characterSchema)
   .action(async ({ parsedInput, ctx: { userId } }) => {
@@ -72,15 +85,7 @@ export const createCharacter = authenticatedAction
         throw new Error("Scenario not found or not owned by user");
       }
     }
-    const weaponIds = [...new Set(parsedInput.weaponSet as string[])];
-    if (
-      weaponIds.length > 0 &&
-      (await prisma.weapon.count({
-        where: { id: { in: weaponIds }, userId },
-      })) !== weaponIds.length
-    ) {
-      throw new Error("Weapon not found or not owned by user");
-    }
+    await assertOwnedWeapons(userId, parsedInput.weaponSet as string[]);
     await prisma.character.create({
       data: {
         name: parsedInput.name,
@@ -165,15 +170,7 @@ export const updateCharacter = authenticatedAction
     parsedInput.weakness = parsedInput.weakness.filter((w) => w);
     parsedInput.skillSet = parsedInput.skillSet.filter((s) => s);
     parsedInput.weaponSet = parsedInput.weaponSet.filter((w) => w);
-    const weaponIds = [...new Set(parsedInput.weaponSet as string[])];
-    if (
-      weaponIds.length > 0 &&
-      (await prisma.weapon.count({
-        where: { id: { in: weaponIds }, userId },
-      })) !== weaponIds.length
-    ) {
-      throw new Error("Weapon not found or not owned by user");
-    }
+    await assertOwnedWeapons(userId, parsedInput.weaponSet as string[]);
     await prisma.character.update({
       where: {
         id: parsedInput.id,
