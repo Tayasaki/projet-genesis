@@ -7,7 +7,7 @@ const h = vi.hoisted(() => ({
   role: "USER" as string,
   prisma: {
     user: { findUniqueOrThrow: vi.fn() },
-    suggestion: { create: vi.fn(), delete: vi.fn() },
+    suggestion: { create: vi.fn(), delete: vi.fn(), count: vi.fn() },
   },
 }));
 
@@ -62,6 +62,7 @@ beforeEach(() => {
     id: "u1",
     role: h.role,
   }));
+  h.prisma.suggestion.count.mockResolvedValue(0);
   actAs("USER");
 });
 
@@ -110,6 +111,38 @@ describe("createSuggestion stays open to any logged-in user", () => {
     expect(res?.serverError).toBeDefined();
     expect(h.prisma.suggestion.create).not.toHaveBeenCalled();
   });
+});
+
+describe("createSuggestion authorship and quota", () => {
+  it("records the session user as author", async () => {
+    await createSuggestion({ type: "Ammo", name: "Arrow" });
+
+    expect(h.prisma.suggestion.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({ userId: "u1" }),
+    });
+  });
+
+  it("blocks a plain USER over the hourly quota", async () => {
+    h.prisma.suggestion.count.mockResolvedValue(5);
+
+    const res = await createSuggestion({ type: "Ammo", name: "Arrow" });
+
+    expect(res?.serverError).toBeDefined();
+    expect(h.prisma.suggestion.create).not.toHaveBeenCalled();
+  });
+
+  it.each(["ADMIN", "SUPERUSER"] as const)(
+    "never throttles %s",
+    async (role) => {
+      actAs(role);
+      h.prisma.suggestion.count.mockResolvedValue(50);
+
+      const res = await createSuggestion({ type: "Ammo", name: "Arrow" });
+
+      expect(res?.serverError).toBeUndefined();
+      expect(h.prisma.suggestion.create).toHaveBeenCalledTimes(1);
+    },
+  );
 });
 
 describe("/suggestions page gate", () => {

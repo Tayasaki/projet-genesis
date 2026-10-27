@@ -31,8 +31,8 @@ export function createPrismaMock(): PrismaMock {
  * Authentication and authorization are covered separately (tests/security).
  */
 export function createSafeActionMock() {
-  const base = createSafeActionClient().use(async ({ next }) =>
-    next({ ctx: { userId: TEST_USER_ID } }),
-  );
+  const base = createSafeActionClient({
+    handleServerError: (error) => error.message,
+  }).use(async ({ next }) => next({ ctx: { userId: TEST_USER_ID } }));
   return { action: base, authenticatedAction: base, authorizedAction: base };
 }

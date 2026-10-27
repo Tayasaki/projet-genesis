@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { prisma as prismaClient } from "@/lib/prisma";
 import { TEST_USER_ID, type PrismaMock } from "../helpers/action-mocks";
@@ -34,8 +34,21 @@ vi.mock("next/cache", () => ({ revalidatePath }));
 
 const prisma = prismaClient as unknown as PrismaMock;
 
+const NOW = new Date("2026-10-27T12:00:00.000Z");
+const HOUR_MS = 60 * 60 * 1000;
+// Mirrors SUGGESTION_RATE_LIMIT in suggestion.action.ts.
+const LIMIT = 5;
+
 beforeEach(() => {
   vi.clearAllMocks();
+  vi.useFakeTimers({ toFake: ["Date"] });
+  vi.setSystemTime(NOW);
+  prisma.user.findUniqueOrThrow.mockResolvedValue({ role: "USER" });
+  prisma.suggestion.count.mockResolvedValue(0);
+});
+
+afterEach(() => {
+  vi.useRealTimers();
 });
 
 import {
@@ -52,7 +65,12 @@ describe("createSuggestion", () => {
     });
 
     expect(prisma.suggestion.create).toHaveBeenCalledWith({
-      data: { type: "Ammo", name: "Arrow", description: "pointy" },
+      data: {
+        type: "Ammo",
+        name: "Arrow",
+        description: "pointy",
+        userId: TEST_USER_ID,
+      },
     });
     expect(revalidatePath).toHaveBeenCalledWith("/suggestions");
   });
@@ -73,7 +91,7 @@ describe("createSuggestion", () => {
     await createSuggestion({ type, name: "n" });
 
     expect(prisma.suggestion.create).toHaveBeenCalledWith({
-      data: { type, name: "n", description: undefined },
+      data: { type, name: "n", description: undefined, userId: TEST_USER_ID },
     });
   });
 
@@ -98,6 +116,122 @@ describe("createSuggestion", () => {
       )?.validationErrors,
     ).toBeDefined();
     expect(prisma.suggestion.create).not.toHaveBeenCalled();
+  });
+});
+
+describe("createSuggestion authorship", () => {
+  it("stores the creating user's id from the session context", async () => {
+    await createSuggestion({ type: "Ammo", name: "Arrow" });
+
+    expect(prisma.suggestion.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({ userId: TEST_USER_ID }),
+    });
+  });
+});
+
+describe("createSuggestion rate limit", () => {
+  it("counts only this user's suggestions inside the last hour", async () => {
+    await createSuggestion({ type: "Ammo", name: "Arrow" });
+
+    expect(prisma.suggestion.count).toHaveBeenCalledWith({
+      where: {
+        userId: TEST_USER_ID,
+        createdAt: { gte: new Date(NOW.getTime() - HOUR_MS) },
+      },
+    });
+  });
+
+  it("allows a suggestion while under the limit", async () => {
+    prisma.suggestion.count.mockResolvedValue(LIMIT - 1);
+
+    const res = await createSuggestion({ type: "Ammo", name: "Arrow" });
+
+    expect(res?.serverError).toBeUndefined();
+    expect(prisma.suggestion.create).toHaveBeenCalledTimes(1);
+  });
+
+  it.each([LIMIT, LIMIT + 3])(
+    "rejects with %i recent suggestions and creates no row",
+    async (recent) => {
+      prisma.suggestion.count.mockResolvedValue(recent);
+
+      const res = await createSuggestion({ type: "Ammo", name: "Arrow" });
+
+      expect(res?.serverError).toMatch(/too many suggestions/i);
+      expect(prisma.suggestion.create).not.toHaveBeenCalled();
+      expect(revalidatePath).not.toHaveBeenCalled();
+    },
+  );
+
+  it.each(["ADMIN", "SUPERUSER"])(
+    "exempts %s even when over the limit",
+    async (role) => {
+      prisma.user.findUniqueOrThrow.mockResolvedValue({ role });
+      prisma.suggestion.count.mockResolvedValue(LIMIT + 10);
+
+      const res = await createSuggestion({ type: "Ammo", name: "Arrow" });
+
+      expect(res?.serverError).toBeUndefined();
+      expect(prisma.suggestion.create).toHaveBeenCalledTimes(1);
+    },
+  );
+
+  it("reads the role from the database for the session user", async () => {
+    await createSuggestion({ type: "Ammo", name: "Arrow" });
+
+    expect(prisma.user.findUniqueOrThrow).toHaveBeenCalledWith(
+      expect.objectContaining({ where: { id: TEST_USER_ID } }),
+    );
+  });
+
+  it("moves the window with the clock so old rows stop counting", async () => {
+    vi.setSystemTime(new Date(NOW.getTime() + 2 * HOUR_MS));
+
+    await createSuggestion({ type: "Ammo", name: "Arrow" });
+
+    expect(prisma.suggestion.count).toHaveBeenCalledWith({
+      where: {
+        userId: TEST_USER_ID,
+        createdAt: { gte: new Date(NOW.getTime() + HOUR_MS) },
+      },
+    });
+  });
+});
+
+describe("createSuggestion input bounds and duplicates", () => {
+  it("accepts a name of exactly 100 characters", async () => {
+    const res = await createSuggestion({ type: "Ammo", name: "n".repeat(100) });
+
+    expect(res?.validationErrors).toBeUndefined();
+    expect(prisma.suggestion.create).toHaveBeenCalledTimes(1);
+  });
+
+  it("rejects a name longer than 100 characters", async () => {
+    const res = await createSuggestion({ type: "Ammo", name: "n".repeat(101) });
+
+    expect(res?.validationErrors).toBeDefined();
+    expect(prisma.suggestion.create).not.toHaveBeenCalled();
+  });
+
+  it("turns a unique-name violation (P2002) into a clean error", async () => {
+    prisma.suggestion.create.mockRejectedValue(
+      Object.assign(new Error("Unique constraint failed"), { code: "P2002" }),
+    );
+
+    const res = await createSuggestion({ type: "Ammo", name: "Arrow" });
+
+    expect(res?.serverError).toBe("This suggestion already exists");
+    expect(revalidatePath).not.toHaveBeenCalled();
+  });
+
+  it("does not mask other database errors as duplicates", async () => {
+    prisma.suggestion.create.mockRejectedValue(
+      Object.assign(new Error("connection lost"), { code: "P1001" }),
+    );
+
+    const res = await createSuggestion({ type: "Ammo", name: "Arrow" });
+
+    expect(res?.serverError).toBe("connection lost");
   });
 });
 
