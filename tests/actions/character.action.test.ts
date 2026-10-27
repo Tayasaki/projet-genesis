@@ -29,6 +29,9 @@ const prisma = prismaClient as unknown as PrismaMock;
 
 beforeEach(() => {
   vi.clearAllMocks();
+  // Tolerate ownership pre-checks (covered in tests/security): resolve to an owned row.
+  prisma.scenario.findUnique.mockResolvedValue({ id: "owned" });
+  prisma.character.findUnique.mockResolvedValue({ id: "owned" });
 });
 
 import { NoObjectGeneratedError } from "ai";
