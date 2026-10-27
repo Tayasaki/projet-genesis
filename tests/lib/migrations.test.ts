@@ -42,8 +42,17 @@ describe("better_auth_core_fields migration", () => {
     expect(coreSql).not.toMatch(/ALTER COLUMN\s+"\w+"\s+(SET DATA\s+)?TYPE\b/i);
   });
 
+  it("is idempotent: every ADD COLUMN uses IF NOT EXISTS", () => {
+    const adds = coreSql.match(/ADD COLUMN\b/g) ?? [];
+    const guarded = coreSql.match(/ADD COLUMN IF NOT EXISTS\b/g) ?? [];
+    expect(adds.length).toBe(7);
+    expect(guarded.length).toBe(adds.length);
+  });
+
   it("gives every NOT NULL column it adds a default, so existing rows stay valid", () => {
-    const added = [...coreSql.matchAll(/ADD COLUMN\s+"\w+"[^,;]*/g)].map((m) => m[0]);
+    const added = [
+      ...coreSql.matchAll(/ADD COLUMN\s+(?:IF NOT EXISTS\s+)?"\w+"[^,;]*/g),
+    ].map((m) => m[0]);
     expect(added.length).toBe(7);
     for (const column of added.filter((c) => /NOT NULL/.test(c))) {
       expect(column).toMatch(/DEFAULT/);
