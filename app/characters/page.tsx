@@ -1,4 +1,5 @@
 import { getAuthSession } from "@/lib/auth";
+import { charactersOwnedBy } from "@/lib/ownership";
 import { prisma } from "@/lib/prisma";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
@@ -14,7 +15,7 @@ export const metadata: Metadata = {
 
 const getUserCharacters = cache((userId: string) =>
   prisma.character.findMany({
-    where: { scenario: { some: { userId } } },
+    where: charactersOwnedBy(userId),
   }),
 );
 

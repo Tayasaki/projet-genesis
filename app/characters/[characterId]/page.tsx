@@ -1,6 +1,7 @@
 import { CharacterForm } from "@/components/form/character/CharacterForm";
 import { getAuthSession } from "@/lib/auth";
 import { env } from "@/lib/env";
+import { characterOwnedBy } from "@/lib/ownership";
 import { prisma } from "@/lib/prisma";
 import {
   getAlignments,
@@ -23,10 +24,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   const session = await getAuthSession();
   const character = session?.user?.id
     ? await prisma.character.findUnique({
-        where: {
-          id: params.characterId,
-          scenario: { some: { userId: session.user.id } },
-        },
+        where: characterOwnedBy(params.characterId, session.user.id),
         select: { name: true },
       })
     : null;
@@ -49,16 +47,7 @@ export default async function CharacterPage(
   if (!session?.user?.id) redirect("/login");
 
   const character = await prisma.character.findUnique({
-    where: {
-      id: params.characterId,
-      scenario: {
-        some: {
-          user: {
-            id: session.user.id,
-          },
-        },
-      },
-    },
+    where: characterOwnedBy(params.characterId, session.user.id),
     include: {
       temperment: true,
       alignment: true,

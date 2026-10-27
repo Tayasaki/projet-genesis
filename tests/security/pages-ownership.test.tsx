@@ -99,7 +99,7 @@ describe("@modal character page", () => {
 
     expect(h.prisma.character.findUnique.mock.calls[0][0].where).toEqual({
       id: "character-1",
-      scenario: { some: { user: { id: OWNER } } },
+      scenario: { some: { userId: OWNER } },
     });
   });
 
@@ -107,7 +107,7 @@ describe("@modal character page", () => {
     actAs(ATTACKER);
     await expect(ModalCharacter(props)).rejects.toThrow("NEXT_NOT_FOUND");
     expect(h.prisma.character.findUnique.mock.calls[0][0].where).toMatchObject({
-      scenario: { some: { user: { id: ATTACKER } } },
+      scenario: { some: { userId: ATTACKER } },
     });
   });
 

@@ -1,4 +1,5 @@
 import { getAuthSession } from "@/lib/auth";
+import { scenarioOwnedBy } from "@/lib/ownership";
 import { prisma } from "@/lib/prisma";
 import { Metadata } from "next";
 import React from "react";
@@ -13,7 +14,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   const session = await getAuthSession();
   const scenario = session?.user?.id
     ? await prisma.scenario.findUnique({
-        where: { id: params.scenarioId, userId: session.user.id },
+        where: scenarioOwnedBy(params.scenarioId, session.user.id),
         select: { name: true },
       })
     : null;

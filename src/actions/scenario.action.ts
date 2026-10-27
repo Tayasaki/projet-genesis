@@ -1,5 +1,9 @@
 "use server";
 
+import {
+  assertOwnedCharacter,
+  scenarioOwnedBy,
+} from "@/lib/ownership";
 import { prisma } from "@/lib/prisma";
 import { authenticatedAction } from "@/lib/safe-action";
 import { revalidatePath } from "next/cache";
@@ -33,17 +37,9 @@ export const updateScenarioCharacter = authenticatedAction
     }),
   )
   .action(async ({ parsedInput, ctx: { userId } }) => {
-    const character = await prisma.character.findUnique({
-      where: {
-        id: parsedInput.characterId,
-        scenario: { some: { userId } },
-      },
-    });
-    if (!character) {
-      throw new Error("Character not found or not owned by user");
-    }
+    await assertOwnedCharacter(userId, parsedInput.characterId);
     await prisma.scenario.update({
-      where: { id: parsedInput.scenarioId, userId: userId },
+      where: scenarioOwnedBy(parsedInput.scenarioId, userId),
       data: {
         character: {
           connect: { id: parsedInput.characterId },
@@ -57,10 +53,7 @@ export const deleteScenario = authenticatedAction
   .schema(z.object({ id: z.string().min(1) }))
   .action(async ({ parsedInput, ctx: { userId } }) => {
     await prisma.scenario.deleteMany({
-      where: {
-        id: parsedInput.id,
-        userId: userId,
-      },
+      where: scenarioOwnedBy(parsedInput.id, userId),
     });
     revalidatePath("/");
   });

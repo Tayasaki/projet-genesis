@@ -12,6 +12,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { getAuthSession } from "@/lib/auth";
+import { charactersOwnedBy, scenarioOwnedBy } from "@/lib/ownership";
 import { prisma } from "@/lib/prisma";
 import { cn } from "@/lib/utils";
 import { ArrowRight, Plus } from "lucide-react";
@@ -27,23 +28,14 @@ export default async function ScenarioManage(props: {
   const session = await getAuthSession();
   if (!session?.user?.id) redirect("/login");
   const scenario = await prisma.scenario.findUnique({
-    where: {
-      id: params.scenarioId,
-      userId: session.user.id,
-    },
+    where: scenarioOwnedBy(params.scenarioId, session.user.id),
   });
 
   if (!scenario) notFound();
   const scenarioCharacter = await getCharacters(params.scenarioId);
   const userCharacter = (
     await prisma.character.findMany({
-      where: {
-        scenario: {
-          some: {
-            userId: session.user.id,
-          },
-        },
-      },
+      where: charactersOwnedBy(session.user.id),
     })
   ).filter((c) => !scenarioCharacter.some((sc) => sc.id === c.id));
 
