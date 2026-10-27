@@ -1,4 +1,5 @@
 import { act, renderHook } from "@testing-library/react";
+import { DEFAULT_SERVER_ERROR_MESSAGE } from "next-safe-action";
 import { toast } from "sonner";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -54,13 +55,50 @@ describe("useAttributeSubmit", () => {
     expect(result.current.isLoading).toBe(false);
   });
 
+  it.each([
+    [
+      "the server message",
+      { serverError: "Trop de suggestions" },
+      "Trop de suggestions",
+    ],
+    [
+      "the French fallback for the masked default message",
+      { serverError: DEFAULT_SERVER_ERROR_MESSAGE },
+      "Votre suggestion n'a pas pu être envoyée",
+    ],
+    [
+      "a French fallback",
+      { serverError: { weird: true } },
+      "Votre suggestion n'a pas pu être envoyée",
+    ],
+    [
+      "the fill-fields error",
+      { validationErrors: {} },
+      "Veuillez remplir tous les champs",
+    ],
+  ])(
+    "suggest path toasts %s instead of success on failure",
+    async (_, res, msg) => {
+      vi.mocked(createSuggestion).mockResolvedValueOnce(res as never);
+      const { result } = setup(true);
+
+      await act(() => result.current.handleSubmit(input));
+
+      expect(toast.error).toHaveBeenCalledWith(msg);
+      expect(toast.info).not.toHaveBeenCalled();
+      expect(result.current.isLoading).toBe(false);
+    },
+  );
+
   it("validationErrors shows the fill-fields error and no success toast", async () => {
     const { result, createAction } = setup(false, { validationErrors: {} });
 
     await act(() => result.current.handleSubmit(input));
 
     expect(createAction).toHaveBeenCalledWith(input);
-    expect(toast.error).toHaveBeenCalledWith("Veuillez remplir tous les champs");
+    expect(toast.error).toHaveBeenCalledWith(
+      "Veuillez remplir tous les champs",
+    );
     expect(toast.error).toHaveBeenCalledTimes(1);
     expect(toast.success).not.toHaveBeenCalled();
     expect(result.current.isLoading).toBe(false);
