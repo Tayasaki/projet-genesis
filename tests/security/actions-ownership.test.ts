@@ -1,10 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import {
-  ATTACKER,
-  makePrismaFake,
-  OWNER,
-} from "./ownership-fake";
+import { ATTACKER, makePrismaFake, OWNER } from "./ownership-fake";
 
 const h = vi.hoisted(() => ({
   prisma: undefined as unknown as ReturnType<typeof makePrismaFake>,
@@ -126,6 +122,120 @@ describe("createCharacter", () => {
       userId: ATTACKER,
     });
     expect(h.prisma.character.create).not.toHaveBeenCalled();
+  });
+});
+
+describe("character weapon attachment", () => {
+  const OWN = "weapon-1";
+  const FOREIGN = "weapon-2";
+  const createdData = () =>
+    (
+      h.prisma.character.create.mock.calls as unknown as [
+        { data: Record<string, unknown> },
+      ][]
+    )[0][0].data;
+  const updatedData = () =>
+    (
+      h.prisma.character.update.mock.calls as unknown as [
+        { data: Record<string, unknown> },
+      ][]
+    )[0][0].data;
+
+  it("createCharacter attaches the user's own weapon", async () => {
+    const res = await createCharacter({ ...characterInput, weaponSet: [OWN] });
+
+    expect(res?.serverError).toBeUndefined();
+    expect(createdData().weapon).toEqual({
+      connect: [{ id: OWN }],
+    });
+  });
+
+  it("createCharacter rejects another user's weapon and never creates", async () => {
+    const res = await createCharacter({
+      ...characterInput,
+      weaponSet: [FOREIGN],
+    });
+
+    expect(res?.serverError).toBeDefined();
+    expect(h.prisma.character.create).not.toHaveBeenCalled();
+  });
+
+  it("createCharacter rejects a mixed own and foreign list as a whole", async () => {
+    const res = await createCharacter({
+      ...characterInput,
+      weaponSet: [OWN, FOREIGN],
+    });
+
+    expect(res?.serverError).toBeDefined();
+    expect(h.prisma.character.create).not.toHaveBeenCalled();
+  });
+
+  it("createCharacter answers a missing id exactly like a foreign id", async () => {
+    const foreign = await createCharacter({
+      ...characterInput,
+      weaponSet: [FOREIGN],
+    });
+    const missing = await createCharacter({
+      ...characterInput,
+      weaponSet: ["no-such-weapon"],
+    });
+
+    expect(missing?.serverError).toBe(foreign?.serverError);
+    expect(h.prisma.character.create).not.toHaveBeenCalled();
+  });
+
+  it("createCharacter accepts a repeated own id (distinct count)", async () => {
+    const res = await createCharacter({
+      ...characterInput,
+      weaponSet: [OWN, OWN],
+    });
+
+    expect(res?.serverError).toBeUndefined();
+    expect(h.prisma.character.create).toHaveBeenCalledOnce();
+  });
+
+  it("updateCharacter sets the user's own weapon", async () => {
+    const res = await updateCharacter({
+      ...characterInput,
+      id: "character-1",
+      weaponSet: [OWN],
+    });
+
+    expect(res?.serverError).toBeUndefined();
+    expect(updatedData().weapon).toEqual({
+      set: [{ id: OWN }],
+    });
+  });
+
+  it("updateCharacter rejects another user's weapon and never updates", async () => {
+    const res = await updateCharacter({
+      ...characterInput,
+      id: "character-1",
+      weaponSet: [FOREIGN],
+    });
+
+    expect(res?.serverError).toBeDefined();
+    expect(h.prisma.character.update).not.toHaveBeenCalled();
+  });
+
+  it("updateCharacter rejects a mixed list as a whole", async () => {
+    const res = await updateCharacter({
+      ...characterInput,
+      id: "character-1",
+      weaponSet: [OWN, FOREIGN],
+    });
+
+    expect(res?.serverError).toBeDefined();
+    expect(h.prisma.character.update).not.toHaveBeenCalled();
+  });
+
+  it("scopes the ownership query to the requesting user", async () => {
+    actAs(ATTACKER);
+    await createCharacter({ ...characterInput, weaponSet: [FOREIGN] });
+
+    expect(h.prisma.weapon.count).toHaveBeenCalledWith({
+      where: { id: { in: [FOREIGN] }, userId: ATTACKER },
+    });
   });
 });
 

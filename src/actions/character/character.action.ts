@@ -72,6 +72,15 @@ export const createCharacter = authenticatedAction
         throw new Error("Scenario not found or not owned by user");
       }
     }
+    const weaponIds = [...new Set(parsedInput.weaponSet as string[])];
+    if (
+      weaponIds.length > 0 &&
+      (await prisma.weapon.count({
+        where: { id: { in: weaponIds }, userId },
+      })) !== weaponIds.length
+    ) {
+      throw new Error("Weapon not found or not owned by user");
+    }
     await prisma.character.create({
       data: {
         name: parsedInput.name,
@@ -156,6 +165,15 @@ export const updateCharacter = authenticatedAction
     parsedInput.weakness = parsedInput.weakness.filter((w) => w);
     parsedInput.skillSet = parsedInput.skillSet.filter((s) => s);
     parsedInput.weaponSet = parsedInput.weaponSet.filter((w) => w);
+    const weaponIds = [...new Set(parsedInput.weaponSet as string[])];
+    if (
+      weaponIds.length > 0 &&
+      (await prisma.weapon.count({
+        where: { id: { in: weaponIds }, userId },
+      })) !== weaponIds.length
+    ) {
+      throw new Error("Weapon not found or not owned by user");
+    }
     await prisma.character.update({
       where: {
         id: parsedInput.id,
