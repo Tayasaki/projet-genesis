@@ -8,7 +8,9 @@ import { prisma } from "./prisma";
 // is only for *additional* origins (e.g. a local /etc/hosts dev alias).
 // Configure via TRUSTED_ORIGINS (comma-separated) instead of hardcoding one.
 const trustedOrigins = env.TRUSTED_ORIGINS
-  ? env.TRUSTED_ORIGINS.split(",").map((origin) => origin.trim())
+  ? env.TRUSTED_ORIGINS.split(",")
+      .map((origin) => origin.trim())
+      .filter(Boolean)
   : [];
 
 const socialProviders: Record<
