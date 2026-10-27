@@ -12,6 +12,16 @@ import { parseOriginList } from "./trusted-origins.mjs";
 const trustedOrigins = parseOriginList(env.TRUSTED_ORIGINS);
 const socialProviders = buildSocialProviders(env);
 
+/**
+ * The privacy policy lists only name, email, photo and OAuth id as collected,
+ * so the client IP and user agent Better Auth records on each session are
+ * dropped before the row is written. The columns stay because Better Auth
+ * requires them. IP tracking itself stays on: the rate limiter needs it.
+ */
+export async function withoutClientInfo<T extends object>(session: T) {
+  return { data: { ...session, ipAddress: null, userAgent: null } };
+}
+
 export const auth = betterAuth({
   baseURL: env.BETTER_AUTH_URL,
   trustedOrigins,
@@ -22,6 +32,11 @@ export const auth = betterAuth({
     enabled: false,
   },
   socialProviders,
+  databaseHooks: {
+    session: {
+      create: { before: withoutClientInfo },
+    },
+  },
   session: {
     fields: {
       expiresAt: "expires",

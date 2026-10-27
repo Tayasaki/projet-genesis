@@ -42,6 +42,12 @@ describe.skipIf(!databaseUrl)("Better Auth adapter against Postgres", () => {
       const session = await ctx.internalAdapter.createSession(user.id);
       expect(session.userId).toBe(user.id);
 
+      const stored = await prisma.session.findUniqueOrThrow({
+        where: { sessionToken: session.token },
+        select: { ipAddress: true, userAgent: true },
+      });
+      expect(stored).toEqual({ ipAddress: null, userAgent: null });
+
       const found = await ctx.internalAdapter.findSession(session.token);
       expect(found?.user.id).toBe(user.id);
       expect(found?.session.expiresAt.getTime()).toBeGreaterThan(Date.now());
