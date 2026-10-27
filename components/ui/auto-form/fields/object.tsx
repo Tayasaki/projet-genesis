@@ -11,8 +11,10 @@ import { DEFAULT_ZOD_HANDLERS, INPUT_COMPONENTS } from "../config";
 import { Dependency, FieldConfig, FieldConfigItem } from "../types";
 import {
   beautifyObjectName,
+  enableNumberCoercion,
   getBaseSchema,
   getBaseType,
+  getSchemaDescription,
   zodToHtmlInputProps,
 } from "../utils";
 import AutoFormArray from "./array";
@@ -48,27 +50,13 @@ export default function AutoFormObject<
     return null;
   }
 
-  const handleIfZodNumber = (item: z.ZodAny) => {
-    const isZodNumber = (item as any)._def.typeName === "ZodNumber";
-    const isInnerZodNumber =
-      (item._def as any).innerType?._def?.typeName === "ZodNumber";
-
-    if (isZodNumber) {
-      (item as any)._def.coerce = true;
-    } else if (isInnerZodNumber) {
-      (item._def as any).innerType._def.coerce = true;
-    }
-
-    return item;
-  };
-
   return (
     <Accordion type="multiple" className="space-y-5 border-none">
       {Object.keys(shape).map((name) => {
         let item = shape[name] as z.ZodAny;
-        item = handleIfZodNumber(item) as z.ZodAny;
+        enableNumberCoercion(item);
         const zodBaseType = getBaseType(item);
-        const itemName = item.description ?? beautifyObjectName(name);
+        const itemName = getSchemaDescription(item) ?? beautifyObjectName(name);
         const key = [...path, name].join(".");
 
         const {

@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { z } from "zod";
@@ -71,5 +71,191 @@ describe("AutoForm", () => {
     expect(onValuesChange).toHaveBeenLastCalledWith(
       expect.objectContaining({ username: "jo" }),
     );
+  });
+
+  describe("zod 4 field kinds", () => {
+    function setup<S extends z.ZodObject<z.ZodRawShape>>(
+      formSchema: S,
+      props: { onSubmit?: (v: z.infer<S>) => void } = {},
+    ) {
+      const onSubmit = props.onSubmit ?? vi.fn();
+      render(
+        <AutoForm formSchema={formSchema} onSubmit={onSubmit}>
+          <AutoFormSubmit isLoading={false}>Save</AutoFormSubmit>
+        </AutoForm>,
+      );
+      return onSubmit as ReturnType<typeof vi.fn>;
+    }
+
+    it("renders an enum as a select listing every option and submits the chosen one", async () => {
+      const user = userEvent.setup();
+      const onSubmit = setup(
+        z.object({ role: z.enum(["warrior", "mage", "rogue"]) }),
+      );
+
+      const trigger = screen.getByRole("combobox");
+      expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
+      await user.click(trigger);
+      expect(screen.getAllByRole("option").map((o) => o.textContent)).toEqual([
+        "warrior",
+        "mage",
+        "rogue",
+      ]);
+
+      await user.click(screen.getByRole("option", { name: "mage" }));
+      await user.click(screen.getByRole("button", { name: "Save" }));
+
+      await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+      expect(onSubmit).toHaveBeenCalledWith({ role: "mage" });
+    });
+
+    it("renders an optional enum as a select too", () => {
+      setup(z.object({ ammo: z.enum(["arrow", "bolt"]).optional() }));
+
+      expect(screen.getByRole("combobox")).toBeInTheDocument();
+    });
+
+    it("renders a number as a spinbutton and submits a number", async () => {
+      const user = userEvent.setup();
+      const onSubmit = setup(z.object({ age: z.number().min(1).max(120) }));
+
+      const input = screen.getByRole("spinbutton");
+      expect(input).toHaveAttribute("min", "1");
+      expect(input).toHaveAttribute("max", "120");
+      await user.type(input, "42");
+      await user.click(screen.getByRole("button", { name: "Save" }));
+
+      await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+      expect(onSubmit).toHaveBeenCalledWith({ age: 42 });
+    });
+
+    it("renders a date as a date picker and submits a Date", async () => {
+      const user = userEvent.setup();
+      const onSubmit = setup(z.object({ when: z.date() }));
+
+      expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
+      await user.click(screen.getByRole("button", { name: /pick a date/i }));
+      const days = await screen.findAllByRole("gridcell");
+      await user.click(
+        within(
+          days.find((d) => d.textContent === "15") as HTMLElement,
+        ).getByRole("button"),
+      );
+      await user.click(screen.getByRole("button", { name: "Save" }));
+
+      await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+      const submitted = onSubmit.mock.calls[0][0].when;
+      expect(submitted).toBeInstanceOf(Date);
+      expect(submitted.getDate()).toBe(15);
+    });
+
+    it("renders a boolean as a checkbox and submits a boolean", async () => {
+      const user = userEvent.setup();
+      const onSubmit = setup(z.object({ melee: z.boolean() }));
+
+      const checkbox = screen.getByRole("checkbox");
+      expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
+      await user.click(checkbox);
+      expect(checkbox).toBeChecked();
+      await user.click(screen.getByRole("button", { name: "Save" }));
+
+      await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+      expect(onSubmit).toHaveBeenCalledWith({ melee: true });
+    });
+
+    it("prefills from .default() through optional wrappers", () => {
+      setup(
+        z.object({
+          melee: z.boolean().default(true).optional(),
+          name: z.string().default("Excalibur"),
+          power: z.number().default(7).optional(),
+        }),
+      );
+
+      expect(screen.getByRole("checkbox")).toBeChecked();
+      expect(screen.getByRole("textbox")).toHaveValue("Excalibur");
+      expect(screen.getByRole("spinbutton")).toHaveValue(7);
+    });
+
+    it("prefills a defaulted enum with its default option", () => {
+      setup(z.object({ range: z.enum(["short", "long"]).default("long") }));
+
+      expect(screen.getByRole("combobox")).toHaveTextContent("long");
+    });
+
+    it("keeps the .describe() label through .optional() wrappers", () => {
+      setup(
+        z.object({
+          ammo: z.enum(["arrow"]).describe("Munition de l'arme").optional(),
+        }),
+      );
+
+      expect(screen.getByText("Munition de l'arme")).toBeInTheDocument();
+    });
+
+    it("marks required and optional fields differently and submits without the optional one", async () => {
+      const user = userEvent.setup();
+      const onSubmit = setup(
+        z.object({
+          title: z.string().min(1, "Title is required"),
+          note: z.string().optional(),
+        }),
+      );
+
+      expect(screen.getByLabelText(/title/i)).toBeRequired();
+      expect(screen.getByLabelText(/note/i)).not.toBeRequired();
+      await user.type(screen.getByLabelText(/title/i), "Hello");
+      await user.click(screen.getByRole("button", { name: "Save" }));
+
+      await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+      expect(onSubmit).toHaveBeenCalledWith({ title: "Hello" });
+    });
+
+    it("renders nested objects and arrays of objects with typed fields", async () => {
+      const user = userEvent.setup();
+      setup(
+        z.object({
+          stats: z.object({ level: z.number() }),
+          skills: z
+            .array(z.object({ name: z.enum(["swim", "climb"]).optional() }))
+            .describe("Skills"),
+        }),
+      );
+
+      await user.click(screen.getByRole("button", { name: /stats/i }));
+      expect(await screen.findByRole("spinbutton")).toBeInTheDocument();
+      await user.click(screen.getByRole("button", { name: /skills/i }));
+      await user.click(screen.getByRole("button", { name: /add/i }));
+      expect(await screen.findByRole("combobox")).toBeInTheDocument();
+    });
+
+    it("unwraps a refined object schema and still renders typed fields", () => {
+      setup(
+        z
+          .object({ a: z.number(), b: z.enum(["x", "y"]) })
+          .refine((v) => v.a > 0, "a must be positive") as never,
+      );
+
+      expect(screen.getByRole("spinbutton")).toBeInTheDocument();
+      expect(screen.getByRole("combobox")).toBeInTheDocument();
+    });
+
+    it("renders the weapon-form schema shape with typed fields", () => {
+      setup(
+        z.object({
+          name: z.string().max(50).describe("Nom de l'arme"),
+          melee: z.boolean().describe("Arme de mélée").default(true).optional(),
+          description: z.string().max(200).describe("Description").optional(),
+          ammo: z.enum(["a1", "a2"]).describe("Munition").optional(),
+          weight: z.enum(["light", "heavy"]).describe("Poids"),
+          range: z.enum(["near", "far"]).describe("Portée"),
+          damage: z.enum(["low", "high"]).describe("Dégât"),
+        }),
+      );
+
+      expect(screen.getAllByRole("combobox")).toHaveLength(4);
+      expect(screen.getByRole("checkbox")).toBeChecked();
+      expect(screen.getByText("Arme de mélée")).toBeInTheDocument();
+    });
   });
 });

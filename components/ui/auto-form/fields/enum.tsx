@@ -7,12 +7,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Dices } from "lucide-react";
-import * as z from "zod";
 import { Button } from "../../button";
 import AutoFormLabel from "../common/label";
 import AutoFormTooltip from "../common/tooltip";
 import { AutoFormInputComponentProps } from "../types";
-import { getBaseSchema } from "../utils";
+import { getEnumOptions } from "../utils";
 import { RandomButton } from "../../randomButton";
 
 export default function AutoFormEnum({
@@ -23,16 +22,10 @@ export default function AutoFormEnum({
   zodItem,
   fieldProps,
 }: AutoFormInputComponentProps) {
-  const baseValues = (
-    (getBaseSchema(zodItem) as unknown as z.ZodEnum<any>)._def as any
-  ).values;
-
-  let values: [string, string][] = [];
-  if (!Array.isArray(baseValues)) {
-    values = Object.entries(baseValues);
-  } else {
-    values = baseValues.map((value) => [value, value]);
-  }
+  const values: [string, string][] = getEnumOptions(zodItem).map((value) => [
+    value,
+    value,
+  ]);
 
   function findItem(value: any) {
     return values.find((item) => item[0] === value);
