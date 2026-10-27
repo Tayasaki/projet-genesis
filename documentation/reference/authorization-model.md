@@ -45,7 +45,8 @@ Caveats on Character ownership:
 - Ownership no longer depends on scenario links: a character with zero scenarios stays editable and deletable by its owner, and linking a character to another user's scenario grants that user nothing.
 - `createCharacter` sets `Character.userId` from `ctx.userId` and verifies the supplied `scenarioId` belongs to the caller before creating; `updateScenarioCharacter` requires the caller to own both the character (`assertOwnedCharacter`) and the scenario (`scenarioOwnedBy`).
 - Legacy rows: migration `20261027140000_character_user_id` backfilled `userId` only when all of a character's scenarios shared one owner. Characters linked to scenarios of 2+ users, or to none, were left `NULL`. A `NULL` owner matches no predicate, so nobody can read, edit, delete, link or count those rows (fail-closed) until an operator assigns an owner; the audit query is in the migration file and the PR that introduced it. `deleteAccount` also removes `NULL`-owner rows linked only to the departing user's scenarios (`charactersErasedWithUser`).
-- `getCharacters(scenarioId)` (`src/query/character.query.ts`) lists a scenario's linked characters after the scenario ownership check and does not itself filter on `Character.userId`.
+- `getCharacters(scenarioId, userId)` (`src/query/character.query.ts`) filters with `charactersOwnedBy`, so `NULL`-owner and foreign-owned characters linked to a scenario are not listed and not readable.
+- Operator steps after the new code is live in an environment (the migration is already applied on the shared preview DB, and older code creates `NULL`-owner characters until then): re-run the idempotent backfill `UPDATE` copied from the migration (it only touches `WHERE "userId" IS NULL` rows linked to a single owner), then run the audit query and assign owners by hand to what remains.
 
 ## 4. Page-level pattern
 
