@@ -40,7 +40,9 @@ pnpm install
 DATABASE_URL = "postgresql://user:password@localhost:5432/database";
 
 BETTER_AUTH_URL = "http://localhost:3000";
-BETTER_AUTH_SECRET = "votresupersecret";
+BETTER_AUTH_SECRET = "votresupersecret"; // Générer avec: openssl rand -base64 32
+
+TRUSTED_ORIGINS = ""; // Optionnel: origines supplémentaires séparées par des virgules (ex: "http://app.dev.local:3000")
 
 AUTH_GITHUB_ID = "votreidgithub";
 AUTH_GITHUB_SECRET = "votresecretgithub";
@@ -54,7 +56,7 @@ AUTH_GOOGLE_SECRET = "votresecretgoogle";
 OPENAI_API_KEY = "votreapikeyopenai"; // Optionnel
 ```
 
-`Notez que les variables d'environnement pour les services d'authentification tel que GITHUB_ID, GITHUB_SECRET sont optionnelles. Vous pouvez les laisser vide si vous ne souhaitez pas les utiliser mais les fonctionnalités de login pour les service en question ne seront pas disponible.`
+`Notez que les variables d'environnement pour les services d'authentification tel que GITHUB_ID, GITHUB_SECRET sont optionnelles. Vous pouvez les laisser vides si vous ne souhaitez pas les utiliser: le fournisseur correspondant n'est alors pas activé côté serveur. Les boutons de login des trois services restent toutefois affichés sur la page de connexion, et la connexion via un service non configuré échouera.`
 
 4. Mettre à jour le schéma de la base de données
 

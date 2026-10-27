@@ -4,6 +4,8 @@ skill: x-analyze
 created: 2026-07-31
 target: "codebase root (projet-genesis)"
 status: draft
+last_updated: 2026-07-31
+review_trigger: "when auth, env handling, or dev-environment setup changes"
 ---
 
 # Analysis — projet-genesis (2026-07-31)
