@@ -76,6 +76,7 @@ Vous pouvez maintenant accéder à l'application à l'adresse `http://localhost:
 
 ```bash
 pnpm test        # exécution unique
+pnpm test:coverage # exécution unique + seuils de couverture (lib/utils, src/actions)
 pnpm test:watch  # mode watch
 ```
 

@@ -11,7 +11,8 @@
     "lint": "eslint .",
     "studio": "prisma studio",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@ai-sdk/openai": "^3.0.63",
@@ -70,6 +71,7 @@
     "@types/react-dom": "19.2.3",
     "@typescript-eslint/parser": "^8.59.2",
     "@vitejs/plugin-react": "^6.1.1",
+    "@vitest/coverage-v8": "5.0.0",
     "eslint": "^9.39.4",
     "eslint-config-next": "16.2.6",
     "jsdom": "^30.0.1",
