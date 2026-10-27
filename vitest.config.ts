@@ -11,7 +11,7 @@ export default defineConfig({
     globals: true,
     coverage: {
       provider: "v8",
-      include: ["lib/utils.ts", "src/actions/**/*.ts"],
+      include: ["lib/utils.ts", "lib/ownership.ts", "src/actions/**/*.ts"],
       reporter: ["text", "text-summary"],
       thresholds: { statements: 95, branches: 90, functions: 95, lines: 95 },
     },
