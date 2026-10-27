@@ -1,3 +1,4 @@
+import { getAuthSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { Metadata } from "next";
 import React from "react";
@@ -9,13 +10,16 @@ type Props = {
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
   const params = await props.params;
-  const scenario = await prisma.scenario.findUniqueOrThrow({
-    where: { id: params.scenarioId },
-    select: { name: true },
-  });
+  const session = await getAuthSession();
+  const scenario = session?.user?.id
+    ? await prisma.scenario.findUnique({
+        where: { id: params.scenarioId, userId: session.user.id },
+        select: { name: true },
+      })
+    : null;
 
   return {
-    title: "Projet Genesis - " + scenario.name,
+    title: scenario ? "Projet Genesis - " + scenario.name : "Projet Genesis",
     description:
       "Création de scénarios pour jeux de rôle | Générateur de fiche de personnage",
   };

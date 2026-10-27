@@ -34,6 +34,7 @@ export function matches(row: Row, where: Row): boolean {
 
 export const scenarioRow = {
   id: "scenario-1",
+  name: "Secret Scenario",
   userId: OWNER,
   user: { id: OWNER },
 };
