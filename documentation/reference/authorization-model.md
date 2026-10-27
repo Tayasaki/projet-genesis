@@ -3,7 +3,7 @@ type: reference
 status: active
 created: 2026-10-27
 last_updated: 2026-10-27
-review_trigger: "Any change to lib/safe-action.ts, the Role enum, an ownership relation in prisma/schema.prisma, or a server action / page that reads or writes user data; or when issues #21, #25, #27, #29, #30 close."
+review_trigger: "Any change to lib/safe-action.ts, the Role enum, an ownership relation in prisma/schema.prisma, or a server action / page that reads or writes user data; or when issues #21, #25, #27, #30 close."
 ---
 
 # Authorization model
@@ -67,6 +67,7 @@ Staff-only UI (`app/manage/page.tsx`) additionally loads the user and checks the
 ## 6. Tests
 
 - `tests/security/actions-ownership.test.ts` and `tests/security/pages-ownership.test.tsx`: exercise the real action clients and pages against an in-memory Prisma fake (`tests/security/ownership-fake.ts`) for owner, attacker and anonymous callers.
+- `tests/security/metadata-ownership.test.tsx`: `generateMetadata` titles for owner, non-owner and anonymous callers.
 - `tests/actions/*.test.ts`: per-action behaviour and validation. They replace `@/lib/safe-action` with `createSafeActionMock()` and a Prisma spy from `createPrismaMock()` in `tests/helpers/action-mocks.ts` (fixed `TEST_USER_ID`); auth and ownership are deliberately not covered there.
 - Run with `pnpm test`.
 
@@ -101,19 +102,18 @@ Staff-only UI (`app/manage/page.tsx`) additionally loads the user and checks the
 | `app/login/page.tsx` | redirects logged-in users away | n/a |
 | `app/profile/page.tsx` | login required (redirect) | counts by `userId` / scenario ownership |
 | `app/characters/page.tsx` | login required | `scenario: { some: { userId } }` |
-| `app/characters/[characterId]/page.tsx` | login required | page body uses the Character predicate and `notFound()`; `generateMetadata` runs before it with no session or ownership check (#29) |
+| `app/characters/[characterId]/page.tsx` | login required | page body uses the Character predicate and `notFound()`; `generateMetadata` also looks up the character with the Character predicate when a session exists and falls back to the generic title "Projet Genesis" otherwise or for non-owners |
 | `app/[scenarioId]/characters/page.tsx` | login required | scenario via `{ id, userId }` then `notFound()`; characters via scenario owner |
 | `app/[scenarioId]/characters/@modal/(...)characters/[characterId]/page.tsx` | login required | Character predicate, `notFound()` |
 | `app/[scenarioId]/character-generation/page.tsx` | login required | does not verify `scenarioId` ownership on render; `createCharacter` verifies it on submit; weapons by `userId` |
 | `app/manage/page.tsx` | login required; role read for UI | weapons by `userId`; mutations enforced by the action clients |
 | `app/suggestions/page.tsx` | none in the page itself | global data; destructive actions are the gap in #25 |
 | `app/tos/page.tsx`, `app/privacy-policy/page.tsx` | login required (redirect) | n/a |
-| `app/[scenarioId]/characters/layout.tsx` | none: `generateMetadata` runs `scenario.findUniqueOrThrow({ where: { id } })` with no session or ownership check; wraps `/[scenarioId]/characters` and its `@modal` route (#29) | n/a |
+| `app/[scenarioId]/characters/layout.tsx` | none in the layout itself (the pages it wraps redirect); `generateMetadata` looks up the scenario with `{ id, userId }` when a session exists and falls back to the generic title "Projet Genesis" otherwise or for non-owners; wraps `/[scenarioId]/characters` and its `@modal` route | scenario by `{ id, userId }` (metadata only) |
 
 ## 8. Known gaps (open issues, not fixed by this document)
 
 - #21: `createCharacter`/`updateCharacter` connect client-supplied weapon ids (`weaponSet`) without ownership checks.
 - #25: suggestion create/delete use `authenticatedAction`.
 - #27: `generateCharacter` has no rate limit or input cap.
-- #29: `generateMetadata` leaks names to non-owners: the character name via `app/characters/[characterId]/page.tsx` and the scenario name via `app/[scenarioId]/characters/layout.tsx`. The `/[scenarioId]/characters` route is therefore not fully scoped.
 - #30: `Character` has no owner column; zero-scenario characters are orphaned.
