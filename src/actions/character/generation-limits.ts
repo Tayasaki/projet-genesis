@@ -1,4 +1,4 @@
-// Single home for the abuse limits on AI character generation (issue #27).
+// Single home for the abuse limits on AI character generation.
 // Kept out of character.action.ts because a "use server" module may only
 // export async functions.
 
