@@ -60,6 +60,7 @@ model User {
 	sessions      Session[]
 	Scenario      Scenario[]
 	Weapon				Weapon[]
+	Suggestion		Suggestion[]
 	GenerationLog GenerationLog[]
 }
 
@@ -215,6 +216,11 @@ model Suggestion {
 	type				SuggestionType
 	name				String @id
 	description	String?
+	userId			String?
+	user				User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+	createdAt		DateTime @default(now())
+
+	@@index([userId, createdAt])
 }
 
 enum SuggestionType {

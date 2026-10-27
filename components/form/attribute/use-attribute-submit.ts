@@ -2,6 +2,7 @@
 
 import { createSuggestion } from "@/src/actions/suggestion.action";
 import { SuggestionType } from "@prisma/client";
+import { DEFAULT_SERVER_ERROR_MESSAGE } from "next-safe-action";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -32,12 +33,23 @@ export function useAttributeSubmit<TInput extends AttributeInput>({
   async function handleSubmit(data: TInput) {
     setIsLoading(true);
     if (suggest) {
-      await createSuggestion({
+      const suggested = await createSuggestion({
         type: suggestionType,
         name: data.name,
         description: data.description,
       });
-      toast.info("Votre suggestion a été envoyée");
+      if (suggested?.validationErrors) {
+        toast.error("Veuillez remplir tous les champs");
+      } else if (suggested?.serverError) {
+        toast.error(
+          typeof suggested.serverError === "string" &&
+            suggested.serverError !== DEFAULT_SERVER_ERROR_MESSAGE
+            ? suggested.serverError
+            : "Votre suggestion n'a pas pu être envoyée",
+        );
+      } else {
+        toast.info("Votre suggestion a été envoyée");
+      }
       setIsLoading(false);
       return;
     }

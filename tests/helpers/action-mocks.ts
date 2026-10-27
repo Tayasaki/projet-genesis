@@ -1,7 +1,13 @@
 import { vi } from "vitest";
-import { createSafeActionClient } from "next-safe-action";
+import {
+  createSafeActionClient,
+  DEFAULT_SERVER_ERROR_MESSAGE,
+} from "next-safe-action";
 
 export const TEST_USER_ID = "user-1";
+
+/** Stand-in for lib/safe-action's ActionError: the only error whose message reaches clients. */
+class MockActionError extends Error {}
 
 type Fn = ReturnType<typeof vi.fn>;
 export type PrismaMock = Record<string, Record<string, Fn>>;
@@ -31,8 +37,16 @@ export function createPrismaMock(): PrismaMock {
  * Authentication and authorization are covered separately (tests/security).
  */
 export function createSafeActionMock() {
-  const base = createSafeActionClient().use(async ({ next }) =>
-    next({ ctx: { userId: TEST_USER_ID } }),
-  );
-  return { action: base, authenticatedAction: base, authorizedAction: base };
+  const base = createSafeActionClient({
+    handleServerError: (error) =>
+      error instanceof MockActionError
+        ? error.message
+        : DEFAULT_SERVER_ERROR_MESSAGE,
+  }).use(async ({ next }) => next({ ctx: { userId: TEST_USER_ID } }));
+  return {
+    action: base,
+    authenticatedAction: base,
+    authorizedAction: base,
+    ActionError: MockActionError,
+  };
 }
