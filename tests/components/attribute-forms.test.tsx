@@ -80,8 +80,6 @@ vi.mock("@prisma/client", () => ({
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }) }));
 vi.mock("sonner", () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
 
-vi.setConfig({ testTimeout: 15000 });
-
 const attributeForms: [
   string,
   (p: { suggest: boolean }) => React.ReactElement,

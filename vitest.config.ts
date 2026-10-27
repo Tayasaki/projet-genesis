@@ -9,6 +9,7 @@ export default defineConfig({
     environment: "jsdom",
     setupFiles: ["./vitest.setup.ts"],
     globals: true,
+    testTimeout: 15000,
     coverage: {
       provider: "v8",
       include: ["lib/utils.ts", "lib/ownership.ts", "src/actions/**/*.ts"],

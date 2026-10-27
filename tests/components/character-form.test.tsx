@@ -56,8 +56,6 @@ async function choose(
   await user.click(await screen.findByRole("option", { name: option }));
 }
 
-vi.setConfig({ testTimeout: 15000 });
-
 describe("CharacterForm", () => {
   beforeEach(() => {
     vi.clearAllMocks();

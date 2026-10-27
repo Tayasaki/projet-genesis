@@ -26,8 +26,6 @@ vi.mock("@prisma/client", () => ({
   SuggestionType: new Proxy({}, { get: (_t, key) => key }),
 }));
 
-vi.setConfig({ testTimeout: 15000 });
-
 const named = (...names: string[]) =>
   names.map((name, i) => ({ id: `${name}-${i}`, name }));
 
