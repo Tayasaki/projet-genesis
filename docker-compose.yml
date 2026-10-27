@@ -20,6 +20,7 @@ services:
     environment:
       - DATABASE_URL=postgresql://postgres:mysecretpassword@db:5432/projet-genesis
       - BETTER_AUTH_URL=http://localhost:3000
+      # Générer avec: openssl rand -base64 32
       - BETTER_AUTH_SECRET=votresupersecret
       - AUTH_GITHUB_ID=votregithubid
       - AUTH_GITHUB_SECRET=votregithubsecret
