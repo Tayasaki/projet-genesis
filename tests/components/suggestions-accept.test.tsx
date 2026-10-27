@@ -40,7 +40,9 @@ vi.mock("@/src/actions/weapon/weight.action", () => ({
   createWeight: vi.fn(),
 }));
 vi.mock("@/components/features/layout/DeleteDialog", () => ({
-  DeleteDialog: () => null,
+  DeleteDialog: ({ deleteItem }: { deleteItem: () => Promise<void> }) => (
+    <button onClick={() => void deleteItem()}>Supprimer</button>
+  ),
 }));
 vi.mock("sonner", () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
 
@@ -101,6 +103,53 @@ describe("Accepter handler", () => {
     h.deleteSuggestion.mockResolvedValue({ serverError: "denied" });
 
     renderAcceptButton();
+
+    await waitFor(() => expect(toast.error).toHaveBeenCalled());
+    expect(toast.success).not.toHaveBeenCalled();
+  });
+});
+
+describe("Accepter double click", () => {
+  it("fires a single create while one is pending", async () => {
+    let release: (v: unknown) => void = () => {};
+    h.createAlignment.mockReturnValue(new Promise((r) => (release = r)));
+
+    renderAcceptButton();
+    const button = screen.getByRole("button", { name: "Accepter" });
+    fireEvent.click(button);
+    fireEvent.click(button);
+
+    expect(button).toBeDisabled();
+    expect(h.createAlignment).toHaveBeenCalledTimes(1);
+    release({ data: undefined });
+    await waitFor(() => expect(button).not.toBeDisabled());
+  });
+});
+
+describe("Delete dialog handler", () => {
+  function clickDelete() {
+    const actions = columns.find((c) => c.id === "actions");
+    const cell = actions?.cell as (ctx: unknown) => React.ReactElement;
+    render(cell({ row: { original: { type: "Ammo", name: "Arrow" } } }));
+    fireEvent.click(screen.getByRole("button", { name: "Supprimer" }));
+  }
+
+  it("toasts success only when the delete succeeds", async () => {
+    clickDelete();
+
+    await waitFor(() =>
+      expect(toast.success).toHaveBeenCalledWith("Arrow supprimé"),
+    );
+    expect(toast.error).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ["serverError", { serverError: "denied" }],
+    ["validationErrors", { validationErrors: {} }],
+  ])("toasts an error on %s and never claims success", async (_, result) => {
+    h.deleteSuggestion.mockResolvedValue(result);
+
+    clickDelete();
 
     await waitFor(() => expect(toast.error).toHaveBeenCalled());
     expect(toast.success).not.toHaveBeenCalled();

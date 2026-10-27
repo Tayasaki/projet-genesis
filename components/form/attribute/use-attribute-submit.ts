@@ -32,12 +32,22 @@ export function useAttributeSubmit<TInput extends AttributeInput>({
   async function handleSubmit(data: TInput) {
     setIsLoading(true);
     if (suggest) {
-      await createSuggestion({
+      const suggested = await createSuggestion({
         type: suggestionType,
         name: data.name,
         description: data.description,
       });
-      toast.info("Votre suggestion a été envoyée");
+      if (suggested?.validationErrors) {
+        toast.error("Veuillez remplir tous les champs");
+      } else if (suggested?.serverError) {
+        toast.error(
+          typeof suggested.serverError === "string"
+            ? suggested.serverError
+            : "Votre suggestion n'a pas pu être envoyée",
+        );
+      } else {
+        toast.info("Votre suggestion a été envoyée");
+      }
       setIsLoading(false);
       return;
     }

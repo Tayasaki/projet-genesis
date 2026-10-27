@@ -8,6 +8,8 @@ const h = vi.hoisted(() => ({
   prisma: {
     user: { findUniqueOrThrow: vi.fn() },
     suggestion: { create: vi.fn(), delete: vi.fn(), count: vi.fn() },
+    $executeRaw: vi.fn(),
+    $transaction: vi.fn(),
   },
 }));
 
@@ -63,6 +65,7 @@ beforeEach(() => {
     role: h.role,
   }));
   h.prisma.suggestion.count.mockResolvedValue(0);
+  h.prisma.$transaction.mockImplementation((fn) => fn(h.prisma));
   actAs("USER");
 });
 

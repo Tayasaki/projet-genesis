@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+import { DEFAULT_SERVER_ERROR_MESSAGE } from "next-safe-action";
 import { prisma as prismaClient } from "@/lib/prisma";
 import { TEST_USER_ID, type PrismaMock } from "../helpers/action-mocks";
 
@@ -32,7 +33,12 @@ vi.mock("@prisma/client", () => ({
 }));
 vi.mock("next/cache", () => ({ revalidatePath }));
 
-const prisma = prismaClient as unknown as PrismaMock;
+const prisma = prismaClient as unknown as PrismaMock & {
+  $executeRaw: ReturnType<typeof vi.fn>;
+  $transaction: ReturnType<typeof vi.fn>;
+};
+prisma.$executeRaw = vi.fn();
+prisma.$transaction = vi.fn();
 
 const NOW = new Date("2026-10-27T12:00:00.000Z");
 const HOUR_MS = 60 * 60 * 1000;
@@ -43,8 +49,12 @@ beforeEach(() => {
   vi.clearAllMocks();
   vi.useFakeTimers({ toFake: ["Date"] });
   vi.setSystemTime(NOW);
-  prisma.user.findUniqueOrThrow.mockResolvedValue({ role: "USER" });
-  prisma.suggestion.count.mockResolvedValue(0);
+  prisma.suggestion.count.mockReset().mockResolvedValue(0);
+  prisma.suggestion.create.mockReset().mockResolvedValue(undefined);
+  prisma.suggestion.delete.mockReset().mockResolvedValue(undefined);
+  prisma.user.findUniqueOrThrow.mockReset().mockResolvedValue({ role: "USER" });
+  prisma.$executeRaw.mockReset().mockResolvedValue(1);
+  prisma.$transaction.mockReset().mockImplementation((fn) => fn(prisma));
 });
 
 afterEach(() => {
@@ -215,7 +225,9 @@ describe("createSuggestion input bounds and duplicates", () => {
 
   it("turns a unique-name violation (P2002) into a clean error", async () => {
     prisma.suggestion.create.mockRejectedValue(
-      Object.assign(new Error("Unique constraint failed"), { code: "P2002" }),
+      Object.assign(new Error("Unique constraint failed on name"), {
+        code: "P2002",
+      }),
     );
 
     const res = await createSuggestion({ type: "Ammo", name: "Arrow" });
@@ -231,11 +243,44 @@ describe("createSuggestion input bounds and duplicates", () => {
 
     const res = await createSuggestion({ type: "Ammo", name: "Arrow" });
 
-    expect(res?.serverError).toBe("connection lost");
+    expect(res?.serverError).toBe(DEFAULT_SERVER_ERROR_MESSAGE);
+  });
+});
+
+describe("createSuggestion transaction", () => {
+  it("takes the per-user advisory lock before counting and inserting", async () => {
+    await createSuggestion({ type: "Ammo", name: "Arrow" });
+
+    const lock = prisma.$executeRaw.mock.invocationCallOrder[0];
+    expect(lock).toBeLessThan(
+      prisma.suggestion.count.mock.invocationCallOrder[0],
+    );
+    expect(lock).toBeLessThan(
+      prisma.suggestion.create.mock.invocationCallOrder[0],
+    );
+    expect(prisma.$executeRaw.mock.calls[0].slice(1)).toEqual([TEST_USER_ID]);
+  });
+
+  it("skips lock and count for an admin", async () => {
+    prisma.user.findUniqueOrThrow.mockResolvedValue({ role: "ADMIN" });
+
+    await createSuggestion({ type: "Ammo", name: "Arrow" });
+
+    expect(prisma.$executeRaw).not.toHaveBeenCalled();
+    expect(prisma.suggestion.count).not.toHaveBeenCalled();
   });
 });
 
 describe("deleteSuggestion", () => {
+  it("still deletes a legacy name longer than the create-side cap", async () => {
+    const name = "n".repeat(150);
+
+    const res = await deleteSuggestion({ name });
+
+    expect(res?.validationErrors).toBeUndefined();
+    expect(prisma.suggestion.delete).toHaveBeenCalledWith({ where: { name } });
+  });
+
   it("deletes by name and revalidates", async () => {
     await deleteSuggestion({ name: "Arrow" });
 

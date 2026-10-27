@@ -16,6 +16,7 @@ import { createWeaponSkill } from "@/src/actions/weapon/weaponSkill.action";
 import { createWeight } from "@/src/actions/weapon/weight.action";
 import { Suggestion } from "@/src/query/suggestion.query";
 import { ColumnDef } from "@tanstack/react-table";
+import { useState } from "react";
 import { toast } from "sonner";
 
 type ActionResult = { serverError?: unknown; validationErrors?: unknown };
@@ -56,6 +57,37 @@ function createCatalogEntry({
   }
 }
 
+function AcceptButton({ suggestion }: { suggestion: Suggestion }) {
+  const [pending, setPending] = useState(false);
+
+  async function accept() {
+    setPending(true);
+    try {
+      const created = await createCatalogEntry(suggestion);
+      if (hasActionError(created)) {
+        toast.error("Erreur lors de la création");
+        return;
+      }
+      const deleted = await deleteSuggestion({ name: suggestion.name });
+      if (hasActionError(deleted)) {
+        toast.error("Créé, mais la suggestion n'a pas été supprimée");
+        return;
+      }
+      toast.success("Suggestion acceptée");
+    } catch {
+      toast.error("Erreur inconnu");
+    } finally {
+      setPending(false);
+    }
+  }
+
+  return (
+    <Button onClick={accept} disabled={pending}>
+      Accepter
+    </Button>
+  );
+}
+
 export const columns: ColumnDef<Suggestion>[] = [
   {
     accessorKey: "type",
@@ -75,34 +107,22 @@ export const columns: ColumnDef<Suggestion>[] = [
     cell: ({ row }) => {
       return (
         <div className="flex items-center space-x-2">
-          <Button
-            onClick={async () => {
+          <AcceptButton suggestion={row.original} />
+          <DeleteDialog
+            item={row.original.name}
+            deleteItem={async () => {
               try {
-                const created = await createCatalogEntry(row.original);
-                if (hasActionError(created)) {
-                  toast.error("Erreur lors de la création");
-                  return;
-                }
                 const deleted = await deleteSuggestion({
                   name: row.original.name,
                 });
                 if (hasActionError(deleted)) {
-                  toast.error("Créé, mais la suggestion n'a pas été supprimée");
+                  toast.error("Erreur lors de la suppression");
                   return;
                 }
-                toast.success("Suggestion acceptée");
+                toast.success(`${row.original.name} supprimé`);
               } catch {
                 toast.error("Erreur inconnu");
               }
-            }}
-          >
-            Accepter
-          </Button>
-          <DeleteDialog
-            item={row.original.name}
-            deleteItem={async () => {
-              await deleteSuggestion({ name: row.original.name });
-              toast.success(`${row.original.name} supprimé`);
             }}
           />
         </div>

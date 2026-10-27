@@ -1,15 +1,21 @@
 import { prisma } from "@/lib/prisma";
-import { createSafeActionClient } from "next-safe-action";
+import {
+  createSafeActionClient,
+  DEFAULT_SERVER_ERROR_MESSAGE,
+} from "next-safe-action";
 import { getAuthSession } from "./auth";
 
-export const action = createSafeActionClient();
-
-class ActionError extends Error {
+export class ActionError extends Error {
   constructor(message: string) {
     super(message);
     this.name = "ActionError";
   }
 }
+
+export const action = createSafeActionClient({
+  handleServerError: (error) =>
+    error instanceof ActionError ? error.message : DEFAULT_SERVER_ERROR_MESSAGE,
+});
 
 /**
  * Requires a logged-in user and exposes `ctx.userId`. That is all it
