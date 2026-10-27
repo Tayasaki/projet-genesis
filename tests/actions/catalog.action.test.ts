@@ -34,6 +34,8 @@ type Run = (input: unknown) => Promise<{
   validationErrors?: unknown;
 }>;
 
+const run = (fn: unknown) => fn as Run;
+
 const catalogs: {
   model: string;
   create: Run;
@@ -42,68 +44,68 @@ const catalogs: {
 }[] = [
   {
     model: "alignment",
-    create: alignment.createAlignment,
-    remove: alignment.deleteAlignment,
+    create: run(alignment.createAlignment),
+    remove: run(alignment.deleteAlignment),
     hasDescription: true,
   },
   {
     model: "characterSkill",
-    create: characterSkill.createCharacterSkill,
-    remove: characterSkill.deleteCharacterSkill,
+    create: run(characterSkill.createCharacterSkill),
+    remove: run(characterSkill.deleteCharacterSkill),
     hasDescription: false,
   },
   {
     model: "fortune",
-    create: fortune.createFortune,
-    remove: fortune.deleteFortune,
+    create: run(fortune.createFortune),
+    remove: run(fortune.deleteFortune),
     hasDescription: true,
   },
   {
     model: "strength",
-    create: strength.createStrength,
-    remove: strength.deleteStrength,
+    create: run(strength.createStrength),
+    remove: run(strength.deleteStrength),
     hasDescription: false,
   },
   {
     model: "temperment",
-    create: temperment.createTemperment,
-    remove: temperment.deleteTemperment,
+    create: run(temperment.createTemperment),
+    remove: run(temperment.deleteTemperment),
     hasDescription: true,
   },
   {
     model: "weakness",
-    create: weakness.createWeakness,
-    remove: weakness.deleteWeakness,
+    create: run(weakness.createWeakness),
+    remove: run(weakness.deleteWeakness),
     hasDescription: false,
   },
   {
     model: "ammo",
-    create: ammo.createAmmo,
-    remove: ammo.deleteAmmo,
+    create: run(ammo.createAmmo),
+    remove: run(ammo.deleteAmmo),
     hasDescription: false,
   },
   {
     model: "damage",
-    create: damage.createDamage,
-    remove: damage.deleteDamage,
+    create: run(damage.createDamage),
+    remove: run(damage.deleteDamage),
     hasDescription: false,
   },
   {
     model: "range",
-    create: range.createRange,
-    remove: range.deleteRange,
+    create: run(range.createRange),
+    remove: run(range.deleteRange),
     hasDescription: false,
   },
   {
     model: "weaponSkill",
-    create: weaponSkill.createWeaponSkill,
-    remove: weaponSkill.deleteWeaponSkill,
+    create: run(weaponSkill.createWeaponSkill),
+    remove: run(weaponSkill.deleteWeaponSkill),
     hasDescription: false,
   },
   {
     model: "weight",
-    create: weight.createWeight,
-    remove: weight.deleteWeight,
+    create: run(weight.createWeight),
+    remove: run(weight.deleteWeight),
     hasDescription: false,
   },
 ];

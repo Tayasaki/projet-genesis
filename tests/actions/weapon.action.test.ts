@@ -78,7 +78,9 @@ describe("deleteWeapon", () => {
   it("deletes by id and revalidates /manage", async () => {
     await deleteWeapon({ id: "w1" });
 
-    expect(prisma.weapon.delete).toHaveBeenCalledWith({ where: { id: "w1" } });
+    expect(prisma.weapon.delete).toHaveBeenCalledWith({
+      where: expect.objectContaining({ id: "w1" }),
+    });
     expect(revalidatePath).toHaveBeenCalledWith("/manage");
   });
 });

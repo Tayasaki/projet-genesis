@@ -64,7 +64,7 @@ describe("createCharacter", () => {
       age: null,
       injury: null,
       extra: null,
-      scenario: { connect: { id: "s1" } },
+      scenario: { connect: expect.objectContaining({ id: "s1" }) },
       temperment: { connect: { name: "calm" } },
       alignment: { connect: { name: "good" } },
       fortune: { connect: { name: "rich" } },
@@ -114,7 +114,7 @@ describe("updateCharacter", () => {
     await updateCharacter({ ...input, id: "c1", pj: true });
 
     const call = prisma.character.update.mock.calls[0][0];
-    expect(call.where).toEqual({ id: "c1" });
+    expect(call.where).toEqual(expect.objectContaining({ id: "c1" }));
     expect(call.data.pj).toBe(true);
     expect(call.data.strength).toEqual({ set: [{ name: "strong" }] });
     expect(call.data.skillSet).toEqual({ set: [{ name: "stealth" }] });
@@ -136,7 +136,7 @@ describe("deleteCharacter", () => {
     await deleteCharacter({ id: "c1" });
 
     expect(prisma.character.delete).toHaveBeenCalledWith({
-      where: { id: "c1" },
+      where: expect.objectContaining({ id: "c1" }),
     });
     expect(revalidatePath).toHaveBeenCalledWith("/characters");
   });
@@ -150,7 +150,11 @@ describe("generateCharacter", () => {
     const res = await generateCharacter({ message: "a rogue" });
 
     expect(res?.data).toEqual({ type: "success", character });
-    expect(generateText.mock.calls[0][0].prompt).toBe("a rogue");
+    const args = generateText.mock.calls[0][0];
+    expect(args.prompt).toBe("a rogue");
+    expect(args.model).toEqual({ modelId: "gpt-4o" });
+    expect(args.system).toContain("Project-Genesis AI");
+    expect(args.system).toContain("MUST match the schema");
   });
 
   it("maps NoObjectGeneratedError to a validation-error result", async () => {

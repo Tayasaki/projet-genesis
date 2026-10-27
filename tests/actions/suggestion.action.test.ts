@@ -57,8 +57,28 @@ describe("createSuggestion", () => {
     expect(revalidatePath).toHaveBeenCalledWith("/suggestions");
   });
 
+  it.each([
+    "Alignment",
+    "Ammo",
+    "CharacterSkill",
+    "Damage",
+    "Fortune",
+    "Range",
+    "Strength",
+    "Temperment",
+    "Weakness",
+    "WeaponSkill",
+    "Weight",
+  ] as const)("accepts type %s and stores it", async (type) => {
+    await createSuggestion({ type, name: "n" });
+
+    expect(prisma.suggestion.create).toHaveBeenCalledWith({
+      data: { type, name: "n", description: undefined },
+    });
+  });
+
   it("rejects an unknown type", async () => {
-    const res = await createSuggestion({ type: "Bogus", name: "x" });
+    const res = await createSuggestion({ type: "Bogus" as never, name: "x" });
 
     expect(res?.validationErrors).toBeDefined();
     expect(prisma.suggestion.create).not.toHaveBeenCalled();

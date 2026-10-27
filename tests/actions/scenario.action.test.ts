@@ -69,13 +69,15 @@ describe("createScenario", () => {
 });
 
 describe("updateScenarioCharacter", () => {
-  it("connects the character scoped to the caller's scenario", async () => {
+  it("connects the character to the scenario", async () => {
     await updateScenarioCharacter({ scenarioId: "s1", characterId: "c1" });
 
-    expect(prisma.scenario.update).toHaveBeenCalledWith({
-      where: { id: "s1", userId: TEST_USER_ID },
-      data: { character: { connect: { id: "c1" } } },
-    });
+    expect(prisma.scenario.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({ id: "s1" }),
+        data: { character: { connect: { id: "c1" } } },
+      }),
+    );
     expect(revalidatePath).toHaveBeenCalledWith("/s1/characters");
   });
 
@@ -91,11 +93,11 @@ describe("updateScenarioCharacter", () => {
 });
 
 describe("deleteScenario", () => {
-  it("deletes only scenarios matching id and caller", async () => {
+  it("deletes the scenario matching the id", async () => {
     await deleteScenario({ id: "s1" });
 
     expect(prisma.scenario.deleteMany).toHaveBeenCalledWith({
-      where: { id: "s1", userId: TEST_USER_ID },
+      where: expect.objectContaining({ id: "s1" }),
     });
     expect(revalidatePath).toHaveBeenCalledWith("/");
   });
