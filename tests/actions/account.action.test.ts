@@ -15,7 +15,12 @@ vi.mock("@/lib/safe-action", async () => {
 });
 vi.mock("next/cache", () => ({ revalidatePath }));
 
-const prisma = prismaClient as unknown as PrismaMock;
+const prisma = prismaClient as unknown as PrismaMock & {
+  $transaction: ReturnType<typeof vi.fn>;
+};
+// The shared Proxy mock models only `prisma.<model>.<method>`; same local
+// pattern as tests/actions/suggestion.action.test.ts.
+prisma.$transaction = vi.fn();
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -25,6 +30,7 @@ import { deleteAccount } from "@/src/actions/account.action";
 
 describe("deleteAccount", () => {
   beforeEach(() => {
+    prisma.$transaction.mockReset().mockResolvedValue(undefined);
     prisma.account.findFirstOrThrow.mockResolvedValue({ id: "acc-1" });
   });
 
@@ -43,23 +49,27 @@ describe("deleteAccount", () => {
     expect(prisma.user.delete).not.toHaveBeenCalled();
   });
 
-  it("removes all of the caller's data, scoped by userId, in order", async () => {
+  it("erases the caller's data in one transaction, children before the user", async () => {
     const order: string[] = [];
     for (const [model, method] of [
       ["character", "deleteMany"],
       ["weapon", "deleteMany"],
       ["scenario", "deleteMany"],
       ["user", "delete"],
-      ["session", "deleteMany"],
-      ["account", "delete"],
     ]) {
-      prisma[model][method].mockImplementation(async () => {
+      prisma[model][method].mockImplementation(() => {
         order.push(`${model}.${method}`);
+        return `${model}.${method}`;
       });
     }
+    let transactionOps: unknown;
+    prisma.$transaction.mockImplementation(async (ops: unknown) => {
+      transactionOps = ops;
+    });
 
-    await deleteAccount({ sessionId: TEST_USER_ID });
+    const res = await deleteAccount({ sessionId: TEST_USER_ID });
 
+    expect(res?.serverError).toBeUndefined();
     expect(prisma.account.findFirstOrThrow).toHaveBeenCalledWith({
       where: { userId: TEST_USER_ID },
     });
@@ -86,20 +96,29 @@ describe("deleteAccount", () => {
     expect(prisma.user.delete).toHaveBeenCalledWith({
       where: { id: TEST_USER_ID },
     });
-    expect(prisma.session.deleteMany).toHaveBeenCalledWith({
-      where: { userId: TEST_USER_ID },
-    });
-    expect(prisma.account.delete).toHaveBeenCalledWith({
-      where: { id: "acc-1" },
-    });
-    expect(order).toEqual([
+    expect(prisma.$transaction).toHaveBeenCalledTimes(1);
+    expect(transactionOps).toEqual([
       "character.deleteMany",
       "weapon.deleteMany",
       "scenario.deleteMany",
       "user.delete",
-      "session.deleteMany",
-      "account.delete",
     ]);
+    expect(order).toEqual(transactionOps);
+  });
+
+  it("does not delete the rows the user cascade already removes", async () => {
+    await deleteAccount({ sessionId: TEST_USER_ID });
+
+    expect(prisma.account.delete).not.toHaveBeenCalled();
+    expect(prisma.session.deleteMany).not.toHaveBeenCalled();
+  });
+
+  it("reports a failed erasure instead of swallowing it", async () => {
+    prisma.$transaction.mockRejectedValueOnce(new Error("rolled back"));
+
+    const res = await deleteAccount({ sessionId: TEST_USER_ID });
+
+    expect(res?.serverError).toBeDefined();
   });
 
   it("fails without deleting anything when the user has no account", async () => {
