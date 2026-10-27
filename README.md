@@ -62,6 +62,8 @@ OPENAI_API_KEY = "votreapikeyopenai"; // Optionnel
 pnpx prisma migrate dev
 ```
 
+> Il n'existe pas de script de seed : la base de données démarre vide. Les données de test se créent via l'application.
+
 5. Lancer le serveur de développement
 
 ```bash
