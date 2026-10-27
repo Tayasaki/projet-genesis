@@ -138,7 +138,7 @@ export default function AutoFormObject<
                 ...field,
                 ...fieldConfigItem.inputProps,
                 disabled: isDisabled,
-                ref: undefined,
+                ref: field.ref,
                 value: value,
               };
 

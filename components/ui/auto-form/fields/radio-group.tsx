@@ -19,6 +19,7 @@ export default function AutoFormRadioGroup({
   fieldConfigItem,
 }: AutoFormInputComponentProps) {
   const values = getEnumOptions(zodItem);
+  const { ref: _ref, ...groupProps } = fieldProps;
 
   return (
     <div>
@@ -28,7 +29,21 @@ export default function AutoFormRadioGroup({
           <RadioGroup
             onValueChange={field.onChange}
             defaultValue={field.value}
-            {...fieldProps}
+            {...groupProps}
+            // The group root is not focusable: hand react-hook-form the first
+            // radio so a blocked submit can move focus into the group.
+            ref={(group) =>
+              field.ref(
+                group && {
+                  focus: () =>
+                    group
+                      .querySelector<HTMLElement>(
+                        '[role="radio"]:not([disabled])',
+                      )
+                      ?.focus(),
+                },
+              )
+            }
           >
             {values?.map((value: any) => (
               <FormItem

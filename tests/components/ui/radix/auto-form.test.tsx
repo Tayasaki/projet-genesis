@@ -449,3 +449,118 @@ describe("AutoForm", () => {
     });
   });
 });
+
+describe("AutoForm: accessibility of a blocked submit", () => {
+  const a11ySchema = z.object({
+    title: z.string().min(5, "Title too short"),
+    role: z.enum(["warrior", "mage"], "Veuillez choisir une valeur"),
+  });
+
+  function renderA11y(schemaToUse: z.ZodObject<z.ZodRawShape> = a11ySchema) {
+    render(
+      <AutoForm formSchema={schemaToUse} onSubmit={vi.fn()}>
+        <AutoFormSubmit isLoading={false}>Save</AutoFormSubmit>
+      </AutoForm>,
+    );
+  }
+
+  it("moves focus to the first invalid text field", async () => {
+    const user = userEvent.setup();
+    renderA11y();
+
+    await user.type(screen.getByLabelText(/title/i), "abc");
+    await user.click(screen.getByRole("button", { name: "Save" }));
+    await screen.findByText("Title too short");
+
+    await waitFor(() => expect(screen.getByLabelText(/title/i)).toHaveFocus());
+  });
+
+  it("moves focus to the first invalid number field", async () => {
+    const user = userEvent.setup();
+    renderA11y(
+      z.object({
+        age: z.number({ error: "Nombre requis" }),
+        bio: z.string().min(3, "Bio too short"),
+      }),
+    );
+
+    await user.click(screen.getByRole("button", { name: "Save" }));
+    await screen.findByText("Nombre requis");
+
+    await waitFor(() => expect(screen.getByRole("spinbutton")).toHaveFocus());
+  });
+
+  it("moves focus to the select trigger when it is the first invalid field", async () => {
+    const user = userEvent.setup();
+    renderA11y(
+      z.object({
+        role: z.enum(["warrior", "mage"], "Veuillez choisir une valeur"),
+        title: z.string().min(5, "Title too short"),
+      }),
+    );
+
+    await user.click(screen.getByRole("button", { name: "Save" }));
+    await screen.findByText("Veuillez choisir une valeur");
+
+    await waitFor(() => expect(screen.getByRole("combobox")).toHaveFocus());
+  });
+
+  it("skips valid fields and focuses the first invalid one", async () => {
+    const user = userEvent.setup();
+    renderA11y();
+
+    await user.type(screen.getByLabelText(/title/i), "long enough");
+    await user.click(screen.getByRole("button", { name: "Save" }));
+    await screen.findByText("Veuillez choisir une valeur");
+
+    await waitFor(() => expect(screen.getByRole("combobox")).toHaveFocus());
+  });
+
+  it("announces each error through exactly one role=alert element", async () => {
+    const user = userEvent.setup();
+    renderA11y();
+
+    await user.type(screen.getByLabelText(/title/i), "abc");
+    await user.click(screen.getByRole("button", { name: "Save" }));
+    await screen.findAllByRole("alert");
+
+    expect(screen.getAllByRole("alert").map((a) => a.textContent)).toEqual([
+      "Title too short",
+      "Veuillez choisir une valeur",
+    ]);
+  });
+
+  it("renders no alert while the form is valid", () => {
+    renderA11y();
+
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+  });
+
+  it("flags the invalid select trigger and points it at its error message", async () => {
+    const user = userEvent.setup();
+    renderA11y();
+
+    const trigger = screen.getByRole("combobox");
+    expect(trigger).toHaveAttribute("aria-invalid", "false");
+
+    await user.click(screen.getByRole("button", { name: "Save" }));
+    const message = await screen.findByText("Veuillez choisir une valeur");
+
+    expect(trigger).toHaveAttribute("aria-invalid", "true");
+    expect(message.id).not.toBe("");
+    expect(trigger.getAttribute("aria-describedby")).toContain(message.id);
+  });
+
+  it("flags the invalid text input and points it at its error message", async () => {
+    const user = userEvent.setup();
+    renderA11y();
+
+    await user.type(screen.getByLabelText(/title/i), "abc");
+    await user.click(screen.getByRole("button", { name: "Save" }));
+    const message = await screen.findByText("Title too short");
+
+    const input = screen.getByLabelText(/title/i);
+    expect(input).toHaveAttribute("aria-invalid", "true");
+    expect(input.getAttribute("aria-describedby")).toContain(message.id);
+  });
+});
