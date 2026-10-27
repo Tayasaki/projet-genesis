@@ -24,3 +24,29 @@ describe("character_user_id migration", () => {
     expect(statements).toMatch(/AND c\."userId" IS NULL;/);
   });
 });
+
+describe("better_auth_core_fields migration", () => {
+  const coreSql = readFileSync(
+    path.resolve(
+      __dirname,
+      "../../prisma/migrations/20261028000000_better_auth_core_fields/migration.sql",
+    ),
+    "utf8",
+  )
+    .split("\n")
+    .filter((l) => !l.trim().startsWith("--"))
+    .join("\n");
+
+  it("is additive: no DROP, DELETE FROM, TRUNCATE or column type change", () => {
+    expect(coreSql).not.toMatch(/\b(DROP|TRUNCATE|DELETE\s+FROM)\b/i);
+    expect(coreSql).not.toMatch(/ALTER COLUMN\s+"\w+"\s+(SET DATA\s+)?TYPE\b/i);
+  });
+
+  it("gives every NOT NULL column it adds a default, so existing rows stay valid", () => {
+    const added = [...coreSql.matchAll(/ADD COLUMN\s+"\w+"[^,;]*/g)].map((m) => m[0]);
+    expect(added.length).toBe(7);
+    for (const column of added.filter((c) => /NOT NULL/.test(c))) {
+      expect(column).toMatch(/DEFAULT/);
+    }
+  });
+});
