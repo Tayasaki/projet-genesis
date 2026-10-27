@@ -3,6 +3,7 @@
 import AutoForm, { AutoFormSubmit } from "@/components/ui/auto-form";
 import { createAmmo, deleteAmmo } from "@/src/actions/weapon/ammo.action";
 import { SuggestionType } from "@prisma/client";
+import { requiredString } from "@/components/form/required-string";
 import { z } from "zod";
 import { useAttributeSubmit } from "../attribute/use-attribute-submit";
 
@@ -21,7 +22,7 @@ export const AmmoForm = ({ suggest }: { suggest: boolean }) => {
   return (
     <AutoForm
       formSchema={z.object({
-        name: z.string().max(50).describe("Nom de la munition"),
+        name: requiredString(50).describe("Nom de la munition"),
       })}
       fieldConfig={{
         name: {

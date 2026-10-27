@@ -3,6 +3,7 @@
 import AutoForm, { AutoFormSubmit } from "@/components/ui/auto-form";
 import { createWeight, deleteWeight } from "@/src/actions/weapon/weight.action";
 import { SuggestionType } from "@prisma/client";
+import { requiredString } from "@/components/form/required-string";
 import { z } from "zod";
 import { useAttributeSubmit } from "../attribute/use-attribute-submit";
 
@@ -21,7 +22,7 @@ export const WeightForm = ({ suggest }: { suggest: boolean }) => {
   return (
     <AutoForm
       formSchema={z.object({
-        name: z.string().max(50).describe("Nom du poids"),
+        name: requiredString(50).describe("Nom du poids"),
       })}
       fieldConfig={{
         name: {

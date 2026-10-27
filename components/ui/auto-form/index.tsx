@@ -70,6 +70,7 @@ function AutoForm<SchemaType extends ZodObjectOrWrapped>({
     const parsedValues = formSchema.safeParse(values);
     if (parsedValues.success) {
       onSubmitProp?.(parsedValues.data as z.infer<SchemaType>);
+      form.reset();
     }
   }
 
@@ -77,10 +78,8 @@ function AutoForm<SchemaType extends ZodObjectOrWrapped>({
     <div>
       <Form {...(form as any)}>
         <form
-          onSubmit={(e) => {
-            form.handleSubmit(onSubmit)(e);
-            form.reset();
-          }}
+          noValidate
+          onSubmit={form.handleSubmit(onSubmit)}
           onChange={() => {
             const values = form.getValues();
             onValuesChangeProp?.(values as Partial<z.infer<SchemaType>>);

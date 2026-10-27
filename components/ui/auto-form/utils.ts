@@ -84,17 +84,6 @@ export function getEnumOptions(schema: z.ZodType): string[] {
 }
 
 /**
- * Number inputs yield strings: turn on zod's own coercion for the underlying
- * number schema so the resolver validates (and submits) a number.
- */
-export function enableNumberCoercion(schema: z.ZodType): void {
-  const base = getBaseSchema(schema as z.ZodAny);
-  if (base && getSchemaKind(base) === "ZodNumber") {
-    (base._zod.def as { coerce?: boolean }).coerce = true;
-  }
-}
-
-/**
  * Search for a "default" in the Zod stack and return its value.
  */
 export function getDefaultValueInZodStack(schema: ZodSchema): any {

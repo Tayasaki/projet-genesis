@@ -5,6 +5,7 @@ import {
   deleteTemperment,
 } from "@/src/actions/character/temperment.action";
 import { SuggestionType } from "@prisma/client";
+import { requiredString } from "@/components/form/required-string";
 import { z } from "zod";
 import AutoForm, { AutoFormSubmit } from "../../ui/auto-form";
 import { useAttributeSubmit } from "../attribute/use-attribute-submit";
@@ -24,7 +25,7 @@ export const TempermentForm = ({ suggest }: { suggest: boolean }) => {
   return (
     <AutoForm
       formSchema={z.object({
-        name: z.string().max(50).describe("Nom du tempérament"),
+        name: requiredString(50).describe("Nom du tempérament"),
         description: z
           .string()
           .max(200)

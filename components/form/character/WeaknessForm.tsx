@@ -3,6 +3,7 @@ import {
   deleteWeakness,
 } from "@/src/actions/character/weakness.action";
 import { SuggestionType } from "@prisma/client";
+import { requiredString } from "@/components/form/required-string";
 import { z } from "zod";
 import AutoForm, { AutoFormSubmit } from "../../ui/auto-form";
 import { useAttributeSubmit } from "../attribute/use-attribute-submit";
@@ -22,7 +23,7 @@ export const WeaknessForm = ({ suggest }: { suggest: boolean }) => {
   return (
     <AutoForm
       formSchema={z.object({
-        name: z.string().max(50).describe("Nom de la faiblesse"),
+        name: requiredString(50).describe("Nom de la faiblesse"),
       })}
       fieldConfig={{
         name: {

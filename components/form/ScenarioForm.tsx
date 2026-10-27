@@ -3,12 +3,13 @@
 import { createScenario } from "@/src/actions/scenario.action";
 import { useState } from "react";
 import { toast } from "sonner";
+import { requiredString } from "@/components/form/required-string";
 import { z } from "zod";
 import AutoForm, { AutoFormSubmit } from "../ui/auto-form";
 
 const formScenarioSchema = z.object({
-  name: z.string().max(50).describe("Nom du scénario"),
-  universe: z.string().min(1).max(30).describe("Univers du scénario"),
+  name: requiredString(50).describe("Nom du scénario"),
+  universe: requiredString(30).describe("Univers du scénario"),
   description: z
     .string()
     .max(200)

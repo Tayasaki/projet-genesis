@@ -12,6 +12,7 @@ import {
 } from "@/src/query/weapon.query";
 import { useState } from "react";
 import { toast } from "sonner";
+import { requiredString } from "@/components/form/required-string";
 import { z } from "zod";
 
 export const WeaponForm = ({
@@ -35,7 +36,7 @@ export const WeaponForm = ({
   const skillNames = skills.map((s) => s.name) as [string, ...string[]];
 
   const weaponFormSchema = z.object({
-    name: z.string().max(50).describe("Nom de l'arme"),
+    name: requiredString(50).describe("Nom de l'arme"),
     melee: z.boolean().describe("Arme de mélée").default(true).optional(),
     description: z
       .string()

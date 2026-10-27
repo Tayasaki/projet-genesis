@@ -3,6 +3,7 @@
 import AutoForm, { AutoFormSubmit } from "@/components/ui/auto-form";
 import { createRange, deleteRange } from "@/src/actions/weapon/range.action";
 import { SuggestionType } from "@prisma/client";
+import { requiredString } from "@/components/form/required-string";
 import { z } from "zod";
 import { useAttributeSubmit } from "../attribute/use-attribute-submit";
 
@@ -21,7 +22,7 @@ export const RangeForm = ({ suggest }: { suggest: boolean }) => {
   return (
     <AutoForm
       formSchema={z.object({
-        name: z.string().max(50).describe("Nom de la porté"),
+        name: requiredString(50).describe("Nom de la porté"),
       })}
       fieldConfig={{
         name: {
