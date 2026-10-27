@@ -14,6 +14,8 @@ import { AutoFormInputComponentProps } from "../types";
 import { getEnumOptions } from "../utils";
 import { RandomButton } from "../../randomButton";
 
+const DEFAULT_ENUM_PLACEHOLDER = "Sélectionner une option";
+
 export default function AutoFormEnum({
   label,
   isRequired,
@@ -43,8 +45,13 @@ export default function AutoFormEnum({
           {...fieldProps}
         >
           <SelectTrigger className={fieldProps.className}>
-            <SelectValue placeholder={fieldConfigItem.inputProps?.placeholder}>
-              {field.value ? findItem(field.value)?.[1] : "Select an option"}
+            <SelectValue
+              placeholder={
+                fieldConfigItem.inputProps?.placeholder ??
+                DEFAULT_ENUM_PLACEHOLDER
+              }
+            >
+              {field.value ? findItem(field.value)?.[1] : undefined}
             </SelectValue>
           </SelectTrigger>
           <SelectContent>

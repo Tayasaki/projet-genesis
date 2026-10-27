@@ -9,6 +9,7 @@ export default function AutoFormNumber({
   isRequired,
   fieldConfigItem,
   fieldProps,
+  field,
 }: AutoFormInputComponentProps) {
   const { showLabel: _showLabel, ...fieldPropsWithoutShowLabel } = fieldProps;
   const showLabel = _showLabel === undefined ? true : _showLabel;
@@ -17,7 +18,15 @@ export default function AutoFormNumber({
     <FormItem>
       {showLabel && <AutoFormLabel label={label} isRequired={isRequired} />}
       <FormControl>
-        <Input type="number" {...fieldPropsWithoutShowLabel} />
+        <Input
+          type="number"
+          {...fieldPropsWithoutShowLabel}
+          onChange={(e) =>
+            field.onChange(
+              e.target.value === "" ? undefined : e.target.valueAsNumber,
+            )
+          }
+        />
       </FormControl>
       <AutoFormTooltip fieldConfigItem={fieldConfigItem} />
       <FormMessage />

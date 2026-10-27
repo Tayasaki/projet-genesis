@@ -129,6 +129,120 @@ describe("AutoForm", () => {
       expect(onSubmit).toHaveBeenCalledWith({ age: 42 });
     });
 
+    it("shows a placeholder, then a validation error, for an unselected required enum", async () => {
+      const user = userEvent.setup();
+      const onSubmit = setup(
+        z.object({
+          role: z.enum(["warrior", "mage"], "Veuillez choisir une valeur"),
+        }),
+      );
+
+      expect(screen.getByRole("combobox")).toHaveTextContent(
+        "Sélectionner une option",
+      );
+      await user.click(screen.getByRole("button", { name: "Save" }));
+
+      expect(
+        await screen.findByText("Veuillez choisir une valeur"),
+      ).toBeInTheDocument();
+      expect(onSubmit).not.toHaveBeenCalled();
+    });
+
+    it("uses the configured placeholder on an unselected enum", () => {
+      render(
+        <AutoForm
+          formSchema={z.object({ role: z.enum(["warrior", "mage"]) })}
+          fieldConfig={{ role: { inputProps: { placeholder: "Choisir..." } } }}
+        />,
+      );
+
+      expect(screen.getByRole("combobox")).toHaveTextContent("Choisir...");
+    });
+
+    it("keeps validation errors and typed values visible after a blocked submit", async () => {
+      const user = userEvent.setup();
+      const onSubmit = setup(
+        z.object({
+          title: z.string().min(5, "Title too short"),
+          role: z.enum(["warrior", "mage"], "Veuillez choisir une valeur"),
+        }),
+      );
+
+      await user.type(screen.getByLabelText(/title/i), "abc");
+      await user.click(screen.getByRole("button", { name: "Save" }));
+      await screen.findByText("Title too short");
+      await new Promise((r) => setTimeout(r, 50));
+
+      expect(screen.getByText("Title too short")).toBeInTheDocument();
+      expect(
+        screen.getByText("Veuillez choisir une valeur"),
+      ).toBeInTheDocument();
+      expect(screen.getByLabelText(/title/i)).toHaveValue("abc");
+      expect(onSubmit).not.toHaveBeenCalled();
+    });
+
+    it("resets the fields after a successful submit", async () => {
+      const user = userEvent.setup();
+      const onSubmit = setup(z.object({ title: z.string().min(1) }));
+
+      await user.type(screen.getByLabelText(/title/i), "Hello");
+      await user.click(screen.getByRole("button", { name: "Save" }));
+
+      await waitFor(() =>
+        expect(onSubmit).toHaveBeenCalledWith({ title: "Hello" }),
+      );
+      await waitFor(() =>
+        expect(screen.getByLabelText(/title/i)).toHaveValue(""),
+      );
+    });
+
+    it("fails an empty required number instead of coercing it to 0", async () => {
+      const user = userEvent.setup();
+      const onSubmit = setup(z.object({ age: z.number().min(1) }));
+
+      await user.click(screen.getByRole("button", { name: "Save" }));
+
+      await waitFor(() =>
+        expect(
+          screen.getByRole("spinbutton").closest("div")?.textContent,
+        ).toMatch(/\S/),
+      );
+      expect(onSubmit).not.toHaveBeenCalled();
+      expect(
+        document.querySelector("[id$='-form-item-message']"),
+      ).not.toBeNull();
+    });
+
+    it("accepts an empty optional number and omits it from the payload", async () => {
+      const user = userEvent.setup();
+      const onSubmit = setup(
+        z.object({ title: z.string(), age: z.number().optional() }),
+      );
+
+      await user.type(screen.getByLabelText(/title/i), "x");
+      await user.click(screen.getByRole("button", { name: "Save" }));
+
+      await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+      expect(onSubmit).toHaveBeenCalledWith({ title: "x" });
+    });
+
+    it("clearing a typed number makes a required number fail again", async () => {
+      const user = userEvent.setup();
+      const onSubmit = setup(z.object({ age: z.number() }));
+
+      const input = screen.getByRole("spinbutton");
+      await user.type(input, "5");
+      await user.clear(input);
+      await user.click(screen.getByRole("button", { name: "Save" }));
+
+      await waitFor(() =>
+        expect(
+          document.querySelector("[id$='-form-item-message']"),
+        ).not.toBeNull(),
+      );
+      expect(onSubmit).not.toHaveBeenCalled();
+    });
+
     it("renders a date as a date picker and submits a Date", async () => {
       const user = userEvent.setup();
       const onSubmit = setup(z.object({ when: z.date() }));

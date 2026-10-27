@@ -32,6 +32,21 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 
+const REQUIRED_CHOICE_MESSAGE = "Veuillez choisir une valeur";
+
+/**
+ * Enum select that must be chosen on create (no empty default) and falls back
+ * to the stored value when editing.
+ */
+function requiredChoice(
+  names: [string, ...string[]],
+  label: string,
+  current?: string,
+) {
+  const schema = z.enum(names, REQUIRED_CHOICE_MESSAGE).describe(label);
+  return current ? schema.default(current) : schema;
+}
+
 export const CharacterForm = ({
   temperments,
   strengths,
@@ -121,18 +136,21 @@ export const CharacterForm = ({
       .describe("Extra")
       .default(character?.extra ?? "")
       .optional(),
-    temperment: z
-      .enum(tempermentsNames)
-      .default(character?.temperment?.name ?? "")
-      .describe("Tempérament"),
-    alignment: z
-      .enum(alignementsNames)
-      .describe("Alignement")
-      .default(character?.alignment?.name ?? ""),
-    fortune: z
-      .enum(fortunesNames)
-      .describe("Richesse")
-      .default(character?.fortune?.name ?? ""),
+    temperment: requiredChoice(
+      tempermentsNames,
+      "Tempérament",
+      character?.temperment?.name,
+    ),
+    alignment: requiredChoice(
+      alignementsNames,
+      "Alignement",
+      character?.alignment?.name,
+    ),
+    fortune: requiredChoice(
+      fortunesNames,
+      "Richesse",
+      character?.fortune?.name,
+    ),
     strength: z
       .array(
         z.object({ name: z.enum(strengthNames).describe("Force").optional() }),
