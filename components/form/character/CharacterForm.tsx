@@ -25,6 +25,10 @@ import {
   Temperments,
   Weaknesses,
 } from "@/src/query/character.query";
+import {
+  GENERATION_RATE_LIMIT,
+  MAX_GENERATION_PROMPT_LENGTH,
+} from "@/src/actions/character/generation-limits";
 import { Weapon } from "@/src/query/weapon.query";
 import { Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -194,7 +198,7 @@ export const CharacterForm = ({
                 placeholder="Message..."
                 className="w-full"
                 onBlur={(e) => setMessage(e.target.value)}
-                max={50}
+                maxLength={MAX_GENERATION_PROMPT_LENGTH}
               />
               <DropdownMenuItem
                 className={cn(buttonVariants())}
@@ -232,10 +236,19 @@ export const CharacterForm = ({
                     } satisfies Partial<z.infer<typeof characterFormSchema>>;
                     setValues(generatedCharacter);
                     toast.success("Personnage généré avec succès ✨");
-                  } else if (value?.data?.type === "error") {
-                    toast.error("Erreur lors de la génération du personnage");
+                  } else if (value?.data?.type === "rate-limited") {
+                    toast.error(
+                      `Limite atteinte : ${GENERATION_RATE_LIMIT} générations par heure, réessayez plus tard.`,
+                    );
                   } else if (value?.data?.type === "validation-error") {
                     toast.error("L'IA n'a pas pu générer de personnage");
+                  } else if (value?.validationErrors) {
+                    toast.error(
+                      value.validationErrors.message?._errors?.[0] ??
+                        "Message invalide",
+                    );
+                  } else if (value?.serverError) {
+                    toast.error("Erreur lors de la génération du personnage");
                   }
                   setIsLoading(false);
                 }}

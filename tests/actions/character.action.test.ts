@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { prisma as prismaClient } from "@/lib/prisma";
 import { TEST_USER_ID, type PrismaMock } from "../helpers/action-mocks";
+import { attachGenerationLogFake } from "../helpers/generation-log-fake";
 
 const { revalidatePath, generateText } = vi.hoisted(() => ({
   revalidatePath: vi.fn(),
@@ -33,6 +34,7 @@ beforeEach(() => {
   prisma.scenario.findUnique.mockResolvedValue({ id: "owned" });
   prisma.character.findUnique.mockResolvedValue({ id: "owned" });
   prisma.weapon.count.mockResolvedValue(1);
+  attachGenerationLogFake(prisma);
 });
 
 import { NoObjectGeneratedError } from "ai";

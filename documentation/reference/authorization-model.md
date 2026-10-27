@@ -3,7 +3,7 @@ type: reference
 status: active
 created: 2026-10-27
 last_updated: 2026-10-27
-review_trigger: "Any change to lib/safe-action.ts, the Role enum, an ownership relation in prisma/schema.prisma, or a server action / page that reads or writes user data; or when issues #27, #30, #40 close."
+review_trigger: "Any change to lib/safe-action.ts, the Role enum, an ownership relation in prisma/schema.prisma, or a server action / page that reads or writes user data; or when issue #30 closes."
 ---
 
 # Authorization model
@@ -38,7 +38,7 @@ Neither client scopes data to an owner. Every handler that touches user-owned ro
 | `Weapon` | `Weapon.userId` | `where: { id, userId }` |
 | `Character` | none directly; owned transitively through its scenarios (many-to-many `Character.scenario`) | `scenario: { some: { userId } }` |
 | Reference data (Temperment, Alignment, Fortune, Strength, Weakness, CharacterSkill, WeaponSkill, Ammo, Damage, Range, Weight) | global, not user-owned | none; writes are staff-only via `authorizedAction` |
-| `Suggestion` | global; no author column | creation is login-only; deletion and the listing page are staff-only (see known gaps, #40) |
+| `Suggestion` | global; `Suggestion.userId` records the author | creation is login-only and rate-limited; deletion and the listing page are staff-only |
 
 Caveats on Character ownership:
 
@@ -86,11 +86,11 @@ Staff-only pages (`app/manage/page.tsx`, `app/suggestions/page.tsx`) additionall
 | `createCharacter` | authenticated | scenario checked with `{ id, userId }` when `scenarioId` given; client-supplied weapon ids verified with `assertOwnedWeapons` (`userId`) before connect |
 | `updateCharacter` | authenticated | `scenario: { some: { userId } }`; client-supplied weapon ids verified with `assertOwnedWeapons` (`userId`) before `set` |
 | `deleteCharacter` | authenticated | `scenario: { some: { userId } }` |
-| `generateCharacter` | authenticated | none (no data access); no rate limit or input cap (#27) |
+| `generateCharacter` | authenticated | none (no user-owned data read); input capped at 2000 chars, `maxOutputTokens` 600, and 10 attempts per user per rolling hour counted in `GenerationLog` (userId + createdAt, no prompt text; ADMIN/SUPERUSER exempt); over-limit returns `{ type: "rate-limited" }` before any OpenAI call |
 | `createWeapon` | authenticated | sets owner from ctx; `ammo`/`weight`/`range`/`damage`/skills connected by name (reference data) |
 | `deleteWeapon` | authenticated | `{ id, userId }` |
 | `deleteAccount` | authenticated | everything keyed on ctx `userId`; input `sessionId` must equal it |
-| `createSuggestion` | authenticated | none; suggestions are global and have no author; no rate limit (#40) |
+| `createSuggestion` | authenticated | none; suggestions are global; each row records its author (`userId`); non-staff are limited to 5 per rolling hour (advisory-lock transaction), ADMIN/SUPERUSER exempt |
 | `deleteSuggestion` | authorized | global data; staff-only |
 | `create*`/`delete*` for Temperment, Alignment, Fortune, Strength, Weakness, CharacterSkill (`src/actions/character/*`) | authorized | global reference data |
 | `create*`/`delete*` for Ammo, Damage, Range, Weight, WeaponSkill (`src/actions/weapon/*`) | authorized | global reference data |
@@ -117,6 +117,4 @@ Staff-only pages (`app/manage/page.tsx`, `app/suggestions/page.tsx`) additionall
 
 ## 8. Known gaps (open issues, not fixed by this document)
 
-- #40: `Suggestion` has no author (`userId`) and `createSuggestion` has no rate limit (remainder of #25; deletion and the listing page are now staff-only).
-- #27: `generateCharacter` has no rate limit or input cap.
 - #30: `Character` has no owner column; zero-scenario characters are orphaned.
