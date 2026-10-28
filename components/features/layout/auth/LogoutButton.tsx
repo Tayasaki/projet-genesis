@@ -12,8 +12,12 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Loader2, LogOut, XCircle } from "lucide-react";
-import { signOut } from "@/lib/auth-client";
-import { useTransition } from "react";
+import { hasActionError } from "@/lib/action-result";
+import { signOut, useSession } from "@/lib/auth-client";
+import { deleteAccount } from "@/src/actions/account.action";
+import { useRouter } from "next/navigation";
+import { useRef, useState, useTransition } from "react";
+import { toast } from "sonner";
 
 export const LogoutButton = () => {
   const [isPending, startTransition] = useTransition();
@@ -37,12 +41,51 @@ export const LogoutButton = () => {
 };
 
 export const DeleteAccountButton = () => {
+  const router = useRouter();
+  const { data: session } = useSession();
+  const userId = session?.user?.id;
+  const [open, setOpen] = useState(false);
+  const [isPending, setIsPending] = useState(false);
+  // The ref blocks a second click before React re-renders the disabled state.
+  const inFlight = useRef(false);
+
+  const handleDelete = async () => {
+    if (!userId || inFlight.current) return;
+    inFlight.current = true;
+    setIsPending(true);
+    let erased = false;
+    try {
+      erased = !hasActionError(await deleteAccount({ sessionId: userId }));
+    } catch {
+      erased = false;
+    }
+    if (!erased) {
+      toast.error(
+        "La suppression du compte a échoué. Votre compte n'a pas été supprimé.",
+      );
+      setOpen(false);
+      setIsPending(false);
+      inFlight.current = false;
+      return;
+    }
+    // The account is already gone, so a failed sign-out must not block the
+    // redirect: the session row no longer exists server-side.
+    try {
+      await signOut();
+    } catch {}
+    toast.success("Votre compte a été supprimé.");
+    router.replace("/login");
+  };
+
   return (
-    <AlertDialog>
+    <AlertDialog
+      open={open}
+      onOpenChange={(next) => !isPending && setOpen(next)}
+    >
       <AlertDialogTrigger asChild>
         <Button
           variant="destructive"
-          className="rounded-md bg-gray-200 text-destructive hover:bg-gray-200/70"
+          className="text-destructive rounded-md bg-gray-200 hover:bg-gray-200/70"
         >
           Supprimer mon compte
         </Button>
@@ -57,8 +100,17 @@ export const DeleteAccountButton = () => {
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Annuler</AlertDialogCancel>
-          <AlertDialogAction onClick={async () => {}}>
+          <AlertDialogCancel disabled={isPending}>Annuler</AlertDialogCancel>
+          <AlertDialogAction
+            disabled={isPending || !userId}
+            onClick={(event) => {
+              // Keep the dialog open (and the button disabled) until the
+              // erasure settles.
+              event.preventDefault();
+              void handleDelete();
+            }}
+          >
+            {isPending && <Loader2 className="mr-2 size-4 animate-spin" />}
             Supprimer mon compte
           </AlertDialogAction>
         </AlertDialogFooter>
