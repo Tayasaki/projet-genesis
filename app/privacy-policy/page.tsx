@@ -37,17 +37,37 @@ export default async function PrivacyPolicy() {
           inclut :
         </p>
         <ul role="list">
-          <li className="before:ml-6 before:mr-2 before:content-['•']">
+          <li className="before:mr-2 before:ml-6 before:content-['•']">
             Nom et prénom (le cas échéant)
           </li>
-          <li className="before:ml-6 before:mr-2 before:content-['•']">
+          <li className="before:mr-2 before:ml-6 before:content-['•']">
             Adresse email
           </li>
-          <li className="before:ml-6 before:mr-2 before:content-['•']">
+          <li className="before:mr-2 before:ml-6 before:content-['•']">
             Photo de profil (facultatif, selon le fournisseur OAuth)
           </li>
-          <li className="before:ml-6 before:mr-2 before:content-['•']">
+          <li className="before:mr-2 before:ml-6 before:content-['•']">
             ID utilisateur fourni par le service OAuth
+          </li>
+        </ul>
+        <p>
+          Pour faire fonctionner l&apos;application, les données techniques et
+          les contenus suivants sont également enregistrés dans notre base de
+          données :
+        </p>
+        <ul role="list">
+          <li className="before:mr-2 before:ml-6 before:content-['•']">
+            Les jetons d&apos;accès et de rafraîchissement OAuth reçus du
+            fournisseur, rattachés à votre compte
+          </li>
+          <li className="before:mr-2 before:ml-6 before:content-['•']">
+            Les sessions de connexion : identifiant de session et date
+            d&apos;expiration. L&apos;adresse IP et le navigateur utilisé (user
+            agent) ne sont pas enregistrés dans ces sessions
+          </li>
+          <li className="before:mr-2 before:ml-6 before:content-['•']">
+            Les contenus que vous créez : scénarios, personnages, armes et
+            suggestions
           </li>
         </ul>
       </div>
@@ -60,16 +80,37 @@ export default async function PrivacyPolicy() {
           autorisé, la modification, la divulgation ou la destruction.
         </p>
         <p>
-          Toutes les communications entre l&apos;application et les serveurs
-          sont chiffrées via des protocoles de sécurité standard tels que
-          SSL/TLS. Les informations sensibles, comme les jetons d&apos;accès
-          OAuth, sont également protégées par des méthodes de chiffrement
-          avancées.
+          Les communications entre votre navigateur et l&apos;application sont
+          chiffrées via le protocole HTTPS (TLS).
+        </p>
+        <p>
+          Les jetons d&apos;accès et de rafraîchissement OAuth reçus du
+          fournisseur sont stockés dans la base de données de l&apos;application
+          afin de maintenir la connexion. Ils sont protégés par les contrôles
+          d&apos;accès de l&apos;hébergeur et du fournisseur de base de données,
+          mais ils ne font pas l&apos;objet d&apos;un chiffrement supplémentaire
+          au niveau de l&apos;application.
+        </p>
+      </div>
+      <div className="flex flex-col gap-2">
+        <h2 className="text-xl font-semibold">
+          4. Conservation et suppression des données
+        </h2>
+        <p>
+          Vos données sont conservées tant que votre compte existe. Vous pouvez
+          demander la suppression de votre compte. Cette suppression efface
+          votre compte, vos sessions, vos scénarios, vos armes et vos
+          personnages.
+        </p>
+        <p>
+          Les suggestions que vous avez rédigées sont conservées de manière
+          anonyme : la référence à leur auteur est retirée, et elles servent de
+          données de modération.
         </p>
       </div>
       <div>
         <h2 className="text-xl font-semibold">
-          4. Modifications de la politique de confidentialité
+          5. Modifications de la politique de confidentialité
         </h2>
         <p>
           Nous nous réservons le droit de modifier cette Politique de
