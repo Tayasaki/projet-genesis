@@ -15,7 +15,6 @@ import { Loader2, LogOut, XCircle } from "lucide-react";
 import { hasActionError } from "@/lib/action-result";
 import { signOut, useSession } from "@/lib/auth-client";
 import { deleteAccount } from "@/src/actions/account.action";
-import { useRouter } from "next/navigation";
 import { useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
 
@@ -41,7 +40,6 @@ export const LogoutButton = () => {
 };
 
 export const DeleteAccountButton = () => {
-  const router = useRouter();
   const { data: session } = useSession();
   const userId = session?.user?.id;
   const [open, setOpen] = useState(false);
@@ -69,12 +67,14 @@ export const DeleteAccountButton = () => {
       return;
     }
     // The account is already gone, so a failed sign-out must not block the
-    // redirect: the session row no longer exists server-side.
+    // redirect: the session row no longer exists server-side. A hard
+    // navigation (not router.replace) drops the cached server-rendered header
+    // that still shows the deleted user.
     try {
       await signOut();
     } catch {}
-    toast.success("Votre compte a été supprimé.");
-    router.replace("/login");
+    // eslint-disable-next-line @next/next/no-location-assign-relative-destination -- full reload on purpose
+    window.location.assign("/login");
   };
 
   return (
@@ -85,18 +85,21 @@ export const DeleteAccountButton = () => {
       <AlertDialogTrigger asChild>
         <Button
           variant="destructive"
-          className="text-destructive rounded-md bg-gray-200 hover:bg-gray-200/70"
+          className="rounded-md bg-gray-200 text-destructive hover:bg-gray-200/70"
         >
           Supprimer mon compte
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Cette action est irréversible 🤯</AlertDialogTitle>
+          <AlertDialogTitle>
+            Supprimer définitivement votre compte ?
+          </AlertDialogTitle>
           <AlertDialogDescription>
-            En continuant, vous supprimerez votre compte et toute les données
-            liées à ce dernier. Etes vous sûr et certain de vouloir tout
-            supprimer.
+            Cette action est irréversible. Seront supprimés : votre compte, vos
+            sessions, vos scénarios, vos personnages et vos armes. Les
+            suggestions que vous avez déjà soumises sont conservées de façon
+            anonyme.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
