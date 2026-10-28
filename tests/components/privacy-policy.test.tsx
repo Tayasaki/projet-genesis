@@ -51,6 +51,16 @@ describe("privacy policy", () => {
     expect(content).toContain("scénarios, personnages, armes et suggestions");
   });
 
+  it("discloses transient in-memory IP processing for rate limiting", async () => {
+    const content = await text();
+    expect(content).toContain(
+      "l'adresse IP de votre connexion est utilisée de manière transitoire",
+    );
+    expect(content).toContain(
+      "conservée uniquement en mémoire pendant une courte fenêtre de temps et n'est pas enregistrée dans la base de données ni dans vos sessions",
+    );
+  });
+
   it("describes retention and deletion, with anonymous suggestions", async () => {
     const content = await text();
     expect(content).toContain("4. Conservation et suppression des données");

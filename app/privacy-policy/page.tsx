@@ -91,6 +91,13 @@ export default async function PrivacyPolicy() {
           mais ils ne font pas l&apos;objet d&apos;un chiffrement supplémentaire
           au niveau de l&apos;application.
         </p>
+        <p>
+          Pour limiter les requêtes abusives, l&apos;adresse IP de votre
+          connexion est utilisée de manière transitoire par le système
+          d&apos;authentification ; elle est conservée uniquement en mémoire
+          pendant une courte fenêtre de temps et n&apos;est pas enregistrée dans
+          la base de données ni dans vos sessions.
+        </p>
       </div>
       <div className="flex flex-col gap-2">
         <h2 className="text-xl font-semibold">
