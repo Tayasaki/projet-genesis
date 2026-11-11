@@ -13,73 +13,73 @@ import { WeaponSkillForm } from "@/components/form/weapon/WeaponSkillForm";
 import { WeightForm } from "@/components/form/weapon/WeightForm";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-export const TabsManagement = ({ isAuthorized }: { isAuthorized: boolean }) => {
+export const CharacterAttributeForms = ({
+  isAuthorized,
+}: {
+  isAuthorized: boolean;
+}) => {
   return (
-    <div className="flex flex-col gap-10 lg:flex-row lg:gap-8">
-      <div className="flex-1">
-        <h3 className="mb-4 text-lg font-semibold">
-          Créer des attributs de personnages
-        </h3>
-        <Tabs defaultValue="temperment">
-          <TabsList>
-            <TabsTrigger value="temperment">Tempérament</TabsTrigger>
-            <TabsTrigger value="alignement">Alignement</TabsTrigger>
-            <TabsTrigger value="fortune">Richesse</TabsTrigger>
-            <TabsTrigger value="strenght">Force</TabsTrigger>
-            <TabsTrigger value="weakness">Faiblesse</TabsTrigger>
-            <TabsTrigger value="skills">Compétences</TabsTrigger>
-          </TabsList>
+    <Tabs defaultValue="temperment">
+      <TabsList>
+        <TabsTrigger value="temperment">Tempérament</TabsTrigger>
+        <TabsTrigger value="alignement">Alignement</TabsTrigger>
+        <TabsTrigger value="fortune">Richesse</TabsTrigger>
+        <TabsTrigger value="strenght">Force</TabsTrigger>
+        <TabsTrigger value="weakness">Faiblesse</TabsTrigger>
+        <TabsTrigger value="skills">Compétences</TabsTrigger>
+      </TabsList>
 
-          <TabsContent value="temperment">
-            <TempermentForm suggest={!isAuthorized} />
-          </TabsContent>
-          <TabsContent value="alignement">
-            <AlignementForm suggest={!isAuthorized} />
-          </TabsContent>
-          <TabsContent value="fortune">
-            <FortuneForm suggest={!isAuthorized} />
-          </TabsContent>
-          <TabsContent value="strenght">
-            <StrengthForm suggest={!isAuthorized} />
-          </TabsContent>
-          <TabsContent value="weakness">
-            <WeaknessForm suggest={!isAuthorized} />
-          </TabsContent>
-          <TabsContent value="skills">
-            <CharacterSkillForm suggest={!isAuthorized} />
-          </TabsContent>
-        </Tabs>
-      </div>
+      <TabsContent value="temperment">
+        <TempermentForm suggest={!isAuthorized} />
+      </TabsContent>
+      <TabsContent value="alignement">
+        <AlignementForm suggest={!isAuthorized} />
+      </TabsContent>
+      <TabsContent value="fortune">
+        <FortuneForm suggest={!isAuthorized} />
+      </TabsContent>
+      <TabsContent value="strenght">
+        <StrengthForm suggest={!isAuthorized} />
+      </TabsContent>
+      <TabsContent value="weakness">
+        <WeaknessForm suggest={!isAuthorized} />
+      </TabsContent>
+      <TabsContent value="skills">
+        <CharacterSkillForm suggest={!isAuthorized} />
+      </TabsContent>
+    </Tabs>
+  );
+};
 
-      <div className="flex-1">
-        <h3 className="mb-4 text-lg font-semibold">
-          Créer des attributs d&apos;armes
-        </h3>
-        <Tabs defaultValue="damage">
-          <TabsList>
-            <TabsTrigger value="damage">Dégât</TabsTrigger>
-            <TabsTrigger value="ammo">Munition</TabsTrigger>
-            <TabsTrigger value="range">Porté</TabsTrigger>
-            <TabsTrigger value="Weight">Poids</TabsTrigger>
-            <TabsTrigger value="skills">Compétences</TabsTrigger>
-          </TabsList>
-          <TabsContent value="damage">
-            <DamageForm suggest={!isAuthorized} />
-          </TabsContent>
-          <TabsContent value="ammo">
-            <AmmoForm suggest={!isAuthorized} />
-          </TabsContent>
-          <TabsContent value="range">
-            <RangeForm suggest={!isAuthorized} />
-          </TabsContent>
-          <TabsContent value="Weight">
-            <WeightForm suggest={!isAuthorized} />
-          </TabsContent>
-          <TabsContent value="skills">
-            <WeaponSkillForm suggest={!isAuthorized} />
-          </TabsContent>
-        </Tabs>
-      </div>
-    </div>
+export const WeaponAttributeForms = ({
+  isAuthorized,
+}: {
+  isAuthorized: boolean;
+}) => {
+  return (
+    <Tabs defaultValue="damage">
+      <TabsList>
+        <TabsTrigger value="damage">Dégât</TabsTrigger>
+        <TabsTrigger value="ammo">Munition</TabsTrigger>
+        <TabsTrigger value="range">Porté</TabsTrigger>
+        <TabsTrigger value="Weight">Poids</TabsTrigger>
+        <TabsTrigger value="skills">Compétences</TabsTrigger>
+      </TabsList>
+      <TabsContent value="damage">
+        <DamageForm suggest={!isAuthorized} />
+      </TabsContent>
+      <TabsContent value="ammo">
+        <AmmoForm suggest={!isAuthorized} />
+      </TabsContent>
+      <TabsContent value="range">
+        <RangeForm suggest={!isAuthorized} />
+      </TabsContent>
+      <TabsContent value="Weight">
+        <WeightForm suggest={!isAuthorized} />
+      </TabsContent>
+      <TabsContent value="skills">
+        <WeaponSkillForm suggest={!isAuthorized} />
+      </TabsContent>
+    </Tabs>
   );
 };

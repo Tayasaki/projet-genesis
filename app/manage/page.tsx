@@ -1,7 +1,11 @@
-import { TabsManagement } from "@/components/features/layout/TabsManagement";
+import {
+  CharacterAttributeForms,
+  WeaponAttributeForms,
+} from "@/components/features/layout/TabsManagement";
 import { WeaponForm } from "@/components/form/weapon/WeaponForm";
 import { FormPanel } from "@/components/ui/form-panel";
 import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getAuthSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import {
@@ -46,6 +50,8 @@ export const metadata: Metadata = {
     "Création de scénarios pour jeux de rôle | Générateur de fiche de personnage",
 };
 
+const panelTabsClass = "mt-6 border-0 bg-transparent p-0";
+
 export default async function Manage() {
   const session = await getAuthSession();
   if (!session?.user?.id) redirect("/login");
@@ -87,36 +93,59 @@ export default async function Manage() {
   weaponSkill.map((w) => weaponAttributes.push({ ...w, type: "skill" }));
 
   return (
-    <div className="flex flex-col gap-10">
-      <div className="flex flex-col gap-8">
-        <DataTable
-          columns={characterAttributesColumns}
-          data={characterAttributes}
-          title="Attributs de personnage"
-        />
-        <Separator />
-        <DataTable
-          columns={weaponAttributesColumns}
-          data={weaponAttributes}
-          title="Attributs d'arme"
-        />
-        <Separator />
-        <DataTable columns={weaponColumns} data={weapons} title="Armes" />
-      </div>
-      <div className="flex flex-col gap-4">
-        <h2 className="text-lg font-semibold">Créer une arme</h2>
-        <FormPanel className="max-w-xl">
-          <WeaponForm
-            ammos={ammo}
-            damages={damage}
-            ranges={range}
-            weights={weight}
-            skills={weaponSkill}
+    <Tabs defaultValue="characters">
+      <TabsList>
+        <TabsTrigger value="characters">Personnages</TabsTrigger>
+        <TabsTrigger value="weapons">Armes</TabsTrigger>
+      </TabsList>
+
+      <TabsContent value="characters" className={panelTabsClass}>
+        <div className="grid gap-8 lg:grid-cols-2">
+          <DataTable
+            columns={characterAttributesColumns}
+            data={characterAttributes}
+            title="Attributs de personnage"
           />
-        </FormPanel>
-      </div>
-      <Separator />
-      <TabsManagement isAuthorized={isAuthorized} />
-    </div>
+          <div>
+            <h3 className="mb-4 text-lg font-semibold">Créer un attribut</h3>
+            <CharacterAttributeForms isAuthorized={isAuthorized} />
+          </div>
+        </div>
+      </TabsContent>
+
+      <TabsContent value="weapons" className={panelTabsClass}>
+        <div className="flex flex-col gap-8">
+          <div className="grid gap-8 lg:grid-cols-2">
+            <DataTable columns={weaponColumns} data={weapons} title="Armes" />
+            <div>
+              <h3 className="mb-4 text-lg font-semibold">Créer une arme</h3>
+              <FormPanel>
+                <WeaponForm
+                  ammos={ammo}
+                  damages={damage}
+                  ranges={range}
+                  weights={weight}
+                  skills={weaponSkill}
+                />
+              </FormPanel>
+            </div>
+          </div>
+          <Separator />
+          <div className="grid gap-8 lg:grid-cols-2">
+            <DataTable
+              columns={weaponAttributesColumns}
+              data={weaponAttributes}
+              title="Attributs d'arme"
+            />
+            <div>
+              <h3 className="mb-4 text-lg font-semibold">
+                Créer un attribut d&apos;arme
+              </h3>
+              <WeaponAttributeForms isAuthorized={isAuthorized} />
+            </div>
+          </div>
+        </div>
+      </TabsContent>
+    </Tabs>
   );
 }
