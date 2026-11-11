@@ -78,8 +78,9 @@ Vous pouvez maintenant accéder à l'application à l'adresse `http://localhost:
 
 ```bash
 pnpm test        # exécution unique
-pnpm test:coverage # exécution unique + seuils de couverture (lib/utils, src/actions)
+pnpm test:coverage # exécution unique + seuils de couverture (lib/, src/actions, src/query)
 pnpm test:watch  # mode watch
+pnpm test:e2e    # tests end-to-end (Playwright) — nécessite une base de données migrée
 ```
 
 ## Docker

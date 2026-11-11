@@ -1,7 +1,7 @@
 import path from "node:path";
 
 import react from "@vitejs/plugin-react";
-import { defineConfig } from "vitest/config";
+import { defaultExclude, defineConfig } from "vitest/config";
 
 export default defineConfig({
   plugins: [react()],
@@ -10,6 +10,8 @@ export default defineConfig({
     setupFiles: ["./vitest.setup.ts"],
     globals: true,
     testTimeout: 15000,
+    // tests/e2e/** runs under Playwright's own test runner, not vitest.
+    exclude: [...defaultExclude, "tests/e2e/**"],
     coverage: {
       provider: "v8",
       include: [
