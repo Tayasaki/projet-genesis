@@ -13,7 +13,9 @@ import {
 } from "@tanstack/react-table";
 
 import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
+import { Inbox } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -107,11 +109,8 @@ export function DataTable<TData, TValue>({
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  Aucun résultat.
+                <TableCell colSpan={columns.length}>
+                  <EmptyState icon={Inbox} title="Aucun résultat" />
                 </TableCell>
               </TableRow>
             )}

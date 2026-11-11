@@ -11,11 +11,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { EmptyState } from "@/components/ui/empty-state";
 import { getAuthSession } from "@/lib/auth";
 import { charactersOwnedBy, scenarioOwnedBy } from "@/lib/ownership";
 import { prisma } from "@/lib/prisma";
 import { cn } from "@/lib/utils";
-import { ArrowRight, Plus } from "lucide-react";
+import { ArrowRight, Plus, Users } from "lucide-react";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getCharacters } from "../../../src/query/character.query";
@@ -42,17 +43,17 @@ export default async function ScenarioManage(props: {
   scenarioCharacter.sort((a, b) => (a.pj === b.pj ? 0 : a.pj ? -1 : 1));
 
   return (
-    <div className="h-full">
-      <div className="mb-6">
-        <h1 className="mb-8 text-3xl font-bold">
+    <div className="flex h-full flex-col gap-8">
+      <div className="flex flex-col gap-1.5">
+        <h1 className="text-2xl font-semibold tracking-tight">
           {scenario.name} ({scenario.universe})
         </h1>
-        <span className="text-muted-foreground italic">
+        <span className="text-muted-foreground text-sm">
           {scenario.description}
         </span>
       </div>
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-2xl font-semibold">Personnages</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-semibold">Personnages</h2>
         <div className="flex items-center gap-2">
           <Dialog>
             <DialogTrigger
@@ -90,7 +91,11 @@ export default async function ScenarioManage(props: {
       {scenarioCharacter.length > 0 ? (
         <DisplayCharacter characterList={scenarioCharacter} />
       ) : (
-        <p>Pas encore de personnage</p>
+        <EmptyState
+          icon={Users}
+          title="Pas encore de personnage"
+          description="Créez-en un ou importez-en un existant."
+        />
       )}
     </div>
   );

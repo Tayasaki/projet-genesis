@@ -9,7 +9,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Scenario } from "@prisma/client";
+import { BookOpen } from "lucide-react";
 import Link from "next/link";
 import { DeleteDialog } from "./DeleteDialog";
 import { deleteScenario } from "@/src/actions/scenario.action";
@@ -18,9 +20,11 @@ import { toast } from "sonner";
 export const ScenarioList = ({ scenario }: { scenario: Scenario[] }) => {
   if (scenario.length === 0) {
     return (
-      <p className="text-muted-foreground py-8 text-center text-sm">
-        Aucun scénario. Créez-en un pour commencer.
-      </p>
+      <EmptyState
+        icon={BookOpen}
+        title="Aucun scénario"
+        description="Créez-en un pour commencer."
+      />
     );
   }
   return (
