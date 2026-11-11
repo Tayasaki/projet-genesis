@@ -1,4 +1,4 @@
-import { EmptyState } from "@/components/ui/empty-state";
+import { EmptyStateInline } from "@/components/ui/empty-state";
 import { FormItem, FormMessage, useFormField } from "@/components/ui/form";
 import { ListX } from "lucide-react";
 import {
@@ -66,13 +66,15 @@ export default function AutoFormEnum({
   }
 
   return values.length === 0 ? (
-    <EmptyState
-      icon={ListX}
-      title="Aucun élément disponible"
-      description={
-        label ? `Aucun élément créé pour « ${label} » pour l'instant.` : undefined
-      }
-    />
+    <FormItem>
+      <AutoFormLabel label={label} isRequired={isRequired} />
+      <EmptyStateInline
+        icon={ListX}
+        title={
+          label ? `Aucun élément créé pour « ${label} »` : "Aucun élément disponible"
+        }
+      />
+    </FormItem>
   ) : (
     <FormItem>
       <AutoFormLabel label={label} isRequired={isRequired} />

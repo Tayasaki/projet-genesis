@@ -29,3 +29,25 @@ export const EmptyState = ({
     </div>
   </div>
 );
+
+/** Single-line variant for a compact spot (inside a form field) where the
+ * full block variant's padding and icon circle would be disproportionate. */
+export const EmptyStateInline = ({
+  icon: Icon,
+  title,
+  className,
+}: {
+  icon: LucideIcon;
+  title: string;
+  className?: string;
+}) => (
+  <div
+    className={cn(
+      "text-muted-foreground flex items-center gap-2 py-1.5 text-sm",
+      className,
+    )}
+  >
+    <Icon className="size-3.5 shrink-0" />
+    <span>{title}</span>
+  </div>
+);
