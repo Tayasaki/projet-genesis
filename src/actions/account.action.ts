@@ -13,10 +13,8 @@ export const deleteAccount = authenticatedAction
   )
   .action(async ({ parsedInput, ctx: { userId } }) => {
     if (parsedInput.sessionId !== userId) throw new Error("Invalid session id");
-    // Precondition kept from before: a caller without an account row is rejected.
-    await prisma.account.findFirstOrThrow({
-      where: { userId: userId },
-    });
+    // authenticatedAction already proved a live session for `userId`; an
+    // Account row is not required (a user may hold a Session without one).
     // One transaction: all of the user's data is erased or none of it. The
     // user delete cascades to Account, Session and GenerationLog and nulls
     // Suggestion.userId, so those need no delete of their own (deleting an

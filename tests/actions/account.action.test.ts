@@ -31,14 +31,13 @@ import { deleteAccount } from "@/src/actions/account.action";
 describe("deleteAccount", () => {
   beforeEach(() => {
     prisma.$transaction.mockReset().mockResolvedValue(undefined);
-    prisma.account.findFirstOrThrow.mockResolvedValue({ id: "acc-1" });
   });
 
   it("rejects a sessionId that differs from the caller and deletes nothing", async () => {
     const res = await deleteAccount({ sessionId: "someone-else" });
 
     expect(res?.serverError).toBeDefined();
-    expect(prisma.account.findFirstOrThrow).not.toHaveBeenCalled();
+    expect(prisma.$transaction).not.toHaveBeenCalled();
     expect(prisma.user.delete).not.toHaveBeenCalled();
   });
 
@@ -70,9 +69,6 @@ describe("deleteAccount", () => {
     const res = await deleteAccount({ sessionId: TEST_USER_ID });
 
     expect(res?.serverError).toBeUndefined();
-    expect(prisma.account.findFirstOrThrow).toHaveBeenCalledWith({
-      where: { userId: TEST_USER_ID },
-    });
     expect(prisma.character.deleteMany).toHaveBeenCalledWith({
       where: {
         OR: [
@@ -121,12 +117,16 @@ describe("deleteAccount", () => {
     expect(res?.serverError).toBeDefined();
   });
 
-  it("fails without deleting anything when the user has no account", async () => {
-    prisma.account.findFirstOrThrow.mockRejectedValueOnce(new Error("none"));
-
+  it("lets a user without an account row erase themselves", async () => {
+    // No Account row (e.g. a Session-only user): nothing may look one up.
     const res = await deleteAccount({ sessionId: TEST_USER_ID });
 
-    expect(res?.serverError).toBeDefined();
-    expect(prisma.user.delete).not.toHaveBeenCalled();
+    expect(res?.serverError).toBeUndefined();
+    expect(prisma.account.findFirstOrThrow).not.toHaveBeenCalled();
+    expect(prisma.account.findFirst).not.toHaveBeenCalled();
+    expect(prisma.$transaction).toHaveBeenCalledTimes(1);
+    expect(prisma.user.delete).toHaveBeenCalledWith({
+      where: { id: TEST_USER_ID },
+    });
   });
 });

@@ -160,22 +160,34 @@ describe.skipIf(!databaseUrl)("deleteAccount against Postgres", () => {
     expect(await prisma.weapon.count({ where: other })).toBe(1);
   });
 
-  it("erases nothing when the caller has no account row", async () => {
+  it("erases a caller who has a session but no account row", async () => {
     await prisma.user.create({
       data: {
         id: TEST_USER_ID,
         email: `${TEST_USER_ID}@example.test`,
-        Scenario: { create: { name: "it-del-sc-keep", universe: "u" } },
+        sessions: {
+          create: {
+            sessionToken: `tok-${TEST_USER_ID}`,
+            expires: new Date(Date.now() + 3_600_000),
+          },
+        },
+        Scenario: { create: { name: "it-del-sc-noacc", universe: "u" } },
       },
     });
+    expect(
+      await prisma.account.count({ where: { userId: TEST_USER_ID } }),
+    ).toBe(0);
 
     const { deleteAccount } = await import("@/src/actions/account.action");
     const res = await deleteAccount({ sessionId: TEST_USER_ID });
 
-    expect(res?.serverError).toBeDefined();
-    expect(await prisma.user.count({ where: { id: TEST_USER_ID } })).toBe(1);
+    expect(res?.serverError).toBeUndefined();
+    expect(await prisma.user.count({ where: { id: TEST_USER_ID } })).toBe(0);
+    expect(
+      await prisma.session.count({ where: { userId: TEST_USER_ID } }),
+    ).toBe(0);
     expect(
       await prisma.scenario.count({ where: { userId: TEST_USER_ID } }),
-    ).toBe(1);
+    ).toBe(0);
   });
 });
