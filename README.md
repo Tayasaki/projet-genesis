@@ -15,8 +15,8 @@ Ce projet a pour but de créer une application web permettant de créer, intéra
 
 ### Prérequis
 
-- Node.js 20.0.0 ou ultérieur
-- pnpm 8.11.0 ou ultérieur
+- Node.js 22.0.0 ou ultérieur
+- pnpm 10.24.0 ou ultérieur
 - Git 2.33.0 ou ultérieur
 - Avoir un base de données PostgreSQL
 
