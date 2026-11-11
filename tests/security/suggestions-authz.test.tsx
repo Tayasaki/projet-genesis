@@ -45,7 +45,9 @@ vi.mock("@/src/query/suggestion.query", () => ({
   getSuggestions: async () => [],
 }));
 vi.mock("../../app/manage/data-table", () => ({ DataTable: () => null }));
-vi.mock("../../app/suggestions/suggestionsColumns", () => ({ columns: [] }));
+vi.mock("../../app/suggestions/suggestionsColumns", () => ({
+  SuggestionsTable: () => null,
+}));
 
 import SuggestionsPage from "@/app/suggestions/page";
 import {

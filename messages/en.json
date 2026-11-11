@@ -1,0 +1,406 @@
+{
+  "common": {
+    "appName": "Projet Genesis",
+    "login": "Log in",
+    "search": "Search...",
+    "actions": "Actions",
+    "previous": "Previous",
+    "next": "Next",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "confirmDeleteTitle": "Delete permanently?",
+    "confirmDeleteDescription": "This action is irreversible. It will permanently delete \"{item}\".",
+    "selectOption": "Select an option",
+    "randomize": "Randomize",
+    "type": "Type",
+    "name": "Name",
+    "description": "Description",
+    "noDescription": "No description",
+    "notAuthorizedDeleteAttribute": "You are not authorized to delete this attribute type",
+    "deletedSuccess": "{name} deleted",
+    "requiredFieldsError": "Please fill in all fields",
+    "suggestionFailedError": "Your suggestion could not be sent",
+    "suggestionSentSuccess": "Your suggestion was sent",
+    "undo": "Undo",
+    "suggest": "Suggest",
+    "requiredField": "This field is required"
+  },
+  "nav": {
+    "suggestions": "Suggestions",
+    "manage": "Manage",
+    "myCharacters": "My characters"
+  },
+  "footer": {
+    "tos": "Terms of Service",
+    "privacyPolicy": "Privacy Policy"
+  },
+  "login": {
+    "title": "Log in",
+    "subtitle": "Sign in to access your scenarios and characters.",
+    "withGoogle": "Continue with Google",
+    "withGithub": "Continue with Github",
+    "withDiscord": "Continue with Discord"
+  },
+  "home": {
+    "title": "Welcome to Projet Genesis",
+    "description": "Create scenarios and randomly generate characters for your tabletop RPG sessions. Keep track of your characters and weapons, and freely use the attributes already defined — you can suggest new ones if you're not authorized to create them yourself.",
+    "createScenario": "Create a scenario",
+    "scenarioName": "Scenario name",
+    "scenarioNamePlaceholder": "Super cool scenario!",
+    "scenarioUniverse": "Scenario universe",
+    "scenarioUniversePlaceholder": "Ultra fun universe!",
+    "scenarioDescription": "Scenario description",
+    "submit": "Create my scenario",
+    "requiredFieldsError": "Please fill in all fields",
+    "mustBeLoggedInError": "You must be logged in to create a scenario",
+    "createdSuccess": "Scenario created successfully"
+  },
+  "scenario": {
+    "empty": "No scenarios yet",
+    "emptyDescription": "Create one to get started.",
+    "deletedSuccess": "{name} deleted"
+  },
+  "account": {
+    "logOut": "Log out",
+    "deleteAccount": "Delete my account",
+    "deleteAccountTitle": "Permanently delete your account?",
+    "deleteAccountDescription": "This action is irreversible. The following will be deleted: your account, your sessions, your scenarios, your characters and your weapons. Suggestions you have already submitted are kept anonymously.",
+    "deleteAccountFailed": "Account deletion failed. Your account was not deleted."
+  },
+  "characterCard": {
+    "imageAlt": "Character image",
+    "pj": "PC",
+    "npc": "NPC",
+    "origin": "Origin: {origin}",
+    "role": "Role: {role}",
+    "age": "Age: {age}",
+    "injury": "Injury: {injury}",
+    "temperment": "Temperament: {name}",
+    "alignment": "Alignment: {name}",
+    "fortune": "Fortune: {name}",
+    "searchPlaceholder": "Character name...",
+    "sortByPlaceholder": "Sort by",
+    "sortByName": "Name",
+    "sortByPj": "PC"
+  },
+  "myCharacters": {
+    "heading": "Characters",
+    "pj": "PC",
+    "role": "Role",
+    "noRole": "No role",
+    "origin": "Origin",
+    "noOrigin": "No origin",
+    "edit": "Edit",
+    "deletedSuccess": "{name} deleted"
+  },
+  "suggestions": {
+    "heading": "Suggestions",
+    "accept": "Accept",
+    "createError": "Error while creating",
+    "createdButNotDeleted": "Created, but the suggestion could not be deleted",
+    "accepted": "Suggestion accepted",
+    "unknownError": "Unknown error",
+    "deleteError": "Error while deleting",
+    "deletedSuccess": "{name} deleted"
+  },
+  "profile": {
+    "profilePictureAlt": "Profile picture",
+    "scenariosCreatedSuffix": "scenarios created 📄",
+    "charactersCreatedSuffix": "game characters 🤺",
+    "weaponsReadySuffix": "weapons ready to use ⚔",
+    "none": "None",
+    "noneFeminine": "None"
+  },
+  "characterForm": {
+    "generationPageTitle": "Generate your character",
+    "nameDescribe": "Character name",
+    "namePlaceholder": "Eric Tournlavis",
+    "pjDescribe": "Player character",
+    "originDescribe": "Character origin",
+    "originPlaceholder": "Born in the mountains",
+    "roleDescribe": "Character role",
+    "rolePlaceholder": "Warrior",
+    "ageDescribe": "Character age",
+    "agePlaceholder": "25",
+    "injuryDescribe": "Injury",
+    "injuryPlaceholder": "Leg injury",
+    "extraDescribe": "Extra",
+    "extraPlaceholder": "Loves cats",
+    "temperment": "Temperament",
+    "alignment": "Alignment",
+    "fortune": "Fortune",
+    "strengthDescribe": "Strength",
+    "strengthSetDescribe": "Strengths",
+    "weaknessDescribe": "Weakness",
+    "weaknessSetDescribe": "Weaknesses",
+    "skillDescribe": "Skill",
+    "skillSetDescribe": "Skills",
+    "weaponDescribe": "Weapon",
+    "weaponSetDescribe": "Weapons",
+    "requiredChoiceError": "Please choose a value",
+    "generateWithAi": "Generate with AI",
+    "generatingInProgress": "Your character will be ready soon...",
+    "generationMessagePlaceholder": "Message...",
+    "generateSubmit": "Let's go!",
+    "generatedSuccess": "Character generated successfully ✨",
+    "generationRateLimited": "Limit reached: {limit} generations per hour, try again later.",
+    "generationFailed": "The AI could not generate a character",
+    "invalidMessage": "Invalid message",
+    "generationError": "Error generating the character",
+    "authError": "You must be logged in to create a character",
+    "modifiedSuccess": "Character updated",
+    "createdSuccess": "Character created successfully",
+    "modifySubmit": "Update your character",
+    "createSubmit": "Create your character"
+  },
+  "weaponForm": {
+    "nameDescribe": "Weapon name",
+    "meleeDescribe": "Melee weapon",
+    "descriptionDescribe": "Weapon description",
+    "ammoDescribe": "Weapon ammo",
+    "weightDescribe": "Weapon weight",
+    "rangeDescribe": "Weapon range",
+    "damageDescribe": "Weapon damage",
+    "skillDescribe": "Skill",
+    "skillSetDescribe": "Skills",
+    "authError": "You must be logged in to create a weapon",
+    "createdSuccess": "Weapon created successfully",
+    "createSubmit": "Create the weapon"
+  },
+  "characters": {
+    "heading": "Characters",
+    "import": "Import",
+    "createCharacter": "Create a character",
+    "importDialogTitle": "Import a character",
+    "importDialogDescription": "Select a character from your list to import into this scenario.",
+    "empty": "No characters yet",
+    "emptyDescription": "Create one or import an existing one.",
+    "noneFound": "No characters found",
+    "genericError": "An error occurred",
+    "importedSuccess": "{name} was imported successfully 🧙",
+    "age": "Age: {age}",
+    "origin": "Origin: {origin}",
+    "role": "Role: {role}",
+    "extra": "Extra: {extra}"
+  },
+  "attributes": {
+    "temperment": {
+      "authError": "You must be logged in to create a temperament",
+      "created": "Temperament created successfully",
+      "deleted": "Temperament deleted successfully",
+      "nameDescribe": "Temperament name",
+      "namePlaceholder": "Choleric",
+      "descriptionDescribe": "Temperament description",
+      "descriptionPlaceholder": "A choleric person gets angry easily",
+      "createSubmit": "Create the temperament"
+    },
+    "alignement": {
+      "authError": "You must be logged in to create an alignment",
+      "created": "Alignment created successfully",
+      "deleted": "Alignment deleted successfully",
+      "nameDescribe": "Alignment name",
+      "namePlaceholder": "Lawful good",
+      "descriptionDescribe": "Alignment description",
+      "descriptionPlaceholder": "A lawful good character acts like a knight",
+      "createSubmit": "Create the alignment"
+    },
+    "fortune": {
+      "authError": "You must be logged in to create a fortune",
+      "created": "Fortune created successfully",
+      "deleted": "Fortune deleted successfully",
+      "nameDescribe": "Fortune name",
+      "namePlaceholder": "Rich as Croesus",
+      "descriptionDescribe": "Fortune description",
+      "descriptionPlaceholder": "The character is rich as Croesus",
+      "createSubmit": "Create the fortune"
+    },
+    "strength": {
+      "authError": "You must be logged in to create a strength",
+      "created": "Strength created successfully",
+      "deleted": "Strength deleted successfully",
+      "nameDescribe": "Strength name",
+      "namePlaceholder": "Bear strength",
+      "createSubmit": "Create the strength"
+    },
+    "weakness": {
+      "authError": "You must be logged in to create a weakness",
+      "created": "Weakness created successfully",
+      "deleted": "Weakness deleted successfully",
+      "nameDescribe": "Weakness name",
+      "namePlaceholder": "Weak as a kitten",
+      "createSubmit": "Create the weakness"
+    },
+    "characterSkill": {
+      "authError": "You must be logged in to create a skill",
+      "created": "Skill created successfully",
+      "deleted": "Skill deleted successfully",
+      "nameDescribe": "Skill name",
+      "namePlaceholder": "Agile",
+      "createSubmit": "Create the skill"
+    },
+    "ammo": {
+      "authError": "You must be logged in to create ammo",
+      "created": "Ammo created successfully",
+      "deleted": "Ammo deleted successfully",
+      "nameDescribe": "Ammo name",
+      "namePlaceholder": "Low ammo",
+      "createSubmit": "Create the ammo"
+    },
+    "damage": {
+      "authError": "You must be logged in to create a damage",
+      "created": "Damage created successfully",
+      "deleted": "Damage deleted successfully",
+      "nameDescribe": "Damage name",
+      "namePlaceholder": "Low damage",
+      "createSubmit": "Create the damage"
+    },
+    "range": {
+      "authError": "You must be logged in to create a range",
+      "created": "Range created successfully",
+      "deleted": "Range deleted successfully",
+      "nameDescribe": "Range name",
+      "namePlaceholder": "Short range",
+      "createSubmit": "Create the range"
+    },
+    "weaponSkill": {
+      "authError": "You must be logged in to create a weapon skill",
+      "created": "Weapon skill created successfully",
+      "deleted": "Weapon skill deleted successfully",
+      "nameDescribe": "Weapon skill name",
+      "namePlaceholder": "Piercing",
+      "createSubmit": "Create the weapon skill"
+    },
+    "weight": {
+      "authError": "You must be logged in to create a weight",
+      "created": "Weight created successfully",
+      "deleted": "Weight deleted successfully",
+      "nameDescribe": "Weight name",
+      "namePlaceholder": "Very heavy",
+      "createSubmit": "Create the weight"
+    }
+  },
+  "emptyState": {
+    "noResults": "No results",
+    "noOptionsAvailable": "No options available",
+    "noOptionsFor": "No \"{label}\" created yet",
+    "noOptionsForDescription": "No \"{label}\" created yet."
+  },
+  "manage": {
+    "personnages": "Characters",
+    "armes": "Weapons",
+    "characterAttributes": "Character attributes",
+    "weaponAttributes": "Weapon attributes",
+    "weapons": "Weapons",
+    "createAttribute": "Create an attribute",
+    "createWeapon": "Create a weapon",
+    "createWeaponAttribute": "Create a weapon attribute",
+    "temperament": "Temperament",
+    "alignment": "Alignment",
+    "fortune": "Wealth",
+    "strength": "Strength",
+    "weakness": "Weakness",
+    "skills": "Skills",
+    "skill": "skill",
+    "damage": "Damage",
+    "ammo": "Ammo",
+    "range": "Range",
+    "weight": "Weight"
+  },
+  "tos": {
+    "title": "Projet-Genesis Terms of Service",
+    "sections": [
+      {
+        "heading": "1. Introduction",
+        "body": [
+          "Welcome to Projet-Genesis, an application dedicated to tabletop role-playing game (RPG) enthusiasts. This application lets you create scenarios and characters, either manually or with semi-automated assistance. It also offers additional features, such as weapon creation. These Terms of Service (\"Terms\") govern your use of the application. By using this application, you agree to these Terms."
+        ]
+      },
+      {
+        "heading": "2. Acceptance of the Terms",
+        "body": [
+          "By accessing or using Projet-Genesis, you agree to be bound by these Terms. If you do not agree to these Terms, you must not use the application. We encourage you to read these Terms carefully before using our service."
+        ]
+      },
+      {
+        "heading": "3. Access to and use of the application",
+        "body": [
+          "The application is intended for anyone aged 13 or older. If you are under 13, you must obtain permission from a parent or guardian to use this application. You are responsible for all activity that occurs under your account and must ensure that all information you provide during registration is accurate and complete."
+        ]
+      },
+      {
+        "heading": "4. User accounts",
+        "body": [
+          "To access the application, you must create a user account. You agree to provide accurate information and to keep it up to date if it changes. You are responsible for the security of your account and for any actions taken through it.",
+          "If you notice suspicious activity on your account, you must notify us immediately. We reserve the right to suspend or delete accounts without notice in the event of a breach of these Terms."
+        ]
+      },
+      {
+        "heading": "5. Intellectual property",
+        "body": [
+          "All content available on the application, including text, images, graphics, logos, user interfaces, and source code, is protected by copyright and other intellectual property laws. The application and its content are the exclusive property of the development team.",
+          "You may use the application and its content only for your personal, non-commercial use of the application. Any reproduction, distribution, modification, or other use of the content without prior authorization is strictly prohibited."
+        ]
+      },
+      {
+        "heading": "6. Changes to the Terms",
+        "body": [
+          "We reserve the right to modify these Terms at any time. If we make significant changes, we will notify you through the application or by any other appropriate means. Your continued use of the application after the changes take effect constitutes your acceptance of those changes. We recommend reviewing these Terms regularly to stay informed of any updates."
+        ]
+      }
+    ]
+  },
+  "privacyPolicy": {
+    "title": "Projet-Genesis Privacy Policy",
+    "sections": [
+      {
+        "heading": "1. Introduction",
+        "body": [
+          "This Privacy Policy explains how Projet-Genesis (hereafter \"the application\") collects, uses, and protects the personal information of its users. By using our application, you agree to the practices described in this policy."
+        ]
+      },
+      {
+        "heading": "2. Information We Collect",
+        "body": [
+          "The application exclusively uses OAuth authentication to let users sign in. OAuth is a standardized protocol that enables secure authorization in a simplified setup. By using OAuth, the application does not store your credentials directly (such as passwords) but instead receives an access token that verifies your identity with the OAuth service provider (such as Google, Facebook, etc.).",
+          "During OAuth authentication, we collect and use only the information necessary to create and manage your user account on our application. This includes:"
+        ],
+        "list1": [
+          "First and last name (where provided)",
+          "Email address",
+          "Profile picture (optional, depending on the OAuth provider)",
+          "User ID provided by the OAuth service"
+        ],
+        "body2": [
+          "To operate the application, the following technical data and content are also stored in our database:"
+        ],
+        "list2": [
+          "OAuth access and refresh tokens received from the provider, attached to your account",
+          "Login sessions: session identifier and expiration date. Your IP address and browser (user agent) are not stored in these sessions",
+          "The content you create: scenarios, characters, weapons, and suggestions"
+        ]
+      },
+      {
+        "heading": "3. Data Security",
+        "body": [
+          "We take the security of your data very seriously and implement appropriate technical and organizational security measures to protect your information against unauthorized access, alteration, disclosure, or destruction.",
+          "Communications between your browser and the application are encrypted using the HTTPS (TLS) protocol.",
+          "OAuth access and refresh tokens received from the provider are stored in the application's database to maintain your login session. They are protected by the hosting provider's and database provider's access controls, but they are not subject to additional encryption at the application level.",
+          "To limit abusive requests, your connection's IP address is used transiently by the authentication system; it is kept in memory only for a short window of time and is not stored in the database or in your sessions."
+        ]
+      },
+      {
+        "heading": "4. Data retention and deletion",
+        "body": [
+          "Your data is retained for as long as your account exists. You may request deletion of your account. This deletion erases your account, your sessions, your scenarios, your weapons, and your characters.",
+          "Suggestions you have written are retained anonymously: the reference to their author is removed, and they are kept as moderation data."
+        ]
+      },
+      {
+        "heading": "5. Changes to this Privacy Policy",
+        "body": [
+          "We reserve the right to modify this Privacy Policy at any time. In the event of a substantial change, we will notify you through the application or by another appropriate means. We encourage you to review this policy regularly to stay informed of any updates."
+        ]
+      }
+    ]
+  }
+}

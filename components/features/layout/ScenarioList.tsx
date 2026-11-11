@@ -12,18 +12,20 @@ import {
 import { EmptyState } from "@/components/ui/empty-state";
 import { Scenario } from "@prisma/client";
 import { BookOpen } from "lucide-react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { DeleteDialog } from "./DeleteDialog";
 import { deleteScenario } from "@/src/actions/scenario.action";
 import { toast } from "sonner";
 
 export const ScenarioList = ({ scenario }: { scenario: Scenario[] }) => {
+  const t = useTranslations("scenario");
   if (scenario.length === 0) {
     return (
       <EmptyState
         icon={BookOpen}
-        title="Aucun scénario"
-        description="Créez-en un pour commencer."
+        title={t("empty")}
+        description={t("emptyDescription")}
       />
     );
   }
@@ -54,7 +56,7 @@ export const ScenarioList = ({ scenario }: { scenario: Scenario[] }) => {
               item={s.name}
               deleteItem={async () => {
                 await deleteScenario({ id: s.id });
-                toast.success(`${s.name} supprimé`);
+                toast.success(t("deletedSuccess", { name: s.name }));
               }}
             />
           </CardFooter>

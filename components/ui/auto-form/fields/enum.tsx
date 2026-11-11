@@ -1,6 +1,9 @@
+"use client";
+
 import { EmptyStateInline } from "@/components/ui/empty-state";
 import { FormItem, FormMessage, useFormField } from "@/components/ui/form";
 import { ListX } from "lucide-react";
+import { useTranslations } from "next-intl";
 import {
   Select,
   SelectContent,
@@ -14,8 +17,6 @@ import AutoFormTooltip from "../common/tooltip";
 import { AutoFormInputComponentProps } from "../types";
 import { getEnumOptions } from "../utils";
 import { RandomButton } from "../../randomButton";
-
-const DEFAULT_ENUM_PLACEHOLDER = "Sélectionner une option";
 
 // Rendered inside FormItem so useFormField can read its generated ids. The
 // Radix Select root renders no DOM node, so the id, ARIA wiring and ref that a
@@ -55,6 +56,8 @@ export default function AutoFormEnum({
   zodItem,
   fieldProps,
 }: AutoFormInputComponentProps) {
+  const t = useTranslations("common");
+  const tEmpty = useTranslations("emptyState");
   const { ref, ...rootProps } = fieldProps;
   const values: [string, string][] = getEnumOptions(zodItem).map((value) => [
     value,
@@ -71,7 +74,7 @@ export default function AutoFormEnum({
       <EmptyStateInline
         icon={ListX}
         title={
-          label ? `Aucun élément créé pour « ${label} »` : "Aucun élément disponible"
+          label ? tEmpty("noOptionsFor", { label }) : tEmpty("noOptionsAvailable")
         }
       />
     </FormItem>
@@ -86,8 +89,7 @@ export default function AutoFormEnum({
         <EnumTrigger className={fieldProps.className} triggerRef={ref}>
           <SelectValue
             placeholder={
-              fieldConfigItem.inputProps?.placeholder ??
-              DEFAULT_ENUM_PLACEHOLDER
+              fieldConfigItem.inputProps?.placeholder ?? t("selectOption")
             }
           >
             {field.value ? findItem(field.value)?.[1] : undefined}

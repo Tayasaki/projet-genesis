@@ -8,16 +8,18 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { CharacterScenario } from "@/src/query/character.query";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 
 export const Character = ({ character }: { character: CharacterScenario }) => {
+  const t = useTranslations("characterCard");
   return (
     <Card className="hover:border-primary/40 max-w-md transition-colors">
       <Link href={`/characters/${character.id}`}>
         <CardHeader className="flex flex-row items-center gap-3 space-y-0">
           <Avatar>
             {character.image ? (
-              <AvatarImage src={character.image} alt={"Image du personnage"} />
+              <AvatarImage src={character.image} alt={t("imageAlt")} />
             ) : (
               <AvatarFallback>
                 {character.name.slice(0, 2).toUpperCase()}
@@ -27,21 +29,25 @@ export const Character = ({ character }: { character: CharacterScenario }) => {
           <CardTitle className="text-base font-semibold">
             {character.name}
           </CardTitle>
-          <Badge variant="outline">{character.pj ? "PJ" : "PNJ"}</Badge>
+          <Badge variant="outline">
+            {character.pj ? t("pj") : t("npc")}
+          </Badge>
         </CardHeader>
         <CardContent className="space-y-2 text-sm">
-          {character.origin && <p>Origine: {character.origin}</p>}
-          {character.role && <p>Rôle: {character.role}</p>}
-          {character.age && <p>Âge: {character.age}</p>}
+          {character.origin && <p>{t("origin", { origin: character.origin })}</p>}
+          {character.role && <p>{t("role", { role: character.role })}</p>}
+          {character.age && <p>{t("age", { age: character.age })}</p>}
           {character.injury && (
-            <p className="text-red-500">Blessure: {character.injury}</p>
+            <p className="text-red-500">
+              {t("injury", { injury: character.injury })}
+            </p>
           )}
           {character.temperment ? (
             character.temperment?.description ? (
               <HoverCard>
                 <HoverCardTrigger asChild className="hover:text-primary">
                   <p className="decoration-muted-foreground underline decoration-dotted underline-offset-4">
-                    Temperement: {character.temperment?.name}
+                    {t("temperment", { name: character.temperment?.name })}
                   </p>
                 </HoverCardTrigger>
                 <HoverCardContent>
@@ -49,7 +55,7 @@ export const Character = ({ character }: { character: CharacterScenario }) => {
                 </HoverCardContent>
               </HoverCard>
             ) : (
-              <p>Temperement: {character.temperment?.name}</p>
+              <p>{t("temperment", { name: character.temperment?.name })}</p>
             )
           ) : null}
           {character.alignment ? (
@@ -57,7 +63,7 @@ export const Character = ({ character }: { character: CharacterScenario }) => {
               <HoverCard>
                 <HoverCardTrigger asChild className="hover:text-primary">
                   <p className="decoration-muted-foreground underline decoration-dotted underline-offset-4">
-                    Alignement: {character.alignment?.name}
+                    {t("alignment", { name: character.alignment?.name })}
                   </p>
                 </HoverCardTrigger>
                 <HoverCardContent>
@@ -65,7 +71,7 @@ export const Character = ({ character }: { character: CharacterScenario }) => {
                 </HoverCardContent>
               </HoverCard>
             ) : (
-              <p>Alignement: {character.alignment?.name}</p>
+              <p>{t("alignment", { name: character.alignment?.name })}</p>
             )
           ) : null}
           {character.fortune ? (
@@ -73,7 +79,7 @@ export const Character = ({ character }: { character: CharacterScenario }) => {
               <HoverCard>
                 <HoverCardTrigger asChild className="hover:text-primary">
                   <p className="decoration-muted-foreground underline decoration-dotted underline-offset-4">
-                    Richesse: {character.fortune?.name}
+                    {t("fortune", { name: character.fortune?.name })}
                   </p>
                 </HoverCardTrigger>
                 <HoverCardContent>
@@ -81,7 +87,7 @@ export const Character = ({ character }: { character: CharacterScenario }) => {
                 </HoverCardContent>
               </HoverCard>
             ) : (
-              <p>Richesse: {character.fortune?.name}</p>
+              <p>{t("fortune", { name: character.fortune?.name })}</p>
             )
           ) : null}
         </CardContent>

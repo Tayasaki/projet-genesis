@@ -15,10 +15,12 @@ import { Loader2, LogOut, XCircle } from "lucide-react";
 import { hasActionError } from "@/lib/action-result";
 import { signOut, useSession } from "@/lib/auth-client";
 import { deleteAccount } from "@/src/actions/account.action";
+import { useTranslations } from "next-intl";
 import { useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
 
 export const LogoutButton = () => {
+  const t = useTranslations("account");
   const [isPending, startTransition] = useTransition();
   return (
     <Button
@@ -34,12 +36,14 @@ export const LogoutButton = () => {
       ) : (
         <LogOut className="mr-2 size-4" />
       )}
-      Log out
+      {t("logOut")}
     </Button>
   );
 };
 
 export const DeleteAccountButton = () => {
+  const t = useTranslations("account");
+  const tCommon = useTranslations("common");
   const { data: session } = useSession();
   const userId = session?.user?.id;
   const [open, setOpen] = useState(false);
@@ -58,9 +62,7 @@ export const DeleteAccountButton = () => {
       erased = false;
     }
     if (!erased) {
-      toast.error(
-        "La suppression du compte a échoué. Votre compte n'a pas été supprimé.",
-      );
+      toast.error(t("deleteAccountFailed"));
       setOpen(false);
       setIsPending(false);
       inFlight.current = false;
@@ -87,23 +89,20 @@ export const DeleteAccountButton = () => {
           variant="destructive"
           className="rounded-md bg-gray-200 text-destructive hover:bg-gray-200/70"
         >
-          Supprimer mon compte
+          {t("deleteAccount")}
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>
-            Supprimer définitivement votre compte ?
-          </AlertDialogTitle>
+          <AlertDialogTitle>{t("deleteAccountTitle")}</AlertDialogTitle>
           <AlertDialogDescription>
-            Cette action est irréversible. Seront supprimés : votre compte, vos
-            sessions, vos scénarios, vos personnages et vos armes. Les
-            suggestions que vous avez déjà soumises sont conservées de façon
-            anonyme.
+            {t("deleteAccountDescription")}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={isPending}>Annuler</AlertDialogCancel>
+          <AlertDialogCancel disabled={isPending}>
+            {tCommon("cancel")}
+          </AlertDialogCancel>
           <AlertDialogAction
             disabled={isPending || !userId}
             onClick={(event) => {
@@ -114,7 +113,7 @@ export const DeleteAccountButton = () => {
             }}
           >
             {isPending && <Loader2 className="mr-2 size-4 animate-spin" />}
-            Supprimer mon compte
+            {t("deleteAccount")}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

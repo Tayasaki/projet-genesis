@@ -4,8 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { cache } from "react";
-import { DataTable } from "../manage/data-table";
-import { columns } from "./characterColumns";
+import { MyCharactersTable } from "./characterColumns";
 
 export const metadata: Metadata = {
   title: "Projet Genesis - Mes personnages",
@@ -23,12 +22,5 @@ export default async function MyCharacters() {
   const session = await getAuthSession();
   if (!session?.user?.id) redirect("/login");
   const characters = await getUserCharacters(session.user.id);
-  return (
-    <DataTable
-      classname="-mx-96"
-      columns={columns}
-      data={characters}
-      title="Personnages"
-    />
-  );
+  return <MyCharactersTable data={characters} />;
 }

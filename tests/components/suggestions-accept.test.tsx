@@ -46,13 +46,16 @@ vi.mock("@/components/features/layout/DeleteDialog", () => ({
 }));
 vi.mock("sonner", () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
 
-import { columns } from "@/app/suggestions/suggestionsColumns";
+import { SuggestionsTable } from "@/app/suggestions/suggestionsColumns";
+import type { Suggestion } from "@/src/query/suggestion.query";
 
 function renderAcceptButton() {
-  const actions = columns.find((c) => c.id === "actions");
-  const cell = actions?.cell as (ctx: unknown) => React.ReactElement;
-  const original = { type: "Alignment", name: "Loyal", description: "d" };
-  render(cell({ row: { original } }));
+  const original = {
+    type: "Alignment",
+    name: "Loyal",
+    description: "d",
+  } as unknown as Suggestion;
+  render(<SuggestionsTable data={[original]} />);
   fireEvent.click(screen.getByRole("button", { name: "Accepter" }));
 }
 
@@ -128,9 +131,11 @@ describe("Accepter double click", () => {
 
 describe("Delete dialog handler", () => {
   function clickDelete() {
-    const actions = columns.find((c) => c.id === "actions");
-    const cell = actions?.cell as (ctx: unknown) => React.ReactElement;
-    render(cell({ row: { original: { type: "Ammo", name: "Arrow" } } }));
+    const original = {
+      type: "Ammo",
+      name: "Arrow",
+    } as unknown as Suggestion;
+    render(<SuggestionsTable data={[original]} />);
     fireEvent.click(screen.getByRole("button", { name: "Supprimer" }));
   }
 

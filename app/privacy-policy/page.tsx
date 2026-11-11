@@ -1,132 +1,49 @@
 import { getAuthSession } from "@/lib/auth";
+import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
 
 export default async function PrivacyPolicy() {
   const session = await getAuthSession();
   if (!session?.user?.id) redirect("/login");
+  const t = await getTranslations("privacyPolicy");
+  const sections = t.raw("sections") as {
+    heading: string;
+    body: string[];
+    list1?: string[];
+    body2?: string[];
+    list2?: string[];
+  }[];
+
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-3xl font-bold">
-        Politique de Confidentialité de Projet-Genesis
-      </h1>
-      <div>
-        <h2 className="text-xl font-semibold">1. Introduction</h2>
-        <p>
-          Cette Politique de Confidentialité explique comment Projet-Gensis
-          (ci-après &lduoquotes;l&apos;application&rduoquotes;) collecte,
-          utilise, et protège les informations personnelles de ses utilisateurs.
-          En utilisant notre application, vous acceptez les pratiques décrites
-          dans cette politique.
-        </p>
-      </div>
-      <div className="flex flex-col gap-2">
-        <h2 className="text-xl font-semibold">2. Informations Collectées</h2>
-        <p>
-          L&apos;application utilise exclusivement l&apos;authentification via
-          OAuth pour permettre aux utilisateurs de se connecter. OAuth est un
-          protocole standardisé qui permet l&apos;autorisation sécurisée dans un
-          environnement simplifié. En utilisant OAuth, l&apos;application ne
-          stocke pas directement vos identifiants (comme les mots de passe) mais
-          reçoit un jeton d&apos;accès permettant de vérifier votre identité
-          auprès du fournisseur de service OAuth (comme Google, Facebook, etc.).
-        </p>
-        <p>
-          Lors de l&apos;authentification via OAuth, nous collectons et
-          utilisons uniquement les informations nécessaires à la création et à
-          la gestion de votre compte utilisateur sur notre application. Cela
-          inclut :
-        </p>
-        <ul role="list">
-          <li className="before:mr-2 before:ml-6 before:content-['•']">
-            Nom et prénom (le cas échéant)
-          </li>
-          <li className="before:mr-2 before:ml-6 before:content-['•']">
-            Adresse email
-          </li>
-          <li className="before:mr-2 before:ml-6 before:content-['•']">
-            Photo de profil (facultatif, selon le fournisseur OAuth)
-          </li>
-          <li className="before:mr-2 before:ml-6 before:content-['•']">
-            ID utilisateur fourni par le service OAuth
-          </li>
-        </ul>
-        <p>
-          Pour faire fonctionner l&apos;application, les données techniques et
-          les contenus suivants sont également enregistrés dans notre base de
-          données :
-        </p>
-        <ul role="list">
-          <li className="before:mr-2 before:ml-6 before:content-['•']">
-            Les jetons d&apos;accès et de rafraîchissement OAuth reçus du
-            fournisseur, rattachés à votre compte
-          </li>
-          <li className="before:mr-2 before:ml-6 before:content-['•']">
-            Les sessions de connexion : identifiant de session et date
-            d&apos;expiration. L&apos;adresse IP et le navigateur utilisé (user
-            agent) ne sont pas enregistrés dans ces sessions
-          </li>
-          <li className="before:mr-2 before:ml-6 before:content-['•']">
-            Les contenus que vous créez : scénarios, personnages, armes et
-            suggestions
-          </li>
-        </ul>
-      </div>
-      <div className="flex flex-col gap-2">
-        <h2 className="text-xl font-semibold">3. Sécurité des Données</h2>
-        <p>
-          Nous prenons la sécurité de vos données très au sérieux et mettons en
-          œuvre des mesures de sécurité techniques et organisationnelles
-          appropriées pour protéger vos informations contre l&apos;accès non
-          autorisé, la modification, la divulgation ou la destruction.
-        </p>
-        <p>
-          Les communications entre votre navigateur et l&apos;application sont
-          chiffrées via le protocole HTTPS (TLS).
-        </p>
-        <p>
-          Les jetons d&apos;accès et de rafraîchissement OAuth reçus du
-          fournisseur sont stockés dans la base de données de l&apos;application
-          afin de maintenir la connexion. Ils sont protégés par les contrôles
-          d&apos;accès de l&apos;hébergeur et du fournisseur de base de données,
-          mais ils ne font pas l&apos;objet d&apos;un chiffrement supplémentaire
-          au niveau de l&apos;application.
-        </p>
-        <p>
-          Pour limiter les requêtes abusives, l&apos;adresse IP de votre
-          connexion est utilisée de manière transitoire par le système
-          d&apos;authentification ; elle est conservée uniquement en mémoire
-          pendant une courte fenêtre de temps et n&apos;est pas enregistrée dans
-          la base de données ni dans vos sessions.
-        </p>
-      </div>
-      <div className="flex flex-col gap-2">
-        <h2 className="text-xl font-semibold">
-          4. Conservation et suppression des données
-        </h2>
-        <p>
-          Vos données sont conservées tant que votre compte existe. Vous pouvez
-          demander la suppression de votre compte. Cette suppression efface
-          votre compte, vos sessions, vos scénarios, vos armes et vos
-          personnages.
-        </p>
-        <p>
-          Les suggestions que vous avez rédigées sont conservées de manière
-          anonyme : la référence à leur auteur est retirée, et elles servent de
-          données de modération.
-        </p>
-      </div>
-      <div>
-        <h2 className="text-xl font-semibold">
-          5. Modifications de la politique de confidentialité
-        </h2>
-        <p>
-          Nous nous réservons le droit de modifier cette Politique de
-          Confidentialité à tout moment. En cas de modification substantielle,
-          nous vous en informerons par le biais de l&apos;application ou par un
-          autre moyen approprié. Nous vous encourageons à consulter
-          régulièrement cette politique pour rester informé des mises à jour.
-        </p>
-      </div>
+      <h1 className="text-3xl font-bold">{t("title")}</h1>
+      {sections.map((section) => (
+        <div key={section.heading} className="flex flex-col gap-2">
+          <h2 className="text-xl font-semibold">{section.heading}</h2>
+          {section.body.map((paragraph) => (
+            <p key={paragraph}>{paragraph}</p>
+          ))}
+          {section.list1 && (
+            <ul role="list">
+              {section.list1.map((item) => (
+                <li key={item} className="before:mr-2 before:ml-6 before:content-['•']">
+                  {item}
+                </li>
+              ))}
+            </ul>
+          )}
+          {section.body2?.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+          {section.list2 && (
+            <ul role="list">
+              {section.list2.map((item) => (
+                <li key={item} className="before:mr-2 before:ml-6 before:content-['•']">
+                  {item}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      ))}
     </div>
   );
 }

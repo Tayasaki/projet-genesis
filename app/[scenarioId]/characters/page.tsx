@@ -17,6 +17,7 @@ import { charactersOwnedBy, scenarioOwnedBy } from "@/lib/ownership";
 import { prisma } from "@/lib/prisma";
 import { cn } from "@/lib/utils";
 import { ArrowRight, Plus, Users } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getCharacters } from "../../../src/query/character.query";
@@ -33,6 +34,7 @@ export default async function ScenarioManage(props: {
   });
 
   if (!scenario) notFound();
+  const t = await getTranslations("characters");
   const scenarioCharacter = await getCharacters(params.scenarioId, session.user.id);
   const userCharacter = (
     await prisma.character.findMany({
@@ -53,22 +55,21 @@ export default async function ScenarioManage(props: {
         </span>
       </div>
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold">Personnages</h2>
+        <h2 className="text-lg font-semibold">{t("heading")}</h2>
         <div className="flex items-center gap-2">
           <Dialog>
             <DialogTrigger
               className={cn(buttonVariants(), "flex items-center gap-2")}
             >
               <Plus size={16} className="mr-2" />
-              Importer
+              {t("import")}
             </DialogTrigger>
             <DialogContent className="max-w-5xl">
               <DialogHeader>
-                <DialogTitle>Importer un personnage</DialogTitle>
+                <DialogTitle>{t("importDialogTitle")}</DialogTitle>
               </DialogHeader>
               <DialogDescription>
-                Sélectionnez un personnage dans votre liste pour l&apos;importer
-                dans ce scénario.
+                {t("importDialogDescription")}
               </DialogDescription>
               <ImportCharacter
                 characterList={userCharacter}
@@ -80,7 +81,7 @@ export default async function ScenarioManage(props: {
             className={cn(buttonVariants({ variant: "link" }), "group")}
             href={`/${params.scenarioId}/character-generation`}
           >
-            Créer un personnage
+            {t("createCharacter")}
             <ArrowRight
               className="ml-2 transition group-hover:translate-x-2"
               size={16}
@@ -93,8 +94,8 @@ export default async function ScenarioManage(props: {
       ) : (
         <EmptyState
           icon={Users}
-          title="Pas encore de personnage"
-          description="Créez-en un ou importez-en un existant."
+          title={t("empty")}
+          description={t("emptyDescription")}
         />
       )}
     </div>

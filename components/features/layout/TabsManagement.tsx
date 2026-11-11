@@ -12,21 +12,23 @@ import { RangeForm } from "@/components/form/weapon/RangeForm";
 import { WeaponSkillForm } from "@/components/form/weapon/WeaponSkillForm";
 import { WeightForm } from "@/components/form/weapon/WeightForm";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useTranslations } from "next-intl";
 
 export const CharacterAttributeForms = ({
   isAuthorized,
 }: {
   isAuthorized: boolean;
 }) => {
+  const t = useTranslations("manage");
   return (
     <Tabs defaultValue="temperment">
       <TabsList>
-        <TabsTrigger value="temperment">Tempérament</TabsTrigger>
-        <TabsTrigger value="alignement">Alignement</TabsTrigger>
-        <TabsTrigger value="fortune">Richesse</TabsTrigger>
-        <TabsTrigger value="strenght">Force</TabsTrigger>
-        <TabsTrigger value="weakness">Faiblesse</TabsTrigger>
-        <TabsTrigger value="skills">Compétences</TabsTrigger>
+        <TabsTrigger value="temperment">{t("temperament")}</TabsTrigger>
+        <TabsTrigger value="alignement">{t("alignment")}</TabsTrigger>
+        <TabsTrigger value="fortune">{t("fortune")}</TabsTrigger>
+        <TabsTrigger value="strenght">{t("strength")}</TabsTrigger>
+        <TabsTrigger value="weakness">{t("weakness")}</TabsTrigger>
+        <TabsTrigger value="skills">{t("skills")}</TabsTrigger>
       </TabsList>
 
       <TabsContent value="temperment">
@@ -56,14 +58,15 @@ export const WeaponAttributeForms = ({
 }: {
   isAuthorized: boolean;
 }) => {
+  const t = useTranslations("manage");
   return (
     <Tabs defaultValue="damage">
       <TabsList>
-        <TabsTrigger value="damage">Dégât</TabsTrigger>
-        <TabsTrigger value="ammo">Munition</TabsTrigger>
-        <TabsTrigger value="range">Porté</TabsTrigger>
-        <TabsTrigger value="Weight">Poids</TabsTrigger>
-        <TabsTrigger value="skills">Compétences</TabsTrigger>
+        <TabsTrigger value="damage">{t("damage")}</TabsTrigger>
+        <TabsTrigger value="ammo">{t("ammo")}</TabsTrigger>
+        <TabsTrigger value="range">{t("range")}</TabsTrigger>
+        <TabsTrigger value="Weight">{t("weight")}</TabsTrigger>
+        <TabsTrigger value="skills">{t("skills")}</TabsTrigger>
       </TabsList>
       <TabsContent value="damage">
         <DamageForm suggest={!isAuthorized} />

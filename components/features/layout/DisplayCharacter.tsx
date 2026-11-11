@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { CharacterScenario } from "@/src/query/character.query";
+import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import { Character } from "./Character";
 
@@ -18,6 +19,7 @@ export const DisplayCharacter = ({
 }: {
   characterList: CharacterScenario[];
 }) => {
+  const t = useTranslations("characterCard");
   const [displayArgument, setDisplayArgument] = useState<{
     search: string;
     sort: "name" | "pj" | "";
@@ -46,7 +48,7 @@ export const DisplayCharacter = ({
     <div>
       <div className="mb-8 flex items-center gap-2">
         <Input
-          placeholder="Nom du personnage..."
+          placeholder={t("searchPlaceholder")}
           onChange={(e) =>
             setDisplayArgument((prev) => ({
               ...prev,
@@ -64,11 +66,11 @@ export const DisplayCharacter = ({
           }
         >
           <SelectTrigger>
-            <SelectValue placeholder="Trier par" />
+            <SelectValue placeholder={t("sortByPlaceholder")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="name">Nom</SelectItem>
-            <SelectItem value="pj">PJ</SelectItem>
+            <SelectItem value="name">{t("sortByName")}</SelectItem>
+            <SelectItem value="pj">{t("sortByPj")}</SelectItem>
           </SelectContent>
         </Select>
       </div>

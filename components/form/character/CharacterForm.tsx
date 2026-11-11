@@ -31,13 +31,12 @@ import {
 } from "@/src/actions/character/generation-limits";
 import { Weapon } from "@/src/query/weapon.query";
 import { Sparkles } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import { requiredString } from "@/components/form/required-string";
 import { z } from "zod";
-
-const REQUIRED_CHOICE_MESSAGE = "Veuillez choisir une valeur";
 
 /**
  * Enum select that must be chosen on create (no empty default) and falls back
@@ -46,9 +45,10 @@ const REQUIRED_CHOICE_MESSAGE = "Veuillez choisir une valeur";
 function requiredChoice(
   names: [string, ...string[]],
   label: string,
+  requiredChoiceMessage: string,
   current?: string,
 ) {
-  const schema = z.enum(names, REQUIRED_CHOICE_MESSAGE).describe(label);
+  const schema = z.enum(names, requiredChoiceMessage).describe(label);
   return current ? schema.default(current) : schema;
 }
 
@@ -77,6 +77,8 @@ export const CharacterForm = ({
   modify?: boolean;
   autoGeneration: boolean;
 }) => {
+  const t = useTranslations("characterForm");
+  const tCommon = useTranslations("common");
   const [isLoading, setIsLoading] = useState(false);
   const [values, setValues] =
     useState<Partial<z.infer<typeof characterFormSchema>>>();
@@ -101,83 +103,93 @@ export const CharacterForm = ({
   const weaponNames = weapons.map((w) => w.name) as [string, ...string[]];
 
   const characterFormSchema = z.object({
-    name: requiredString(50)
-      .describe("Nom du personnage")
+    name: requiredString(50, tCommon("requiredField"))
+      .describe(t("nameDescribe"))
       .default(character?.name ?? ""),
     pj: z
       .boolean()
-      .describe("Personnage joueur")
+      .describe(t("pjDescribe"))
       .default(character?.pj ?? true)
       .optional(),
     origin: z
       .string()
       .max(100)
-      .describe("Origine du personnage")
+      .describe(t("originDescribe"))
       .default(character?.origin ?? "")
       .optional(),
     role: z
       .string()
       .max(50)
-      .describe("Rôle du personnage")
+      .describe(t("roleDescribe"))
       .default(character?.role ?? "")
       .optional(),
     age: z
       .string()
       .min(1)
-      .describe("Age du personnage")
+      .describe(t("ageDescribe"))
       .default(character?.age?.toString() ?? "0")
       .optional(),
     injury: z
       .string()
       .max(100)
-      .describe("Blessure")
+      .describe(t("injuryDescribe"))
       .default(character?.injury ?? "")
       .optional(),
     extra: z
       .string()
       .max(200)
-      .describe("Extra")
+      .describe(t("extraDescribe"))
       .default(character?.extra ?? "")
       .optional(),
     temperment: requiredChoice(
       tempermentsNames,
-      "Tempérament",
+      t("temperment"),
+      t("requiredChoiceError"),
       character?.temperment?.name,
     ),
     alignment: requiredChoice(
       alignementsNames,
-      "Alignement",
+      t("alignment"),
+      t("requiredChoiceError"),
       character?.alignment?.name,
     ),
     fortune: requiredChoice(
       fortunesNames,
-      "Richesse",
+      t("fortune"),
+      t("requiredChoiceError"),
       character?.fortune?.name,
     ),
     strength: z
       .array(
-        z.object({ name: z.enum(strengthNames).describe("Force").optional() }),
+        z.object({
+          name: z.enum(strengthNames).describe(t("strengthDescribe")).optional(),
+        }),
       )
-      .describe("Forces"),
+      .describe(t("strengthSetDescribe")),
     weakness: z
       .array(
         z.object({
-          name: z.enum(weaknessNames).describe("Faiblesse").optional(),
+          name: z.enum(weaknessNames).describe(t("weaknessDescribe")).optional(),
         }),
       )
-      .describe("Faiblesses"),
+      .describe(t("weaknessSetDescribe")),
     skillSet: z
       .array(
         z.object({
-          name: z.enum(characterSkillNames).describe("Compétence").optional(),
+          name: z
+            .enum(characterSkillNames)
+            .describe(t("skillDescribe"))
+            .optional(),
         }),
       )
-      .describe("Compétences"),
+      .describe(t("skillSetDescribe")),
     weaponSet: z
       .array(
-        z.object({ name: z.enum(weaponNames).describe("Arme").optional() }),
+        z.object({
+          name: z.enum(weaponNames).describe(t("weaponDescribe")).optional(),
+        }),
       )
-      .describe("Armes"),
+      .describe(t("weaponSetDescribe")),
   });
 
   function getRandomItemsFromArray<T>(
@@ -201,18 +213,19 @@ export const CharacterForm = ({
             >
               {isLoading ? (
                 <span className="animate-pulse">
-                  Votre personnage est bientôt prêt...
+                  {t("generatingInProgress")}
                 </span>
               ) : (
                 <span className="flex">
-                  Générer avec l&apos;IA <Sparkles className="ml-2" size={16} />{" "}
+                  {t("generateWithAi")}{" "}
+                  <Sparkles className="ml-2" size={16} />{" "}
                 </span>
               )}
             </DropdownMenuTrigger>
             <DropdownMenuContent className="flex flex-col gap-2 p-2">
               <Input
                 defaultValue={message}
-                placeholder="Message..."
+                placeholder={t("generationMessagePlaceholder")}
                 className="w-full"
                 onBlur={(e) => setMessage(e.target.value)}
                 maxLength={MAX_GENERATION_PROMPT_LENGTH}
@@ -252,25 +265,27 @@ export const CharacterForm = ({
                       weaponSet: getRandomItemsFromArray(weaponNames, 1),
                     } satisfies Partial<z.infer<typeof characterFormSchema>>;
                     setValues(generatedCharacter);
-                    toast.success("Personnage généré avec succès ✨");
+                    toast.success(t("generatedSuccess"));
                   } else if (value?.data?.type === "rate-limited") {
                     toast.error(
-                      `Limite atteinte : ${GENERATION_RATE_LIMIT} générations par heure, réessayez plus tard.`,
+                      t("generationRateLimited", {
+                        limit: GENERATION_RATE_LIMIT,
+                      }),
                     );
                   } else if (value?.data?.type === "validation-error") {
-                    toast.error("L'IA n'a pas pu générer de personnage");
+                    toast.error(t("generationFailed"));
                   } else if (value?.validationErrors) {
                     toast.error(
                       value.validationErrors.message?._errors?.[0] ??
-                        "Message invalide",
+                        t("invalidMessage"),
                     );
                   } else if (value?.serverError) {
-                    toast.error("Erreur lors de la génération du personnage");
+                    toast.error(t("generationError"));
                   }
                   setIsLoading(false);
                 }}
               >
-                C&apos;est parti!
+                {t("generateSubmit")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -308,19 +323,19 @@ export const CharacterForm = ({
           }
           if (values?.validationErrors || values?.serverError) {
             if (values?.validationErrors) {
-              toast.error("Veuillez remplir tous les champs");
+              toast.error(tCommon("requiredFieldsError"));
             }
             if (values?.serverError) {
-              toast.error("Vous devez être connecté pour créer un personnage");
+              toast.error(t("authError"));
             }
             setIsLoading(false);
             return values;
           }
           if (modify) {
-            toast.success("Personnage modifié");
+            toast.success(t("modifiedSuccess"));
             router.push(`/characters`);
           } else {
-            toast.success("Personnage créé avec succès");
+            toast.success(t("createdSuccess"));
             router.push(`/${scenarioId}/characters`);
           }
           return values;
@@ -328,7 +343,7 @@ export const CharacterForm = ({
         fieldConfig={{
           name: {
             inputProps: {
-              placeholder: "Eric Tournlavis",
+              placeholder: t("namePlaceholder"),
             },
           },
           pj: {
@@ -336,12 +351,12 @@ export const CharacterForm = ({
           },
           origin: {
             inputProps: {
-              placeholder: "Né dans les montagnes",
+              placeholder: t("originPlaceholder"),
             },
           },
           role: {
             inputProps: {
-              placeholder: "Guerrier",
+              placeholder: t("rolePlaceholder"),
             },
           },
           age: {
@@ -359,23 +374,23 @@ export const CharacterForm = ({
               </div>
             ),
             inputProps: {
-              placeholder: "25",
+              placeholder: t("agePlaceholder"),
             },
           },
           injury: {
             inputProps: {
-              placeholder: "Blessure à la jambe",
+              placeholder: t("injuryPlaceholder"),
             },
           },
           extra: {
             inputProps: {
-              placeholder: "Aime les chats",
+              placeholder: t("extraPlaceholder"),
             },
           },
         }}
       >
         <AutoFormSubmit isLoading={isLoading}>
-          {modify ? "Modifier votre personnage" : "Créer votre personnage"}
+          {modify ? t("modifySubmit") : t("createSubmit")}
         </AutoFormSubmit>
       </AutoForm>
     </div>

@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export const DeleteDialog = ({
   item,
@@ -21,13 +22,14 @@ export const DeleteDialog = ({
   item: string;
   deleteItem: () => void;
 }) => {
+  const t = useTranslations("common");
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
         <Button
           variant="ghost"
           size="icon"
-          aria-label={`Supprimer ${item}`}
+          aria-label={`${t("delete")} ${item}`}
           className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 size-8"
         >
           <Trash2 className="size-4" />
@@ -35,20 +37,19 @@ export const DeleteDialog = ({
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Supprimer définitivement ?</AlertDialogTitle>
+          <AlertDialogTitle>{t("confirmDeleteTitle")}</AlertDialogTitle>
           <AlertDialogDescription>
-            Cette action est irréversible. Elle supprimera &quot;{item}&quot;
-            de façon permanente.
+            {t("confirmDeleteDescription", { item })}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Annuler</AlertDialogCancel>
+          <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
           <AlertDialogAction
             onClick={async () => {
               deleteItem();
             }}
           >
-            Supprimer
+            {t("delete")}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

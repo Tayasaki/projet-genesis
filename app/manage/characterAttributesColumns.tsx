@@ -2,6 +2,7 @@
 
 import { DeleteDialog } from "@/components/features/layout/DeleteDialog";
 import { Button } from "@/components/ui/button";
+import { DataTable } from "./data-table";
 import { hasActionError } from "@/lib/action-result";
 import { deleteAlignment } from "@/src/actions/character/alignment.action";
 import { deleteCharacterSkill } from "@/src/actions/character/characterSkill.action";
@@ -11,89 +12,104 @@ import { deleteTemperment } from "@/src/actions/character/temperment.action";
 import { deleteWeakness } from "@/src/actions/character/weakness.action";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { CharacterAttributes } from "./page";
 import { toast } from "sonner";
 
-// One entry per attribute type, holding both its row label and delete action.
+// One entry per attribute type, holding both its translation key and delete action.
 const CHARACTER_ATTRIBUTE_CONFIG: Record<
   string,
   {
-    label: string;
+    labelKey: "temperament" | "alignment" | "fortune" | "strength" | "weakness" | "skill";
     delete: (name: string) => Promise<{ serverError?: unknown } | void>;
   }
 > = {
   temperment: {
-    label: "tempérament",
+    labelKey: "temperament",
     delete: (name) => deleteTemperment({ name }),
   },
   alignement: {
-    label: "alignement",
+    labelKey: "alignment",
     delete: (name) => deleteAlignment({ name }),
   },
-  fortune: { label: "fortune", delete: (name) => deleteFortune({ name }) },
-  strength: { label: "force", delete: (name) => deleteStrength({ name }) },
-  weakness: { label: "faiblesse", delete: (name) => deleteWeakness({ name }) },
+  fortune: { labelKey: "fortune", delete: (name) => deleteFortune({ name }) },
+  strength: { labelKey: "strength", delete: (name) => deleteStrength({ name }) },
+  weakness: { labelKey: "weakness", delete: (name) => deleteWeakness({ name }) },
   skill: {
-    label: "compétence",
+    labelKey: "skill",
     delete: (name) => deleteCharacterSkill({ name }),
   },
 };
 
-export const columns: ColumnDef<CharacterAttributes>[] = [
-  {
-    accessorKey: "type",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Type <ArrowUpDown className="ml-2 size-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => {
-      const type = CHARACTER_ATTRIBUTE_CONFIG[row.original.type]?.label ?? "";
-      return <span className="capitalize">{type}</span>;
-    },
-  },
-  {
-    accessorKey: "name",
-    header: "Nom",
-  },
-  {
-    accessorKey: "description",
-    header: "Description",
-    cell: ({ row }) => {
-      const r = row.original;
-      return (
-        <span className={!r.description ? "italic" : ""}>
-          {r.description ?? "Pas de description"}
-        </span>
-      );
-    },
-  },
-  {
-    id: "actions",
-    header: "Actions",
-    cell: async ({ row }) => {
-      const r = row.original;
+function useCharacterAttributesColumns(): ColumnDef<CharacterAttributes>[] {
+  const t = useTranslations("common");
+  const tManage = useTranslations("manage");
 
-      return (
-        <DeleteDialog
-          item={row.original.name}
-          deleteItem={async () => {
-            const value = await CHARACTER_ATTRIBUTE_CONFIG[r.type]?.delete(
-              r.name,
-            );
-            if (hasActionError(value)) {
-              toast.error(
-                "Vous n'êtes pas autorisé à supprimer ce type d'attribut",
-              );
-            }
-          }}
-        />
-      );
+  return [
+    {
+      accessorKey: "type",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            {t("type")} <ArrowUpDown className="ml-2 size-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => {
+        const labelKey = CHARACTER_ATTRIBUTE_CONFIG[row.original.type]?.labelKey;
+        return <span className="capitalize">{labelKey ? tManage(labelKey) : ""}</span>;
+      },
     },
-  },
-];
+    {
+      accessorKey: "name",
+      header: t("name"),
+    },
+    {
+      accessorKey: "description",
+      header: t("description"),
+      cell: ({ row }) => {
+        const r = row.original;
+        return (
+          <span className={!r.description ? "italic" : ""}>
+            {r.description ?? t("noDescription")}
+          </span>
+        );
+      },
+    },
+    {
+      id: "actions",
+      header: t("actions"),
+      cell: ({ row }) => {
+        const r = row.original;
+
+        return (
+          <DeleteDialog
+            item={row.original.name}
+            deleteItem={async () => {
+              const value = await CHARACTER_ATTRIBUTE_CONFIG[r.type]?.delete(
+                r.name,
+              );
+              if (hasActionError(value)) {
+                toast.error(t("notAuthorizedDeleteAttribute"));
+              }
+            }}
+          />
+        );
+      },
+    },
+  ];
+}
+
+export function CharacterAttributesTable({
+  data,
+  title,
+}: {
+  data: CharacterAttributes[];
+  title: string;
+}) {
+  const columns = useCharacterAttributesColumns();
+  return <DataTable columns={columns} data={data} title={title} />;
+}

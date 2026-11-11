@@ -11,6 +11,7 @@ import {
 } from "@/src/query/character.query";
 import { getWeapons } from "@/src/query/weapon.query";
 import { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
@@ -27,6 +28,7 @@ export default async function CharacterGeneration(
   const params = await props.params;
   const session = await getAuthSession();
   if (!session?.user?.id) redirect("/login");
+  const t = await getTranslations("characterForm");
 
   const temperments = await getTemperments();
   const strengths = await getStrengths();
@@ -39,8 +41,8 @@ export default async function CharacterGeneration(
     env.OPENAI_API_KEY !== undefined && env.OPENAI_API_KEY !== "";
 
   return (
-    <div className="-mx-96 space-y-2">
-      <h1 className="text-3xl font-semibold">Générer votre personnage</h1>
+    <div className="space-y-2">
+      <h1 className="text-3xl font-semibold">{t("generationPageTitle")}</h1>
       <CharacterForm
         temperments={temperments}
         strengths={strengths}

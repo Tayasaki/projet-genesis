@@ -1,3 +1,4 @@
+import createNextIntlPlugin from "next-intl/plugin";
 import { originToDevHost, parseOriginList } from "./lib/trusted-origins.mjs";
 
 // Extra dev origins come from TRUSTED_ORIGINS (the list better-auth trusts);
@@ -12,4 +13,6 @@ const nextConfig = {
   allowedDevOrigins: [...new Set(["localhost", ...extraDevHosts])],
 };
 
-export default nextConfig;
+const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
+
+export default withNextIntl(nextConfig);

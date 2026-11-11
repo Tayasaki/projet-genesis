@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
 import { Inbox } from "lucide-react";
+import { useTranslations } from "next-intl";
 import {
   Table,
   TableBody,
@@ -39,6 +40,8 @@ export function DataTable<TData, TValue>({
   title,
   classname,
 }: DataTableProps<TData, TValue>) {
+  const t = useTranslations("common");
+  const tEmpty = useTranslations("emptyState");
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
   const table = useReactTable({
@@ -62,7 +65,7 @@ export function DataTable<TData, TValue>({
       <div className="flex items-center py-4">
         <Input
           type="search"
-          placeholder="Recherche..."
+          placeholder={t("search")}
           value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("name")?.setFilterValue(event.target.value)
@@ -110,7 +113,7 @@ export function DataTable<TData, TValue>({
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length}>
-                  <EmptyState icon={Inbox} title="Aucun résultat" />
+                  <EmptyState icon={Inbox} title={tEmpty("noResults")} />
                 </TableCell>
               </TableRow>
             )}
@@ -124,7 +127,7 @@ export function DataTable<TData, TValue>({
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
         >
-          Previous
+          {t("previous")}
         </Button>
         <Button
           variant="outline"
@@ -132,7 +135,7 @@ export function DataTable<TData, TValue>({
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
         >
-          Next
+          {t("next")}
         </Button>
       </div>
     </div>

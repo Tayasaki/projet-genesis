@@ -2,6 +2,7 @@
 
 import { DeleteDialog } from "@/components/features/layout/DeleteDialog";
 import { Button } from "@/components/ui/button";
+import { DataTable } from "../manage/data-table";
 import { type ActionErrorFields, hasActionError } from "@/lib/action-result";
 import { createAlignment } from "@/src/actions/character/alignment.action";
 import { createCharacterSkill } from "@/src/actions/character/characterSkill.action";
@@ -17,6 +18,7 @@ import { createWeaponSkill } from "@/src/actions/weapon/weaponSkill.action";
 import { createWeight } from "@/src/actions/weapon/weight.action";
 import { Suggestion } from "@/src/query/suggestion.query";
 import { ColumnDef } from "@tanstack/react-table";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -54,6 +56,7 @@ function createCatalogEntry({
 }
 
 function AcceptButton({ suggestion }: { suggestion: Suggestion }) {
+  const t = useTranslations("suggestions");
   const [pending, setPending] = useState(false);
 
   async function accept() {
@@ -61,17 +64,17 @@ function AcceptButton({ suggestion }: { suggestion: Suggestion }) {
     try {
       const created = await createCatalogEntry(suggestion);
       if (hasActionError(created)) {
-        toast.error("Erreur lors de la création");
+        toast.error(t("createError"));
         return;
       }
       const deleted = await deleteSuggestion({ name: suggestion.name });
       if (hasActionError(deleted)) {
-        toast.error("Créé, mais la suggestion n'a pas été supprimée");
+        toast.error(t("createdButNotDeleted"));
         return;
       }
-      toast.success("Suggestion acceptée");
+      toast.success(t("accepted"));
     } catch {
-      toast.error("Erreur inconnu");
+      toast.error(t("unknownError"));
     } finally {
       setPending(false);
     }
@@ -79,50 +82,61 @@ function AcceptButton({ suggestion }: { suggestion: Suggestion }) {
 
   return (
     <Button onClick={accept} disabled={pending}>
-      Accepter
+      {t("accept")}
     </Button>
   );
 }
 
-export const columns: ColumnDef<Suggestion>[] = [
-  {
-    accessorKey: "type",
-    header: "Type",
-  },
-  {
-    accessorKey: "name",
-    header: "Nom",
-  },
-  {
-    accessorKey: "description",
-    header: "Description",
-  },
-  {
-    id: "actions",
-    header: "Actions",
-    cell: ({ row }) => {
-      return (
-        <div className="flex items-center space-x-2">
-          <AcceptButton suggestion={row.original} />
-          <DeleteDialog
-            item={row.original.name}
-            deleteItem={async () => {
-              try {
-                const deleted = await deleteSuggestion({
-                  name: row.original.name,
-                });
-                if (hasActionError(deleted)) {
-                  toast.error("Erreur lors de la suppression");
-                  return;
-                }
-                toast.success(`${row.original.name} supprimé`);
-              } catch {
-                toast.error("Erreur inconnu");
-              }
-            }}
-          />
-        </div>
-      );
+function useSuggestionsColumns(): ColumnDef<Suggestion>[] {
+  const t = useTranslations("suggestions");
+  const tCommon = useTranslations("common");
+
+  return [
+    {
+      accessorKey: "type",
+      header: tCommon("type"),
     },
-  },
-];
+    {
+      accessorKey: "name",
+      header: tCommon("name"),
+    },
+    {
+      accessorKey: "description",
+      header: tCommon("description"),
+    },
+    {
+      id: "actions",
+      header: tCommon("actions"),
+      cell: ({ row }) => {
+        return (
+          <div className="flex items-center space-x-2">
+            <AcceptButton suggestion={row.original} />
+            <DeleteDialog
+              item={row.original.name}
+              deleteItem={async () => {
+                try {
+                  const deleted = await deleteSuggestion({
+                    name: row.original.name,
+                  });
+                  if (hasActionError(deleted)) {
+                    toast.error(t("deleteError"));
+                    return;
+                  }
+                  toast.success(t("deletedSuccess", { name: row.original.name }));
+                } catch {
+                  toast.error(t("unknownError"));
+                }
+              }}
+            />
+          </div>
+        );
+      },
+    },
+  ];
+}
+
+export function SuggestionsTable({ data }: { data: Suggestion[] }) {
+  const t = useTranslations("suggestions");
+  const columns = useSuggestionsColumns();
+  return <DataTable columns={columns} data={data} title={t("heading")} />;
+}

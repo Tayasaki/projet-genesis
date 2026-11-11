@@ -1,0 +1,406 @@
+{
+  "common": {
+    "appName": "Projet Genesis",
+    "login": "Connexion",
+    "search": "Recherche...",
+    "actions": "Actions",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "confirmDeleteTitle": "Supprimer définitivement ?",
+    "confirmDeleteDescription": "Cette action est irréversible. Elle supprimera « {item} » de façon permanente.",
+    "selectOption": "Sélectionner une option",
+    "randomize": "Randomiser",
+    "type": "Type",
+    "name": "Nom",
+    "description": "Description",
+    "noDescription": "Pas de description",
+    "notAuthorizedDeleteAttribute": "Vous n'êtes pas autorisé à supprimer ce type d'attribut",
+    "deletedSuccess": "{name} supprimé",
+    "requiredFieldsError": "Veuillez remplir tous les champs",
+    "suggestionFailedError": "Votre suggestion n'a pas pu être envoyée",
+    "suggestionSentSuccess": "Votre suggestion a été envoyée",
+    "undo": "Annuler",
+    "suggest": "Suggérer",
+    "requiredField": "Ce champ est requis"
+  },
+  "nav": {
+    "suggestions": "Suggestions",
+    "manage": "Gestion",
+    "myCharacters": "Mes personnages"
+  },
+  "footer": {
+    "tos": "Conditions d'utilisation",
+    "privacyPolicy": "Politique de confidentialité"
+  },
+  "login": {
+    "title": "Login",
+    "subtitle": "Connectez-vous pour accéder à vos scénarios et personnages.",
+    "withGoogle": "Connectez vous avec Google",
+    "withGithub": "Connectez vous avec Github",
+    "withDiscord": "Connectez vous avec Discord"
+  },
+  "home": {
+    "title": "Bienvenue sur Projet Genesis",
+    "description": "Créez des scénarios et générez des personnages aléatoirement pour vos parties de JDR. Gardez une trace de vos personnages et de vos armes, et utilisez librement les attributs déjà définis — vous pouvez en suggérer de nouveaux si vous n'êtes pas autorisé à les créer vous-même.",
+    "createScenario": "Créer un scénario",
+    "scenarioName": "Nom du scénario",
+    "scenarioNamePlaceholder": "Scenario super cool!",
+    "scenarioUniverse": "Univers du scénario",
+    "scenarioUniversePlaceholder": "Univers ultra fun!",
+    "scenarioDescription": "Description du scénario",
+    "submit": "Créer mon scénario",
+    "requiredFieldsError": "Veuillez remplir tous les champs",
+    "mustBeLoggedInError": "Vous devez être connecté pour créer un scénario",
+    "createdSuccess": "Scénario créé avec succès"
+  },
+  "scenario": {
+    "empty": "Aucun scénario",
+    "emptyDescription": "Créez-en un pour commencer.",
+    "deletedSuccess": "{name} supprimé"
+  },
+  "account": {
+    "logOut": "Se déconnecter",
+    "deleteAccount": "Supprimer mon compte",
+    "deleteAccountTitle": "Supprimer définitivement votre compte ?",
+    "deleteAccountDescription": "Cette action est irréversible. Seront supprimés : votre compte, vos sessions, vos scénarios, vos personnages et vos armes. Les suggestions que vous avez déjà soumises sont conservées de façon anonyme.",
+    "deleteAccountFailed": "La suppression du compte a échoué. Votre compte n'a pas été supprimé."
+  },
+  "characterCard": {
+    "imageAlt": "Image du personnage",
+    "pj": "PJ",
+    "npc": "PNJ",
+    "origin": "Origine: {origin}",
+    "role": "Rôle: {role}",
+    "age": "Âge: {age}",
+    "injury": "Blessure: {injury}",
+    "temperment": "Temperement: {name}",
+    "alignment": "Alignement: {name}",
+    "fortune": "Richesse: {name}",
+    "searchPlaceholder": "Nom du personnage...",
+    "sortByPlaceholder": "Trier par",
+    "sortByName": "Nom",
+    "sortByPj": "PJ"
+  },
+  "myCharacters": {
+    "heading": "Personnages",
+    "pj": "PJ",
+    "role": "Rôle",
+    "noRole": "Pas de rôle",
+    "origin": "Origine",
+    "noOrigin": "Pas d'origine",
+    "edit": "Editer",
+    "deletedSuccess": "{name} supprimé"
+  },
+  "suggestions": {
+    "heading": "Suggestions",
+    "accept": "Accepter",
+    "createError": "Erreur lors de la création",
+    "createdButNotDeleted": "Créé, mais la suggestion n'a pas été supprimée",
+    "accepted": "Suggestion acceptée",
+    "unknownError": "Erreur inconnu",
+    "deleteError": "Erreur lors de la suppression",
+    "deletedSuccess": "{name} supprimé"
+  },
+  "profile": {
+    "profilePictureAlt": "Photo de profil",
+    "scenariosCreatedSuffix": "scénarios créés 📄",
+    "charactersCreatedSuffix": "personnages de jeu 🤺",
+    "weaponsReadySuffix": "armes prêtes à l'utilisation ⚔",
+    "none": "Aucun",
+    "noneFeminine": "Aucune"
+  },
+  "characterForm": {
+    "generationPageTitle": "Générer votre personnage",
+    "nameDescribe": "Nom du personnage",
+    "namePlaceholder": "Eric Tournlavis",
+    "pjDescribe": "Personnage joueur",
+    "originDescribe": "Origine du personnage",
+    "originPlaceholder": "Né dans les montagnes",
+    "roleDescribe": "Rôle du personnage",
+    "rolePlaceholder": "Guerrier",
+    "ageDescribe": "Age du personnage",
+    "agePlaceholder": "25",
+    "injuryDescribe": "Blessure",
+    "injuryPlaceholder": "Blessure à la jambe",
+    "extraDescribe": "Extra",
+    "extraPlaceholder": "Aime les chats",
+    "temperment": "Tempérament",
+    "alignment": "Alignement",
+    "fortune": "Richesse",
+    "strengthDescribe": "Force",
+    "strengthSetDescribe": "Forces",
+    "weaknessDescribe": "Faiblesse",
+    "weaknessSetDescribe": "Faiblesses",
+    "skillDescribe": "Compétence",
+    "skillSetDescribe": "Compétences",
+    "weaponDescribe": "Arme",
+    "weaponSetDescribe": "Armes",
+    "requiredChoiceError": "Veuillez choisir une valeur",
+    "generateWithAi": "Générer avec l'IA",
+    "generatingInProgress": "Votre personnage est bientôt prêt...",
+    "generationMessagePlaceholder": "Message...",
+    "generateSubmit": "C'est parti!",
+    "generatedSuccess": "Personnage généré avec succès ✨",
+    "generationRateLimited": "Limite atteinte : {limit} générations par heure, réessayez plus tard.",
+    "generationFailed": "L'IA n'a pas pu générer de personnage",
+    "invalidMessage": "Message invalide",
+    "generationError": "Erreur lors de la génération du personnage",
+    "authError": "Vous devez être connecté pour créer un personnage",
+    "modifiedSuccess": "Personnage modifié",
+    "createdSuccess": "Personnage créé avec succès",
+    "modifySubmit": "Modifier votre personnage",
+    "createSubmit": "Créer votre personnage"
+  },
+  "weaponForm": {
+    "nameDescribe": "Nom de l'arme",
+    "meleeDescribe": "Arme de mélée",
+    "descriptionDescribe": "Description de l'arme",
+    "ammoDescribe": "Munition de l'arme",
+    "weightDescribe": "Poids de l'arme",
+    "rangeDescribe": "Portée de l'arme",
+    "damageDescribe": "Dégât de l'arme",
+    "skillDescribe": "Compétence",
+    "skillSetDescribe": "Compétences",
+    "authError": "Vous devez être connecté pour créer une arme",
+    "createdSuccess": "Arme créé avec succès",
+    "createSubmit": "Créer l'arme"
+  },
+  "characters": {
+    "heading": "Personnages",
+    "import": "Importer",
+    "createCharacter": "Créer un personnage",
+    "importDialogTitle": "Importer un personnage",
+    "importDialogDescription": "Sélectionnez un personnage dans votre liste pour l'importer dans ce scénario.",
+    "empty": "Pas encore de personnage",
+    "emptyDescription": "Créez-en un ou importez-en un existant.",
+    "noneFound": "Aucun personnage trouvé",
+    "genericError": "Une erreur est survenue",
+    "importedSuccess": "{name} a été importé avec succès 🧙",
+    "age": "Âge : {age} ans",
+    "origin": "Origine : {origin}",
+    "role": "Rôle : {role}",
+    "extra": "Extra : {extra}"
+  },
+  "attributes": {
+    "temperment": {
+      "authError": "Vous devez être connecté pour créer un tempérament",
+      "created": "Tempérament créé avec succès",
+      "deleted": "Tempérament supprimé avec succès",
+      "nameDescribe": "Nom du tempérament",
+      "namePlaceholder": "Colérique",
+      "descriptionDescribe": "Description du tempérament",
+      "descriptionPlaceholder": "Le colérique est une personne qui s'énerve facilement",
+      "createSubmit": "Créer le tempérament"
+    },
+    "alignement": {
+      "authError": "Vous devez être connecté pour créer un alignement",
+      "created": "Alignement créé avec succès",
+      "deleted": "Alignement supprimé avec succès",
+      "nameDescribe": "Nom de l'alignement",
+      "namePlaceholder": "Loyal bon",
+      "descriptionDescribe": "Description de l'alignement",
+      "descriptionPlaceholder": "Un personnage loyal bon agit comme un chevalier",
+      "createSubmit": "Créer l'alignement"
+    },
+    "fortune": {
+      "authError": "Vous devez être connecté pour créer une richesse",
+      "created": "Richesse créée avec succès",
+      "deleted": "Richesse supprimée avec succès",
+      "nameDescribe": "Nom de la richesse",
+      "namePlaceholder": "Riche comme Crésus",
+      "descriptionDescribe": "Description de la richesse",
+      "descriptionPlaceholder": "Le personnage est riche comme Crésus",
+      "createSubmit": "Créer la richesse"
+    },
+    "strength": {
+      "authError": "Vous devez être connecté pour créer une force",
+      "created": "Force créée avec succès",
+      "deleted": "Force supprimée avec succès",
+      "nameDescribe": "Nom de la force",
+      "namePlaceholder": "Force de l'ours",
+      "createSubmit": "Créer la force"
+    },
+    "weakness": {
+      "authError": "Vous devez être connecté pour créer une faiblesse",
+      "created": "Faiblesse créée avec succès",
+      "deleted": "Faiblesse supprimée avec succès",
+      "nameDescribe": "Nom de la faiblesse",
+      "namePlaceholder": "Faible comme un chaton",
+      "createSubmit": "Créer la faiblesse"
+    },
+    "characterSkill": {
+      "authError": "Vous devez être connecté pour créer une compétence",
+      "created": "Compétence créée avec succès",
+      "deleted": "Compétence supprimée avec succès",
+      "nameDescribe": "Nom de la compétence",
+      "namePlaceholder": "Agile",
+      "createSubmit": "Créer la compétence"
+    },
+    "ammo": {
+      "authError": "Vous devez être connecté pour créer une munition",
+      "created": "Munition créée avec succès",
+      "deleted": "Munition supprimée avec succès",
+      "nameDescribe": "Nom de la munition",
+      "namePlaceholder": "Peu de munition",
+      "createSubmit": "Créer la munition"
+    },
+    "damage": {
+      "authError": "Vous devez être connecté pour créer un dégât",
+      "created": "Dégât créé avec succès",
+      "deleted": "Dégât supprimé avec succès",
+      "nameDescribe": "Nom du dégât",
+      "namePlaceholder": "Peu de dégât",
+      "createSubmit": "Créer le dégât"
+    },
+    "range": {
+      "authError": "Vous devez être connecté pour créer une portée",
+      "created": "Portée créée avec succès",
+      "deleted": "Portée supprimée avec succès",
+      "nameDescribe": "Nom de la portée",
+      "namePlaceholder": "Faible portée",
+      "createSubmit": "Créer la portée"
+    },
+    "weaponSkill": {
+      "authError": "Vous devez être connecté pour créer une compétence",
+      "created": "Compétence créée avec succès",
+      "deleted": "Compétence supprimée avec succès",
+      "nameDescribe": "Nom de la compétence",
+      "namePlaceholder": "Perçant",
+      "createSubmit": "Créer la compétence"
+    },
+    "weight": {
+      "authError": "Vous devez être connecté pour créer un poids",
+      "created": "Poids créé avec succès",
+      "deleted": "Poids supprimé avec succès",
+      "nameDescribe": "Nom du poids",
+      "namePlaceholder": "Très lourd",
+      "createSubmit": "Créer le poids"
+    }
+  },
+  "emptyState": {
+    "noResults": "Aucun résultat",
+    "noOptionsAvailable": "Aucun élément disponible",
+    "noOptionsFor": "Aucun élément créé pour « {label} »",
+    "noOptionsForDescription": "Aucun élément créé pour « {label} » pour l'instant."
+  },
+  "manage": {
+    "personnages": "Personnages",
+    "armes": "Armes",
+    "characterAttributes": "Attributs de personnage",
+    "weaponAttributes": "Attributs d'arme",
+    "weapons": "Armes",
+    "createAttribute": "Créer un attribut",
+    "createWeapon": "Créer une arme",
+    "createWeaponAttribute": "Créer un attribut d'arme",
+    "temperament": "Tempérament",
+    "alignment": "Alignement",
+    "fortune": "Richesse",
+    "strength": "Force",
+    "weakness": "Faiblesse",
+    "skills": "Compétences",
+    "skill": "compétence",
+    "damage": "Dégât",
+    "ammo": "Munition",
+    "range": "Porté",
+    "weight": "Poids"
+  },
+  "tos": {
+    "title": "Conditions générales d'utilisation de Projet-Genesis",
+    "sections": [
+      {
+        "heading": "1. Introduction",
+        "body": [
+          "Bienvenue sur Projet-Genesis, une application dédiée aux passionnés de jeux de rôle (JDR). Cette application vous permet de créer des scénarios et des personnages de manière manuelle ou semi-automatique. Elle offre également des fonctionnalités complémentaires, telles que la création d'armes. Ces Conditions Générales d'Utilisation (CGU) régissent l'utilisation de l'application. En utilisant cette application, vous acceptez ces CGU."
+        ]
+      },
+      {
+        "heading": "2. Acceptation des conditions",
+        "body": [
+          "En accédant ou en utilisant Projet-Genesis, vous acceptez d'être lié par les présentes CGU. Si vous n'acceptez pas ces conditions, vous ne devez pas utiliser l'application. Nous vous encourageons à lire ces conditions attentivement avant d'utiliser notre service."
+        ]
+      },
+      {
+        "heading": "3. Accès et utilisation de l'application",
+        "body": [
+          "L'application est destinée à toute personne âgée de 13 ans ou plus. Si vous avez moins de 13 ans, vous devez obtenir la permission d'un parent ou d'un tuteur pour utiliser cette application. Vous êtes responsable de toute l'activité qui se déroule sous votre compte et vous devez vous assurer que toutes les informations que vous fournissez lors de l'inscription sont exactes et complètes."
+        ]
+      },
+      {
+        "heading": "4. Comptes utilisateurs",
+        "body": [
+          "Pour accéder à l'application, vous devez créer un compte utilisateur. Vous acceptez de fournir des informations précises et de les mettre à jour en cas de modification. Vous êtes responsable de la sécurité de votre compte et des actions effectuées via celui-ci.",
+          "En cas d'activité suspecte sur votre compte, vous devez nous en informer immédiatement. Nous nous réservons le droit de suspendre ou de supprimer des comptes sans préavis en cas de violation de ces CGU."
+        ]
+      },
+      {
+        "heading": "5. Propriété intellectuelle",
+        "body": [
+          "Tous les contenus disponibles sur l'application, y compris les textes, images, graphiques, logos, interfaces utilisateur, et le code source, sont protégés par des droits d'auteur et d'autres lois sur la propriété intellectuelle. L'application et son contenu sont la propriété exclusive de l'équipe de développement.",
+          "Vous avez le droit d'utiliser l'application et son contenu uniquement dans le cadre de l'utilisation personnelle et non commerciale de l'application. Toute reproduction, distribution, modification, ou autre utilisation du contenu sans autorisation préalable est strictement interdite."
+        ]
+      },
+      {
+        "heading": "6. Modification des conditions",
+        "body": [
+          "Nous nous réservons le droit de modifier ces CGU à tout moment. Si nous apportons des modifications importantes, nous vous en informerons via l'application ou par tout autre moyen approprié. Votre utilisation continue de l'application après l'entrée en vigueur des modifications constitue votre acceptation de ces modifications. Nous vous recommandons de consulter régulièrement ces CGU pour rester informé de toute mise à jour."
+        ]
+      }
+    ]
+  },
+  "privacyPolicy": {
+    "title": "Politique de Confidentialité de Projet-Genesis",
+    "sections": [
+      {
+        "heading": "1. Introduction",
+        "body": [
+          "Cette Politique de Confidentialité explique comment Projet-Genesis (ci-après « l'application ») collecte, utilise, et protège les informations personnelles de ses utilisateurs. En utilisant notre application, vous acceptez les pratiques décrites dans cette politique."
+        ]
+      },
+      {
+        "heading": "2. Informations Collectées",
+        "body": [
+          "L'application utilise exclusivement l'authentification via OAuth pour permettre aux utilisateurs de se connecter. OAuth est un protocole standardisé qui permet l'autorisation sécurisée dans un environnement simplifié. En utilisant OAuth, l'application ne stocke pas directement vos identifiants (comme les mots de passe) mais reçoit un jeton d'accès permettant de vérifier votre identité auprès du fournisseur de service OAuth (comme Google, Facebook, etc.).",
+          "Lors de l'authentification via OAuth, nous collectons et utilisons uniquement les informations nécessaires à la création et à la gestion de votre compte utilisateur sur notre application. Cela inclut :"
+        ],
+        "list1": [
+          "Nom et prénom (le cas échéant)",
+          "Adresse email",
+          "Photo de profil (facultatif, selon le fournisseur OAuth)",
+          "ID utilisateur fourni par le service OAuth"
+        ],
+        "body2": [
+          "Pour faire fonctionner l'application, les données techniques et les contenus suivants sont également enregistrés dans notre base de données :"
+        ],
+        "list2": [
+          "Les jetons d'accès et de rafraîchissement OAuth reçus du fournisseur, rattachés à votre compte",
+          "Les sessions de connexion : identifiant de session et date d'expiration. L'adresse IP et le navigateur utilisé (user agent) ne sont pas enregistrés dans ces sessions",
+          "Les contenus que vous créez : scénarios, personnages, armes et suggestions"
+        ]
+      },
+      {
+        "heading": "3. Sécurité des Données",
+        "body": [
+          "Nous prenons la sécurité de vos données très au sérieux et mettons en œuvre des mesures de sécurité techniques et organisationnelles appropriées pour protéger vos informations contre l'accès non autorisé, la modification, la divulgation ou la destruction.",
+          "Les communications entre votre navigateur et l'application sont chiffrées via le protocole HTTPS (TLS).",
+          "Les jetons d'accès et de rafraîchissement OAuth reçus du fournisseur sont stockés dans la base de données de l'application afin de maintenir la connexion. Ils sont protégés par les contrôles d'accès de l'hébergeur et du fournisseur de base de données, mais ils ne font pas l'objet d'un chiffrement supplémentaire au niveau de l'application.",
+          "Pour limiter les requêtes abusives, l'adresse IP de votre connexion est utilisée de manière transitoire par le système d'authentification ; elle est conservée uniquement en mémoire pendant une courte fenêtre de temps et n'est pas enregistrée dans la base de données ni dans vos sessions."
+        ]
+      },
+      {
+        "heading": "4. Conservation et suppression des données",
+        "body": [
+          "Vos données sont conservées tant que votre compte existe. Vous pouvez demander la suppression de votre compte. Cette suppression efface votre compte, vos sessions, vos scénarios, vos armes et vos personnages.",
+          "Les suggestions que vous avez rédigées sont conservées de manière anonyme : la référence à leur auteur est retirée, et elles servent de données de modération."
+        ]
+      },
+      {
+        "heading": "5. Modifications de la politique de confidentialité",
+        "body": [
+          "Nous nous réservons le droit de modifier cette Politique de Confidentialité à tout moment. En cas de modification substantielle, nous vous en informerons par le biais de l'application ou par un autre moyen approprié. Nous vous encourageons à consulter régulièrement cette politique pour rester informé des mises à jour."
+        ]
+      }
+    ]
+  }
+}

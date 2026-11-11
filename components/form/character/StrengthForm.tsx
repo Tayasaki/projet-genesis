@@ -4,38 +4,43 @@ import {
 } from "@/src/actions/character/strength.action";
 import { SuggestionType } from "@prisma/client";
 import { requiredString } from "@/components/form/required-string";
+import { useTranslations } from "next-intl";
 import { z } from "zod";
 import AutoForm, { AutoFormSubmit } from "../../ui/auto-form";
 import { useAttributeSubmit } from "../attribute/use-attribute-submit";
 
 export const StrengthForm = ({ suggest }: { suggest: boolean }) => {
+  const t = useTranslations("attributes.strength");
+  const tCommon = useTranslations("common");
   const { isLoading, handleSubmit } = useAttributeSubmit({
     suggest,
     suggestionType: SuggestionType.Strength,
     createAction: createStrength,
     deleteAction: deleteStrength,
     labels: {
-      authError: "Vous devez être connecté pour créer une force",
-      created: "Force créé avec succès",
-      deleted: "Force supprimé avec succès",
+      authError: t("authError"),
+      created: t("created"),
+      deleted: t("deleted"),
     },
   });
   return (
     <AutoForm
       formSchema={z.object({
-        name: requiredString(50).describe("Nom du la force"),
+        name: requiredString(50, tCommon("requiredField")).describe(
+          t("nameDescribe"),
+        ),
       })}
       fieldConfig={{
         name: {
           inputProps: {
-            placeholder: "Force de l'ours",
+            placeholder: t("namePlaceholder"),
           },
         },
       }}
       onSubmit={handleSubmit}
     >
       <AutoFormSubmit isLoading={isLoading}>
-        {suggest ? "Suggérer" : "Créer la force"}
+        {suggest ? tCommon("suggest") : t("createSubmit")}
       </AutoFormSubmit>
     </AutoForm>
   );

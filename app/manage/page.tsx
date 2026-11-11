@@ -25,11 +25,11 @@ import {
   getWeights,
 } from "@/src/query/weapon.query";
 import { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
-import { columns as characterAttributesColumns } from "./characterAttributesColumns";
-import { DataTable } from "./data-table";
-import { columns as weaponAttributesColumns } from "./weaponAttributesColumns";
-import { columns as weaponColumns } from "./weaponColumns";
+import { CharacterAttributesTable } from "./characterAttributesColumns";
+import { WeaponAttributesTable } from "./weaponAttributesColumns";
+import { WeaponsTable } from "./weaponColumns";
 
 export type CharacterAttributes = {
   id: string;
@@ -59,6 +59,7 @@ export default async function Manage() {
     where: { id: session.user.id },
   });
   const isAuthorized = user.role === "ADMIN" || user.role === "SUPERUSER";
+  const t = await getTranslations("manage");
 
   const characterAttributes: CharacterAttributes[] = [];
   const weaponAttributes: WeaponAttributes[] = [];
@@ -95,19 +96,20 @@ export default async function Manage() {
   return (
     <Tabs defaultValue="characters">
       <TabsList>
-        <TabsTrigger value="characters">Personnages</TabsTrigger>
-        <TabsTrigger value="weapons">Armes</TabsTrigger>
+        <TabsTrigger value="characters">{t("personnages")}</TabsTrigger>
+        <TabsTrigger value="weapons">{t("armes")}</TabsTrigger>
       </TabsList>
 
       <TabsContent value="characters" className={panelTabsClass}>
         <div className="grid gap-8 lg:grid-cols-2">
-          <DataTable
-            columns={characterAttributesColumns}
+          <CharacterAttributesTable
             data={characterAttributes}
-            title="Attributs de personnage"
+            title={t("characterAttributes")}
           />
           <div>
-            <h3 className="mb-4 text-lg font-semibold">Créer un attribut</h3>
+            <h3 className="mb-4 text-lg font-semibold">
+              {t("createAttribute")}
+            </h3>
             <CharacterAttributeForms isAuthorized={isAuthorized} />
           </div>
         </div>
@@ -116,9 +118,9 @@ export default async function Manage() {
       <TabsContent value="weapons" className={panelTabsClass}>
         <div className="flex flex-col gap-8">
           <div className="grid gap-8 lg:grid-cols-2">
-            <DataTable columns={weaponColumns} data={weapons} title="Armes" />
+            <WeaponsTable data={weapons} title={t("weapons")} />
             <div>
-              <h3 className="mb-4 text-lg font-semibold">Créer une arme</h3>
+              <h3 className="mb-4 text-lg font-semibold">{t("createWeapon")}</h3>
               <FormPanel>
                 <WeaponForm
                   ammos={ammo}
@@ -132,14 +134,13 @@ export default async function Manage() {
           </div>
           <Separator />
           <div className="grid gap-8 lg:grid-cols-2">
-            <DataTable
-              columns={weaponAttributesColumns}
+            <WeaponAttributesTable
               data={weaponAttributes}
-              title="Attributs d'arme"
+              title={t("weaponAttributes")}
             />
             <div>
               <h3 className="mb-4 text-lg font-semibold">
-                Créer un attribut d&apos;arme
+                {t("createWeaponAttribute")}
               </h3>
               <WeaponAttributeForms isAuthorized={isAuthorized} />
             </div>

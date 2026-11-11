@@ -1,24 +1,23 @@
 "use client";
 
 import { createScenario } from "@/src/actions/scenario.action";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
 import { requiredString } from "@/components/form/required-string";
 import { z } from "zod";
 import AutoForm, { AutoFormSubmit } from "../ui/auto-form";
 
-const formScenarioSchema = z.object({
-  name: requiredString(50).describe("Nom du scénario"),
-  universe: requiredString(30).describe("Univers du scénario"),
-  description: z
-    .string()
-    .max(200)
-    .optional()
-    .describe("Description du scénario"),
-});
-
 export const ScenarioForm = () => {
+  const t = useTranslations("home");
   const [isLoading, setIsLoading] = useState(false);
+
+  const formScenarioSchema = z.object({
+    name: requiredString(50).describe(t("scenarioName")),
+    universe: requiredString(30).describe(t("scenarioUniverse")),
+    description: z.string().max(200).optional().describe(t("scenarioDescription")),
+  });
+
   return (
     <AutoForm
       formSchema={formScenarioSchema}
@@ -30,28 +29,28 @@ export const ScenarioForm = () => {
 
         if (values?.validationErrors || values?.serverError) {
           if (values?.validationErrors) {
-            toast.error("Veuillez remplir tous les champs");
+            toast.error(t("requiredFieldsError"));
           }
           if (values?.serverError) {
-            toast.error("Vous devez être connecté pour créer un scénario");
+            toast.error(t("mustBeLoggedInError"));
           }
           setIsLoading(false);
           return values;
         }
 
-        toast.success("Scénario créé avec succès");
+        toast.success(t("createdSuccess"));
         setIsLoading(false);
         return values;
       }}
       fieldConfig={{
         name: {
           inputProps: {
-            placeholder: "Scenario super cool!",
+            placeholder: t("scenarioNamePlaceholder"),
           },
         },
         universe: {
           inputProps: {
-            placeholder: "Univers ultra fun!",
+            placeholder: t("scenarioUniversePlaceholder"),
           },
         },
         description: {
@@ -63,7 +62,7 @@ export const ScenarioForm = () => {
         },
       }}
     >
-      <AutoFormSubmit isLoading={isLoading}>Créer mon scénario</AutoFormSubmit>
+      <AutoFormSubmit isLoading={isLoading}>{t("submit")}</AutoFormSubmit>
     </AutoForm>
   );
 };

@@ -9,6 +9,7 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { hasActionError } from "@/lib/action-result";
 import { cn } from "@/lib/utils";
 import { UserX } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { updateScenarioCharacter } from "@/src/actions/scenario.action";
 import { Character } from "@prisma/client";
 import { useState } from "react";
@@ -25,6 +26,8 @@ export const ImportCharacter = ({
   characterList: Character[];
   scenarioId: string;
 }) => {
+  const t = useTranslations("characters");
+  const tCommon = useTranslations("common");
   const [selectedCharacter, setSelectedCharacter] = useState<
     SelectableCharacter[]
   >(() => characterList.map((c) => ({ ...c, selected: false })));
@@ -33,7 +36,7 @@ export const ImportCharacter = ({
     const copySelectedCharacter = [...selectedCharacter];
     const c = copySelectedCharacter.find((c) => c.id === character.id);
     if (!c) {
-      toast.error("Une erreur est survenue");
+      toast.error(t("genericError"));
       return;
     }
     c.selected = !c?.selected;
@@ -49,9 +52,9 @@ export const ImportCharacter = ({
         characterId: character.id,
       });
       if (hasActionError(value)) {
-        toast.error("Une erreur est survenue");
+        toast.error(t("genericError"));
       } else {
-        toast.success(`${character.name} a été importé avec succès 🧙`);
+        toast.success(t("importedSuccess", { name: character.name }));
       }
     }
   }
@@ -60,7 +63,7 @@ export const ImportCharacter = ({
     <div>
       <ScrollArea className="h-72 w-full p-5">
         {selectedCharacter.length === 0 ? (
-          <EmptyState icon={UserX} title="Aucun personnage trouvé" />
+          <EmptyState icon={UserX} title={t("noneFound")} />
         ) : (
           <div className="flex flex-col gap-3">
             {selectedCharacter.map((character) => (
@@ -83,10 +86,18 @@ export const ImportCharacter = ({
                   />
                 </CardHeader>
                 <CardContent className="text-muted-foreground flex flex-wrap gap-x-4 gap-y-1 text-sm">
-                  {character.age != null && <span>Âge : {character.age} ans</span>}
-                  {character.origin && <span>Origine : {character.origin}</span>}
-                  {character.role && <span>Rôle : {character.role}</span>}
-                  {character.extra && <span>Extra : {character.extra}</span>}
+                  {character.age != null && (
+                    <span>{t("age", { age: character.age })}</span>
+                  )}
+                  {character.origin && (
+                    <span>{t("origin", { origin: character.origin })}</span>
+                  )}
+                  {character.role && (
+                    <span>{t("role", { role: character.role })}</span>
+                  )}
+                  {character.extra && (
+                    <span>{t("extra", { extra: character.extra })}</span>
+                  )}
                 </CardContent>
               </Card>
             ))}
@@ -97,14 +108,14 @@ export const ImportCharacter = ({
       </ScrollArea>
       <DialogFooter>
         <DialogClose asChild>
-          <Button variant="outline">Annuler</Button>
+          <Button variant="outline">{tCommon("cancel")}</Button>
         </DialogClose>
         <DialogClose asChild>
           <Button
             disabled={!selectedCharacter.some((c) => c.selected)}
             onClick={importCharacter}
           >
-            Importer
+            {t("import")}
           </Button>
         </DialogClose>
       </DialogFooter>
