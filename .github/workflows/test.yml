@@ -11,6 +11,21 @@ jobs:
     name: test
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          # Ephemeral CI-only service; not a real credential.
+          POSTGRES_USER: ci
+          POSTGRES_PASSWORD: ci-only-password
+          POSTGRES_DB: genesis_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U ci -d genesis_ci"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -27,5 +42,22 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # Unit suite first, deliberately WITHOUT a generated Prisma client and
+      # without AUTH_IT_DATABASE_URL (the integration test skips itself), so a
+      # missing vi.mock('@prisma/client') still fails here. Coverage thresholds
+      # are evaluated only in this step.
       - name: Run tests with coverage
         run: pnpm test:coverage
+
+      - name: Migrate test database
+        env:
+          DATABASE_URL: postgresql://ci:ci-only-password@localhost:5432/genesis_ci
+        run: |
+          pnpm exec prisma generate
+          pnpm exec prisma migrate deploy
+
+      - name: Run Better Auth integration test
+        env:
+          DATABASE_URL: postgresql://ci:ci-only-password@localhost:5432/genesis_ci
+          AUTH_IT_DATABASE_URL: postgresql://ci:ci-only-password@localhost:5432/genesis_ci
+        run: pnpm exec vitest run tests/integration

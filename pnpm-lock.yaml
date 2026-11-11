@@ -4901,7 +4901,7 @@ snapshots:
     dependencies:
       '@eslint/object-schema': 3.0.5
       debug: 4.4.3
-      minimatch: 10.2.6
+      minimatch: 11.0.7
     transitivePeerDependencies:
       - supports-color
 
@@ -7162,7 +7162,7 @@ snapshots:
       imurmurhash: 0.1.4
       is-glob: 4.0.3
       json-stable-stringify-without-jsonify: 1.0.1
-      minimatch: 10.2.6
+      minimatch: 11.0.7
       natural-compare: 1.4.0
       optionator: 0.9.4
     optionalDependencies:
