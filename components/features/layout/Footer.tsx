@@ -1,55 +1,34 @@
-import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import logo from "@/public/logo.png";
-import { Copyright } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
+import { LogoMark } from "./Logo";
+
+const footerLinkClass =
+  "text-sm text-muted-foreground hover:text-foreground transition-colors";
 
 export const Footer = () => {
   return (
-    <footer className="bottom-0 w-full border-t border-t-accent bg-gray-100 transition dark:bg-slate-900">
-      <div className="container m-auto flex items-center justify-between gap-1 py-2">
-        <div className="flex items-center space-x-4">
-          <h1 className="text-2xl font-bold">
-            <Link href="/" className="flex items-center gap-4">
-              <Image
-                src={logo}
-                alt="logo"
-                width={50}
-                height={50}
-                className="rounded-full bg-slate-500 p-1"
-              />
-              Project Genesis
-            </Link>
-          </h1>
-          <Copyright size={24} />
-        </div>
-        <span>
-          <Link
-            className={cn(buttonVariants({ variant: "link" }))}
-            href={"/manage"}
-          >
+    <footer className="bg-background border-t">
+      <div className="container m-auto flex flex-wrap items-center justify-between gap-4 py-6">
+        <Link href="/" className="flex items-center gap-2">
+          <LogoMark className="size-5" />
+          <span className="text-sm font-medium text-muted-foreground">
+            Projet Genesis
+          </span>
+        </Link>
+        <nav className="flex flex-wrap items-center gap-x-6 gap-y-2">
+          <Link href="/manage" className={cn(footerLinkClass)}>
             Gestion
           </Link>
-          <Link
-            className={cn(buttonVariants({ variant: "link" }))}
-            href={"/characters"}
-          >
+          <Link href="/characters" className={cn(footerLinkClass)}>
             Mes personnages
           </Link>
-          <Link
-            className={cn(buttonVariants({ variant: "link" }))}
-            href={"/tos"}
-          >
+          <Link href="/tos" className={cn(footerLinkClass)}>
             Conditions d&apos;utilisation
           </Link>
-          <Link
-            className={cn(buttonVariants({ variant: "link" }))}
-            href={"/privacy-policy"}
-          >
+          <Link href="/privacy-policy" className={cn(footerLinkClass)}>
             Politique de confidentialité
           </Link>
-        </span>
+        </nav>
       </div>
     </footer>
   );

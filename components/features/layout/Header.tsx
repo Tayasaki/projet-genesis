@@ -1,14 +1,13 @@
 import { ToggleTheme } from "@/components/features/theme/ToggleTheme";
-import { buttonVariants } from "@/components/ui/button";
 import { getAuthSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { cn } from "@/lib/utils";
-import logo from "@/public/logo.png";
-import { Slash } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { LoginButton } from "./auth/LoginButtons";
+import { LogoMark } from "./Logo";
 import { UserProfile } from "./auth/UserProfile";
+
+const navLinkClass = "text-sm font-medium text-muted-foreground hover:text-foreground transition-colors";
 
 export const Header = async () => {
   const session = await getAuthSession();
@@ -18,48 +17,31 @@ export const Header = async () => {
   const role = user?.role;
 
   return (
-    <header className="border-b-accent bg-background fixed top-0 z-20 w-full border-b">
-      <div className="container m-auto flex items-center justify-between gap-1 py-2">
-        <h1 className="text-2xl font-bold">
-          <Link href="/" className="flex items-center gap-4">
-            <Image
-              src={logo}
-              alt="logo"
-              width={50}
-              height={50}
-              className="rounded-full bg-slate-500 p-1 dark:bg-slate-800"
-            />
-            Project Genesis
+    <header className="bg-background/95 fixed top-0 z-20 w-full border-b backdrop-blur-sm">
+      <div className="container m-auto flex h-14 items-center justify-between gap-4">
+        <div className="flex items-center gap-8">
+          <Link href="/" className="flex items-center gap-2.5">
+            <LogoMark className="size-7" />
+            <span className="text-sm font-semibold tracking-tight">
+              Projet Genesis
+            </span>
           </Link>
-        </h1>
-        <nav className="flex items-center">
-          {(role === "ADMIN" || role === "SUPERUSER") && (
-            <>
-              <Link
-                className={cn(buttonVariants({ variant: "link" }))}
-                href={"/suggestions"}
-              >
+          <nav className="flex items-center gap-6">
+            {(role === "ADMIN" || role === "SUPERUSER") && (
+              <Link href="/suggestions" className={cn(navLinkClass)}>
                 Suggestions
               </Link>
-              <Slash className="text-muted size-4" />
-            </>
-          )}
-          <Link
-            className={cn(buttonVariants({ variant: "link" }))}
-            href={"/manage"}
-          >
-            Gestion
-          </Link>
-          <Slash className="text-muted size-4" />
-          <Link
-            className={cn(buttonVariants({ variant: "link" }))}
-            href={"/characters"}
-          >
-            Mes personnages
-          </Link>
-        </nav>
+            )}
+            <Link href="/manage" className={cn(navLinkClass)}>
+              Gestion
+            </Link>
+            <Link href="/characters" className={cn(navLinkClass)}>
+              Mes personnages
+            </Link>
+          </nav>
+        </div>
 
-        <div className="flex space-x-2">
+        <div className="flex items-center gap-2">
           {session?.user ? <UserProfile /> : <LoginButton />}
           <ToggleTheme />
         </div>

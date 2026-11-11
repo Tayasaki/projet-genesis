@@ -1,5 +1,6 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
 import {
   Card,
   CardContent,
@@ -17,7 +18,7 @@ import { toast } from "sonner";
 export const ScenarioList = ({ scenario }: { scenario: Scenario[] }) => {
   if (scenario.length === 0) {
     return (
-      <p className="text-muted-foreground py-8 text-center">
+      <p className="text-muted-foreground py-8 text-center text-sm">
         Aucun scénario. Créez-en un pour commencer.
       </p>
     );
@@ -25,35 +26,35 @@ export const ScenarioList = ({ scenario }: { scenario: Scenario[] }) => {
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
       {scenario.map((s) => (
-        <div key={s.id}>
-          <Card className="transition">
-            <CardHeader>
-              <CardTitle>
-                <Link
-                  className="hover:text-primary"
-                  href={`/${s.id}/characters`}
-                >
-                  {s.name}{" "}
-                </Link>
-              </CardTitle>
-            </CardHeader>
+        <Card
+          key={s.id}
+          className="hover:border-primary/40 flex flex-col justify-between gap-3 py-5 transition-colors"
+        >
+          <CardHeader className="gap-1.5">
+            <CardTitle className="text-base font-semibold">
+              <Link className="hover:text-primary" href={`/${s.id}/characters`}>
+                {s.name}
+              </Link>
+            </CardTitle>
+          </CardHeader>
+          {s.description && (
             <CardContent>
-              <CardDescription className="text-muted-foreground text-wrap">
+              <CardDescription className="text-muted-foreground text-sm">
                 {s.description}
               </CardDescription>
             </CardContent>
-            <CardFooter className="text-primary justify-between font-semibold italic">
-              {s.universe}
-              <DeleteDialog
-                item={s.name}
-                deleteItem={async () => {
-                  await deleteScenario({ id: s.id });
-                  toast.success(`${s.name} supprimé`);
-                }}
-              />
-            </CardFooter>
-          </Card>
-        </div>
+          )}
+          <CardFooter className="items-center justify-between">
+            <Badge variant="secondary">{s.universe}</Badge>
+            <DeleteDialog
+              item={s.name}
+              deleteItem={async () => {
+                await deleteScenario({ id: s.id });
+                toast.success(`${s.name} supprimé`);
+              }}
+            />
+          </CardFooter>
+        </Card>
       ))}
     </div>
   );

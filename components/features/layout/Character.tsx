@@ -1,7 +1,7 @@
 "use client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   HoverCard,
   HoverCardContent,
@@ -12,9 +12,9 @@ import Link from "next/link";
 
 export const Character = ({ character }: { character: CharacterScenario }) => {
   return (
-    <Card className="hover:ring-ring max-w-md transition hover:scale-105 hover:ring-2 hover:ring-offset-2 active:scale-102">
+    <Card className="hover:border-primary/40 max-w-md transition-colors">
       <Link href={`/characters/${character.id}`}>
-        <CardHeader className="flex flex-row">
+        <CardHeader className="flex flex-row items-center gap-3 space-y-0">
           <Avatar>
             {character.image ? (
               <AvatarImage src={character.image} alt={"Image du personnage"} />
@@ -24,10 +24,12 @@ export const Character = ({ character }: { character: CharacterScenario }) => {
               </AvatarFallback>
             )}
           </Avatar>
-          <CardTitle>{character.name}</CardTitle>
+          <CardTitle className="text-base font-semibold">
+            {character.name}
+          </CardTitle>
           <Badge variant="outline">{character.pj ? "PJ" : "PNJ"}</Badge>
         </CardHeader>
-        <div className="container space-y-3">
+        <CardContent className="space-y-2 text-sm">
           {character.origin && <p>Origine: {character.origin}</p>}
           {character.role && <p>Rôle: {character.role}</p>}
           {character.age && <p>Âge: {character.age}</p>}
@@ -38,7 +40,7 @@ export const Character = ({ character }: { character: CharacterScenario }) => {
             character.temperment?.description ? (
               <HoverCard>
                 <HoverCardTrigger asChild className="hover:text-primary">
-                  <p className="italic underline">
+                  <p className="decoration-muted-foreground underline decoration-dotted underline-offset-4">
                     Temperement: {character.temperment?.name}
                   </p>
                 </HoverCardTrigger>
@@ -54,7 +56,7 @@ export const Character = ({ character }: { character: CharacterScenario }) => {
             character.alignment?.description ? (
               <HoverCard>
                 <HoverCardTrigger asChild className="hover:text-primary">
-                  <p className="italic underline">
+                  <p className="decoration-muted-foreground underline decoration-dotted underline-offset-4">
                     Alignement: {character.alignment?.name}
                   </p>
                 </HoverCardTrigger>
@@ -70,7 +72,7 @@ export const Character = ({ character }: { character: CharacterScenario }) => {
             character.fortune?.description ? (
               <HoverCard>
                 <HoverCardTrigger asChild className="hover:text-primary">
-                  <p className="italic underline">
+                  <p className="decoration-muted-foreground underline decoration-dotted underline-offset-4">
                     Richesse: {character.fortune?.name}
                   </p>
                 </HoverCardTrigger>
@@ -82,7 +84,7 @@ export const Character = ({ character }: { character: CharacterScenario }) => {
               <p>Richesse: {character.fortune?.name}</p>
             )
           ) : null}
-        </div>
+        </CardContent>
       </Link>
     </Card>
   );

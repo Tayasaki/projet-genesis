@@ -15,9 +15,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export const TabsManagement = ({ isAuthorized }: { isAuthorized: boolean }) => {
   return (
-    <div className="flex space-x-2">
-      <div>
-        <h3 className="dark:text-primary mb-3 text-xl">
+    <div className="flex flex-col gap-10 lg:flex-row lg:gap-8">
+      <div className="flex-1">
+        <h3 className="mb-4 text-lg font-semibold">
           Créer des attributs de personnages
         </h3>
         <Tabs defaultValue="temperment">
@@ -51,8 +51,8 @@ export const TabsManagement = ({ isAuthorized }: { isAuthorized: boolean }) => {
         </Tabs>
       </div>
 
-      <div>
-        <h3 className="dark:text-primary mb-3 text-xl">
+      <div className="flex-1">
+        <h3 className="mb-4 text-lg font-semibold">
           Créer des attributs d&apos;armes
         </h3>
         <Tabs defaultValue="damage">

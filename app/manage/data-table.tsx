@@ -56,9 +56,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className={classname}>
-      <h3 className="text-2xl font-semibold underline underline-offset-8 dark:text-primary">
-        {title}
-      </h3>
+      <h3 className="text-lg font-semibold">{title}</h3>
       <div className="flex items-center py-4">
         <Input
           type="search"

@@ -1,5 +1,6 @@
 import { TabsManagement } from "@/components/features/layout/TabsManagement";
 import { WeaponForm } from "@/components/form/weapon/WeaponForm";
+import { FormPanel } from "@/components/ui/form-panel";
 import { Separator } from "@/components/ui/separator";
 import { getAuthSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -86,8 +87,8 @@ export default async function Manage() {
   weaponSkill.map((w) => weaponAttributes.push({ ...w, type: "skill" }));
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-col">
+    <div className="flex flex-col gap-10">
+      <div className="flex flex-col gap-8">
         <DataTable
           columns={characterAttributesColumns}
           data={characterAttributes}
@@ -102,16 +103,18 @@ export default async function Manage() {
         <Separator />
         <DataTable columns={weaponColumns} data={weapons} title="Armes" />
       </div>
-      <h2 className="text-2xl font-semibold underline underline-offset-8 dark:text-primary">
-        Créer une arme
-      </h2>
-      <WeaponForm
-        ammos={ammo}
-        damages={damage}
-        ranges={range}
-        weights={weight}
-        skills={weaponSkill}
-      />
+      <div className="flex flex-col gap-4">
+        <h2 className="text-lg font-semibold">Créer une arme</h2>
+        <FormPanel className="max-w-xl">
+          <WeaponForm
+            ammos={ammo}
+            damages={damage}
+            ranges={range}
+            weights={weight}
+            skills={weaponSkill}
+          />
+        </FormPanel>
+      </div>
       <Separator />
       <TabsManagement isAuthorized={isAuthorized} />
     </div>

@@ -6,27 +6,23 @@ import { cn } from "@/lib/utils";
 import { Loader } from "./loader";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-all focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 enabled:hover:scale-105 enabled:hover:ring-2 enabled:hover:ring-offset-2 enabled:active:scale-[1.02]  disabled:cursor-not-allowed disabled:opacity-50",
+  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
   {
     variants: {
       variant: {
-        default:
-          "bg-primary text-primary-foreground hover:ring-ring enabled:hover:bg-primary/90",
+        default: "bg-primary text-primary-foreground hover:bg-primary/90",
         destructive:
-          "bg-destructive text-destructive-foreground hover:scale-110 hover:bg-destructive/90 hover:ring-destructive",
+          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         outline:
-          "border border-input bg-background hover:bg-accent hover:text-accent-foreground hover:ring-ring",
+          "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost:
-          "hover:bg-accent hover:text-accent-foreground enabled:hover:scale-100 enabled:hover:ring-0 enabled:hover:ring-offset-0",
-        link: "text-primary underline-offset-4 hover:underline hover:ring-0 hover:ring-offset-0",
-        discord:
-          "bg-[#7289da] text-white hover:bg-[#677bc4] hover:ring-[#7289da]",
-        github:
-          "bg-[#24292e] text-white hover:bg-[#2f363d] hover:ring-[#24292e]",
+        ghost: "hover:bg-accent hover:text-accent-foreground",
+        link: "text-primary underline-offset-4 hover:underline",
+        discord: "bg-[#5865F2] text-white hover:bg-[#4752C4]",
+        github: "bg-[#18181B] text-white hover:bg-[#27272A]",
         google:
-          "border bg-white text-black hover:bg-[#d4d4d4] hover:ring-[#4285f4]",
+          "border border-input bg-background text-foreground hover:bg-accent",
       },
       size: {
         default: "h-10 px-4 py-2",
