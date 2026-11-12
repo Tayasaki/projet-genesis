@@ -74,42 +74,50 @@ export default function AutoFormEnum({
       <EmptyStateInline
         icon={ListX}
         title={
-          label ? tEmpty("noOptionsFor", { label }) : tEmpty("noOptionsAvailable")
+          label
+            ? tEmpty("noOptionsFor", { label })
+            : tEmpty("noOptionsAvailable")
         }
       />
     </FormItem>
   ) : (
     <FormItem>
       <AutoFormLabel label={label} isRequired={isRequired} />
-      <Select
-        onValueChange={field.onChange}
-        defaultValue={field.value}
-        {...rootProps}
-      >
-        <EnumTrigger className={fieldProps.className} triggerRef={ref}>
-          <SelectValue
-            placeholder={
-              fieldConfigItem.inputProps?.placeholder ?? t("selectOption")
-            }
+      <div className="flex items-center gap-2">
+        <div className="min-w-0 flex-1">
+          <Select
+            onValueChange={field.onChange}
+            defaultValue={field.value}
+            {...rootProps}
           >
-            {field.value ? findItem(field.value)?.[1] : undefined}
-          </SelectValue>
-        </EnumTrigger>
-        <SelectContent>
-          {values.map(([value, label]) => (
-            <SelectItem value={label} key={value}>
-              {label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+            <EnumTrigger className={fieldProps.className} triggerRef={ref}>
+              <SelectValue
+                placeholder={
+                  fieldConfigItem.inputProps?.placeholder ?? t("selectOption")
+                }
+              >
+                {field.value ? findItem(field.value)?.[1] : undefined}
+              </SelectValue>
+            </EnumTrigger>
+            <SelectContent>
+              {values.map(([value, label]) => (
+                <SelectItem value={label} key={value}>
+                  {label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <RandomButton
+          randomize={() => {
+            field.onChange(
+              values[Math.floor(Math.random() * values.length)][0],
+            );
+          }}
+        />
+      </div>
       <AutoFormTooltip fieldConfigItem={fieldConfigItem} />
       <FormMessage />
-      <RandomButton
-        randomize={() => {
-          field.onChange(values[Math.floor(Math.random() * values.length)][0]);
-        }}
-      />
     </FormItem>
   );
 }

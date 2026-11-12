@@ -162,14 +162,20 @@ export const CharacterForm = ({
     strength: z
       .array(
         z.object({
-          name: z.enum(strengthNames).describe(t("strengthDescribe")).optional(),
+          name: z
+            .enum(strengthNames)
+            .describe(t("strengthDescribe"))
+            .optional(),
         }),
       )
       .describe(t("strengthSetDescribe")),
     weakness: z
       .array(
         z.object({
-          name: z.enum(weaknessNames).describe(t("weaknessDescribe")).optional(),
+          name: z
+            .enum(weaknessNames)
+            .describe(t("weaknessDescribe"))
+            .optional(),
         }),
       )
       .describe(t("weaknessSetDescribe")),
@@ -294,6 +300,8 @@ export const CharacterForm = ({
       <AutoForm
         values={values}
         formSchema={characterFormSchema}
+        className="bg-card rounded-xl p-6"
+        fieldsClassName="grid gap-x-6 gap-y-5 space-y-0 md:grid-cols-2"
         onValuesChange={setValues}
         onSubmit={async (data) => {
           setIsLoading(true);
@@ -336,18 +344,26 @@ export const CharacterForm = ({
             router.push(`/characters`);
           } else {
             toast.success(t("createdSuccess"));
-            router.push(scenarioId ? `/${scenarioId}/characters` : "/characters");
+            router.push(
+              scenarioId ? `/${scenarioId}/characters` : "/characters",
+            );
           }
           return values;
         }}
         fieldConfig={{
           name: {
+            renderParent: ({ children }) => (
+              <div className="md:col-span-2">{children}</div>
+            ),
             inputProps: {
               placeholder: t("namePlaceholder"),
             },
           },
           pj: {
             fieldType: "switch",
+            renderParent: ({ children }) => (
+              <div className="md:col-span-2">{children}</div>
+            ),
           },
           origin: {
             inputProps: {
@@ -361,7 +377,7 @@ export const CharacterForm = ({
           },
           age: {
             renderParent: ({ children }) => (
-              <div className="space-y-2">
+              <div className="flex items-end gap-2 [&>*:first-child]:flex-1">
                 {children}
                 <RandomButton
                   randomize={() => {
@@ -389,9 +405,11 @@ export const CharacterForm = ({
           },
         }}
       >
-        <AutoFormSubmit isLoading={isLoading}>
-          {modify ? t("modifySubmit") : t("createSubmit")}
-        </AutoFormSubmit>
+        <div className="mt-6 flex justify-end border-t pt-6">
+          <AutoFormSubmit isLoading={isLoading}>
+            {modify ? t("modifySubmit") : t("createSubmit")}
+          </AutoFormSubmit>
+        </div>
       </AutoForm>
     </div>
   );
