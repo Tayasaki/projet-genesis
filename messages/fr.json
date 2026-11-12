@@ -54,21 +54,28 @@
     "subtitle": "Connectez-vous pour accéder à vos scénarios et personnages.",
     "withGoogle": "Connectez vous avec Google",
     "withGithub": "Connectez vous avec Github",
-    "withDiscord": "Connectez vous avec Discord"
+    "withDiscord": "Connectez vous avec Discord",
+    "heroTitle": "Construisez vos mondes de jeu de rôle",
+    "heroDescription": "Tout pour préparer vos parties au même endroit.",
+    "featureScenarios": "Créez des scénarios pour n'importe quel univers",
+    "featureCharacters": "Générez des personnages à la main ou avec l'IA",
+    "featureWeapons": "Gardez vos armes et attributs organisés",
+    "signInTitle": "Connexion"
   },
   "home": {
     "title": "Bienvenue sur Projet Genesis",
     "description": "Créez des scénarios et générez des personnages aléatoirement pour vos parties de JDR. Gardez une trace de vos personnages et de vos armes, et utilisez librement les attributs déjà définis — vous pouvez en suggérer de nouveaux si vous n'êtes pas autorisé à les créer vous-même.",
     "createScenario": "Créer un scénario",
     "scenarioName": "Nom du scénario",
-    "scenarioNamePlaceholder": "Scenario super cool!",
+    "scenarioNamePlaceholder": "Le siège de Valmor",
     "scenarioUniverse": "Univers du scénario",
-    "scenarioUniversePlaceholder": "Univers ultra fun!",
+    "scenarioUniversePlaceholder": "Fantasy sombre",
     "scenarioDescription": "Description du scénario",
     "submit": "Créer mon scénario",
     "requiredFieldsError": "Veuillez remplir tous les champs",
     "mustBeLoggedInError": "Vous devez être connecté pour créer un scénario",
-    "createdSuccess": "Scénario créé avec succès"
+    "createdSuccess": "Scénario créé avec succès",
+    "scenarioDescriptionPlaceholder": "Une guilde de mercenaires part reprendre une cité assiégée."
   },
   "scenario": {
     "characterCount": "{count, plural, one {# personnage} other {# personnages}}",
@@ -146,18 +153,18 @@
     "generationPageTitle": "Générer votre personnage",
     "editPageTitle": "Modifier votre personnage",
     "nameDescribe": "Nom du personnage",
-    "namePlaceholder": "Eric Tournlavis",
+    "namePlaceholder": "Aldric Voss",
     "pjDescribe": "Personnage joueur",
     "originDescribe": "Origine du personnage",
-    "originPlaceholder": "Né dans les montagnes",
+    "originPlaceholder": "Élevé dans les marches du nord",
     "roleDescribe": "Rôle du personnage",
-    "rolePlaceholder": "Guerrier",
+    "rolePlaceholder": "Capitaine de la garde",
     "ageDescribe": "Age du personnage",
     "agePlaceholder": "25",
     "injuryDescribe": "Blessure",
-    "injuryPlaceholder": "Blessure à la jambe",
+    "injuryPlaceholder": "Cicatrice au bras gauche",
     "extraDescribe": "Extra",
-    "extraPlaceholder": "Aime les chats",
+    "extraPlaceholder": "Porte une lettre scellée",
     "temperment": "Tempérament",
     "alignment": "Alignement",
     "fortune": "Richesse",
@@ -225,7 +232,7 @@
       "nameDescribe": "Nom du tempérament",
       "namePlaceholder": "Colérique",
       "descriptionDescribe": "Description du tempérament",
-      "descriptionPlaceholder": "Le colérique est une personne qui s'énerve facilement",
+      "descriptionPlaceholder": "Prompt à s'emporter, lent à pardonner",
       "createSubmit": "Créer le tempérament"
     },
     "alignement": {
@@ -235,7 +242,7 @@
       "nameDescribe": "Nom de l'alignement",
       "namePlaceholder": "Loyal bon",
       "descriptionDescribe": "Description de l'alignement",
-      "descriptionPlaceholder": "Un personnage loyal bon agit comme un chevalier",
+      "descriptionPlaceholder": "Suit un code moral strict",
       "createSubmit": "Créer l'alignement"
     },
     "fortune": {
@@ -243,9 +250,9 @@
       "created": "Richesse créée avec succès",
       "deleted": "Richesse supprimée avec succès",
       "nameDescribe": "Nom de la richesse",
-      "namePlaceholder": "Riche comme Crésus",
+      "namePlaceholder": "Aisé",
       "descriptionDescribe": "Description de la richesse",
-      "descriptionPlaceholder": "Le personnage est riche comme Crésus",
+      "descriptionPlaceholder": "Possède des terres et une fortune confortable",
       "createSubmit": "Créer la richesse"
     },
     "strength": {
@@ -253,7 +260,7 @@
       "created": "Force créée avec succès",
       "deleted": "Force supprimée avec succès",
       "nameDescribe": "Nom de la force",
-      "namePlaceholder": "Force de l'ours",
+      "namePlaceholder": "Endurance",
       "createSubmit": "Créer la force"
     },
     "weakness": {
@@ -261,7 +268,7 @@
       "created": "Faiblesse créée avec succès",
       "deleted": "Faiblesse supprimée avec succès",
       "nameDescribe": "Nom de la faiblesse",
-      "namePlaceholder": "Faible comme un chaton",
+      "namePlaceholder": "Têtu",
       "createSubmit": "Créer la faiblesse"
     },
     "characterSkill": {
@@ -269,7 +276,7 @@
       "created": "Compétence créée avec succès",
       "deleted": "Compétence supprimée avec succès",
       "nameDescribe": "Nom de la compétence",
-      "namePlaceholder": "Agile",
+      "namePlaceholder": "Escrime",
       "createSubmit": "Créer la compétence"
     },
     "ammo": {
@@ -277,7 +284,7 @@
       "created": "Munition créée avec succès",
       "deleted": "Munition supprimée avec succès",
       "nameDescribe": "Nom de la munition",
-      "namePlaceholder": "Peu de munition",
+      "namePlaceholder": "Flèches",
       "createSubmit": "Créer la munition"
     },
     "damage": {
@@ -285,7 +292,7 @@
       "created": "Dégât créé avec succès",
       "deleted": "Dégât supprimé avec succès",
       "nameDescribe": "Nom du dégât",
-      "namePlaceholder": "Peu de dégât",
+      "namePlaceholder": "Faible",
       "createSubmit": "Créer le dégât"
     },
     "range": {
@@ -293,7 +300,7 @@
       "created": "Portée créée avec succès",
       "deleted": "Portée supprimée avec succès",
       "nameDescribe": "Nom de la portée",
-      "namePlaceholder": "Faible portée",
+      "namePlaceholder": "Courte",
       "createSubmit": "Créer la portée"
     },
     "weaponSkill": {
@@ -301,7 +308,7 @@
       "created": "Compétence créée avec succès",
       "deleted": "Compétence supprimée avec succès",
       "nameDescribe": "Nom de la compétence",
-      "namePlaceholder": "Perçant",
+      "namePlaceholder": "Tir à l'arc",
       "createSubmit": "Créer la compétence"
     },
     "weight": {
@@ -309,7 +316,7 @@
       "created": "Poids créé avec succès",
       "deleted": "Poids supprimé avec succès",
       "nameDescribe": "Nom du poids",
-      "namePlaceholder": "Très lourd",
+      "namePlaceholder": "Lourd",
       "createSubmit": "Créer le poids"
     }
   },

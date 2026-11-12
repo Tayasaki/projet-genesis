@@ -21,6 +21,7 @@ export const ScenarioForm = ({ onSuccess }: { onSuccess?: () => void }) => {
   return (
     <AutoForm
       formSchema={formScenarioSchema}
+      className="border-0 p-0"
       onSubmit={async (data) => {
         setIsLoading(true);
         const values = await createScenario({
@@ -56,8 +57,7 @@ export const ScenarioForm = ({ onSuccess }: { onSuccess?: () => void }) => {
         },
         description: {
           inputProps: {
-            placeholder:
-              "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Alias culpa vel quam doloremque, soluta iste quis reiciendis? Quisquam, eum, dolores fuga iste est, aspernatur odit id magnam delectus dicta vel!",
+            placeholder: t("scenarioDescriptionPlaceholder"),
           },
           fieldType: "textarea",
         },

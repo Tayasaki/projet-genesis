@@ -54,21 +54,28 @@
     "subtitle": "Sign in to access your scenarios and characters.",
     "withGoogle": "Continue with Google",
     "withGithub": "Continue with Github",
-    "withDiscord": "Continue with Discord"
+    "withDiscord": "Continue with Discord",
+    "heroTitle": "Build your tabletop RPG worlds",
+    "heroDescription": "Everything you need to prepare your sessions in one place.",
+    "featureScenarios": "Create scenarios for any universe",
+    "featureCharacters": "Generate characters by hand or with AI",
+    "featureWeapons": "Keep your weapons and attributes organised",
+    "signInTitle": "Sign in"
   },
   "home": {
     "title": "Welcome to Projet Genesis",
     "description": "Create scenarios and randomly generate characters for your tabletop RPG sessions. Keep track of your characters and weapons, and freely use the attributes already defined — you can suggest new ones if you're not authorized to create them yourself.",
     "createScenario": "Create a scenario",
     "scenarioName": "Scenario name",
-    "scenarioNamePlaceholder": "Super cool scenario!",
+    "scenarioNamePlaceholder": "The Siege of Valmor",
     "scenarioUniverse": "Scenario universe",
-    "scenarioUniversePlaceholder": "Ultra fun universe!",
+    "scenarioUniversePlaceholder": "Dark fantasy",
     "scenarioDescription": "Scenario description",
     "submit": "Create my scenario",
     "requiredFieldsError": "Please fill in all fields",
     "mustBeLoggedInError": "You must be logged in to create a scenario",
-    "createdSuccess": "Scenario created successfully"
+    "createdSuccess": "Scenario created successfully",
+    "scenarioDescriptionPlaceholder": "A guild of mercenaries sets out to retake a besieged city."
   },
   "scenario": {
     "characterCount": "{count, plural, one {# character} other {# characters}}",
@@ -146,18 +153,18 @@
     "generationPageTitle": "Generate your character",
     "editPageTitle": "Edit your character",
     "nameDescribe": "Character name",
-    "namePlaceholder": "Eric Tournlavis",
+    "namePlaceholder": "Aldric Voss",
     "pjDescribe": "Player character",
     "originDescribe": "Character origin",
-    "originPlaceholder": "Born in the mountains",
+    "originPlaceholder": "Raised in the northern marches",
     "roleDescribe": "Character role",
-    "rolePlaceholder": "Warrior",
+    "rolePlaceholder": "Captain of the guard",
     "ageDescribe": "Character age",
     "agePlaceholder": "25",
     "injuryDescribe": "Injury",
-    "injuryPlaceholder": "Leg injury",
+    "injuryPlaceholder": "Scar on the left arm",
     "extraDescribe": "Extra",
-    "extraPlaceholder": "Loves cats",
+    "extraPlaceholder": "Carries a sealed letter",
     "temperment": "Temperament",
     "alignment": "Alignment",
     "fortune": "Fortune",
@@ -225,7 +232,7 @@
       "nameDescribe": "Temperament name",
       "namePlaceholder": "Choleric",
       "descriptionDescribe": "Temperament description",
-      "descriptionPlaceholder": "A choleric person gets angry easily",
+      "descriptionPlaceholder": "Quick to anger, slow to forgive",
       "createSubmit": "Create the temperament"
     },
     "alignement": {
@@ -235,7 +242,7 @@
       "nameDescribe": "Alignment name",
       "namePlaceholder": "Lawful good",
       "descriptionDescribe": "Alignment description",
-      "descriptionPlaceholder": "A lawful good character acts like a knight",
+      "descriptionPlaceholder": "Follows a strict moral code",
       "createSubmit": "Create the alignment"
     },
     "fortune": {
@@ -243,9 +250,9 @@
       "created": "Fortune created successfully",
       "deleted": "Fortune deleted successfully",
       "nameDescribe": "Fortune name",
-      "namePlaceholder": "Rich as Croesus",
+      "namePlaceholder": "Wealthy",
       "descriptionDescribe": "Fortune description",
-      "descriptionPlaceholder": "The character is rich as Croesus",
+      "descriptionPlaceholder": "Owns land and a comfortable fortune",
       "createSubmit": "Create the fortune"
     },
     "strength": {
@@ -253,7 +260,7 @@
       "created": "Strength created successfully",
       "deleted": "Strength deleted successfully",
       "nameDescribe": "Strength name",
-      "namePlaceholder": "Bear strength",
+      "namePlaceholder": "Endurance",
       "createSubmit": "Create the strength"
     },
     "weakness": {
@@ -261,7 +268,7 @@
       "created": "Weakness created successfully",
       "deleted": "Weakness deleted successfully",
       "nameDescribe": "Weakness name",
-      "namePlaceholder": "Weak as a kitten",
+      "namePlaceholder": "Stubborn",
       "createSubmit": "Create the weakness"
     },
     "characterSkill": {
@@ -269,7 +276,7 @@
       "created": "Skill created successfully",
       "deleted": "Skill deleted successfully",
       "nameDescribe": "Skill name",
-      "namePlaceholder": "Agile",
+      "namePlaceholder": "Swordsmanship",
       "createSubmit": "Create the skill"
     },
     "ammo": {
@@ -277,7 +284,7 @@
       "created": "Ammo created successfully",
       "deleted": "Ammo deleted successfully",
       "nameDescribe": "Ammo name",
-      "namePlaceholder": "Low ammo",
+      "namePlaceholder": "Arrows",
       "createSubmit": "Create the ammo"
     },
     "damage": {
@@ -285,7 +292,7 @@
       "created": "Damage created successfully",
       "deleted": "Damage deleted successfully",
       "nameDescribe": "Damage name",
-      "namePlaceholder": "Low damage",
+      "namePlaceholder": "Light",
       "createSubmit": "Create the damage"
     },
     "range": {
@@ -293,7 +300,7 @@
       "created": "Range created successfully",
       "deleted": "Range deleted successfully",
       "nameDescribe": "Range name",
-      "namePlaceholder": "Short range",
+      "namePlaceholder": "Short",
       "createSubmit": "Create the range"
     },
     "weaponSkill": {
@@ -301,7 +308,7 @@
       "created": "Weapon skill created successfully",
       "deleted": "Weapon skill deleted successfully",
       "nameDescribe": "Weapon skill name",
-      "namePlaceholder": "Piercing",
+      "namePlaceholder": "Archery",
       "createSubmit": "Create the weapon skill"
     },
     "weight": {
@@ -309,7 +316,7 @@
       "created": "Weight created successfully",
       "deleted": "Weight deleted successfully",
       "nameDescribe": "Weight name",
-      "namePlaceholder": "Very heavy",
+      "namePlaceholder": "Heavy",
       "createSubmit": "Create the weight"
     }
   },
