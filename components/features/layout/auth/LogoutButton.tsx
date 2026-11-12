@@ -24,7 +24,7 @@ export const LogoutButton = () => {
   const [isPending, startTransition] = useTransition();
   return (
     <Button
-      variant={"destructive"}
+      variant={"outline"}
       onClick={() => {
         startTransition(() => {
           signOut();
@@ -86,8 +86,8 @@ export const DeleteAccountButton = () => {
     >
       <AlertDialogTrigger asChild>
         <Button
-          variant="destructive"
-          className="rounded-md bg-gray-200 text-destructive hover:bg-gray-200/70"
+          variant="outline"
+          className="border-destructive text-destructive hover:bg-destructive/10 hover:text-destructive"
         >
           {t("deleteAccount")}
         </Button>

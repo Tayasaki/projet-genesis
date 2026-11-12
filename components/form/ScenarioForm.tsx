@@ -8,7 +8,7 @@ import { requiredString } from "@/components/form/required-string";
 import { z } from "zod";
 import AutoForm, { AutoFormSubmit } from "../ui/auto-form";
 
-export const ScenarioForm = () => {
+export const ScenarioForm = ({ onSuccess }: { onSuccess?: () => void }) => {
   const t = useTranslations("home");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -40,6 +40,7 @@ export const ScenarioForm = () => {
 
         toast.success(t("createdSuccess"));
         setIsLoading(false);
+        onSuccess?.();
         return values;
       }}
       fieldConfig={{

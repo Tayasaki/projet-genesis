@@ -35,6 +35,7 @@
     "requiredField": "This field is required"
   },
   "nav": {
+    "home": "Scenarios",
     "suggestions": "Suggestions",
     "manage": "Manage",
     "myCharacters": "My characters"
@@ -120,11 +121,12 @@
   },
   "profile": {
     "profilePictureAlt": "Profile picture",
-    "scenariosCreatedSuffix": "scenarios created 📄",
-    "charactersCreatedSuffix": "game characters 🤺",
-    "weaponsReadySuffix": "weapons ready to use ⚔",
-    "none": "None",
-    "noneFeminine": "None"
+    "scenarios": "Scenarios",
+    "characters": "Characters",
+    "weapons": "Weapons",
+    "accountSection": "Account",
+    "dangerZone": "Danger zone",
+    "dangerZoneDescription": "Deleting your account is irreversible and will erase all your data."
   },
   "characterForm": {
     "generationPageTitle": "Generate your character",

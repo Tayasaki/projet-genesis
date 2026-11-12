@@ -1,5 +1,3 @@
-import { Footer } from "@/components/features/layout/Footer";
-import { Header } from "@/components/features/layout/Header";
 import { ThemeProvider } from "@/components/features/theme/ThemeProvider";
 import clsx from "clsx";
 import type { Metadata } from "next";
@@ -34,14 +32,8 @@ export default async function RootLayout({
       >
         <NextIntlClientProvider locale={locale} messages={messages}>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <div className="flex size-full min-h-screen flex-col">
-              <Header />
-              <main className="container m-auto h-full max-w-5xl flex-1 pt-24 pb-16">
-                {children}
-              </main>
-              <Footer />
-              <Toaster />
-            </div>
+            {children}
+            <Toaster />
           </ThemeProvider>
         </NextIntlClientProvider>
       </body>

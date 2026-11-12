@@ -46,7 +46,7 @@ vi.mock("@/components/features/layout/DeleteDialog", () => ({
 }));
 vi.mock("sonner", () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
 
-import { SuggestionsTable } from "@/app/suggestions/suggestionsColumns";
+import { SuggestionsTable } from "@/app/(app)/suggestions/suggestionsColumns";
 import type { Suggestion } from "@/src/query/suggestion.query";
 
 function renderAcceptButton() {

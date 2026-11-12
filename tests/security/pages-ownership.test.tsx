@@ -46,8 +46,8 @@ vi.mock("@/components/features/layout/DisplayCharacter", () => ({
   DisplayCharacter: () => null,
 }));
 
-import ScenarioManage from "@/app/[scenarioId]/characters/page";
-import ModalCharacter from "@/app/[scenarioId]/characters/@modal/(...)characters/[characterId]/page";
+import ScenarioManage from "@/app/(app)/[scenarioId]/characters/page";
+import ModalCharacter from "@/app/(app)/[scenarioId]/characters/@modal/(...)characters/[characterId]/page";
 
 function actAs(userId: string) {
   h.session = { user: { id: userId } };

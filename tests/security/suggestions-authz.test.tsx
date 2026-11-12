@@ -44,12 +44,12 @@ vi.mock("next/navigation", () => ({
 vi.mock("@/src/query/suggestion.query", () => ({
   getSuggestions: async () => [],
 }));
-vi.mock("../../app/manage/data-table", () => ({ DataTable: () => null }));
-vi.mock("../../app/suggestions/suggestionsColumns", () => ({
+vi.mock("../../app/(app)/manage/data-table", () => ({ DataTable: () => null }));
+vi.mock("../../app/(app)/suggestions/suggestionsColumns", () => ({
   SuggestionsTable: () => null,
 }));
 
-import SuggestionsPage from "@/app/suggestions/page";
+import SuggestionsPage from "@/app/(app)/suggestions/page";
 import {
   createSuggestion,
   deleteSuggestion,

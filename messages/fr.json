@@ -35,6 +35,7 @@
     "requiredField": "Ce champ est requis"
   },
   "nav": {
+    "home": "Scénarios",
     "suggestions": "Suggestions",
     "manage": "Gestion",
     "myCharacters": "Mes personnages"
@@ -120,11 +121,12 @@
   },
   "profile": {
     "profilePictureAlt": "Photo de profil",
-    "scenariosCreatedSuffix": "scénarios créés 📄",
-    "charactersCreatedSuffix": "personnages de jeu 🤺",
-    "weaponsReadySuffix": "armes prêtes à l'utilisation ⚔",
-    "none": "Aucun",
-    "noneFeminine": "Aucune"
+    "scenarios": "Scénarios",
+    "characters": "Personnages",
+    "weapons": "Armes",
+    "accountSection": "Compte",
+    "dangerZone": "Zone de danger",
+    "dangerZoneDescription": "Supprimer votre compte est irréversible et effacera toutes vos données."
   },
   "characterForm": {
     "generationPageTitle": "Générer votre personnage",

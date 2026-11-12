@@ -11,7 +11,10 @@ import { useState } from "react";
 export const LoginButton = () => {
   const t = useTranslations("common");
   return (
-    <Link href={"/login"} className={clsx(buttonVariants({ variant: "link" }))}>
+    <Link
+      href={"/login"}
+      className={clsx(buttonVariants({ variant: "default" }), "w-full")}
+    >
       <LogIn className="mr-2 size-4" />
       {t("login")}
     </Link>

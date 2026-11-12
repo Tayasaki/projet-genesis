@@ -12,7 +12,7 @@ vi.mock("next/navigation", () => ({
   },
 }));
 
-import PrivacyPolicy from "@/app/privacy-policy/page";
+import PrivacyPolicy from "@/app/(auth)/privacy-policy/page";
 
 const text = async () => {
   const { container } = render(await PrivacyPolicy());

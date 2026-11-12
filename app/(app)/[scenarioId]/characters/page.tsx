@@ -20,7 +20,7 @@ import { ArrowRight, Plus, Users } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { getCharacters } from "../../../src/query/character.query";
+import { getCharacters } from "@/src/query/character.query";
 import { DisplayCharacter } from "@/components/features/layout/DisplayCharacter";
 
 export default async function ScenarioManage(props: {
@@ -59,7 +59,10 @@ export default async function ScenarioManage(props: {
         <div className="flex items-center gap-2">
           <Dialog>
             <DialogTrigger
-              className={cn(buttonVariants(), "flex items-center gap-2")}
+              className={cn(
+                buttonVariants({ variant: "outline" }),
+                "flex items-center gap-2",
+              )}
             >
               <Plus size={16} className="mr-2" />
               {t("import")}
@@ -78,7 +81,7 @@ export default async function ScenarioManage(props: {
             </DialogContent>
           </Dialog>
           <Link
-            className={cn(buttonVariants({ variant: "link" }), "group")}
+            className={cn(buttonVariants(), "group")}
             href={`/${params.scenarioId}/character-generation`}
           >
             {t("createCharacter")}
