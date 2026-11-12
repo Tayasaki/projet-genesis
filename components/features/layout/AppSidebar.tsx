@@ -11,7 +11,6 @@ import {
   SidebarMenuItem,
   SidebarRail,
   SidebarTrigger,
-  useSidebar,
 } from "@/components/ui/sidebar";
 import { BookOpen, LayoutGrid, Lightbulb, LogIn, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -46,28 +45,24 @@ export function AppSidebar({
 }) {
   const t = useTranslations("common");
   const pathname = usePathname();
-  const { state } = useSidebar();
-  const collapsed = state === "collapsed";
 
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
-        <div
-          className={
-            collapsed
-              ? "flex flex-col items-center gap-1 py-1"
-              : "flex items-center justify-between gap-2 px-1 py-1"
-          }
-        >
-          <Link href="/" className="flex shrink-0 items-center gap-2.5">
+        <div className="group/header relative flex h-8 items-center justify-between gap-2 px-1 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0">
+          <Link
+            href="/"
+            className="flex items-center gap-2.5 overflow-hidden group-data-[collapsible=icon]:group-hover/header:invisible"
+          >
             <LogoMark className="size-7 shrink-0" />
-            {!collapsed && (
-              <span className="text-sm font-semibold tracking-tight whitespace-nowrap">
-                {appName}
-              </span>
-            )}
+            <span className="text-sm font-semibold tracking-tight whitespace-nowrap group-data-[collapsible=icon]:hidden">
+              {appName}
+            </span>
           </Link>
-          <SidebarTrigger aria-label={t("toggleSidebar")} />
+          <SidebarTrigger
+            aria-label={t("toggleSidebar")}
+            className="group-data-[collapsible=icon]:absolute group-data-[collapsible=icon]:opacity-0 group-data-[collapsible=icon]:group-hover/header:opacity-100 group-data-[collapsible=icon]:focus-visible:opacity-100"
+          />
         </div>
       </SidebarHeader>
 
@@ -96,19 +91,25 @@ export function AppSidebar({
       </SidebarContent>
 
       <SidebarFooter>
-        {!userName && !collapsed && <LoginButton />}
-        {!userName && collapsed && (
-          <SidebarMenuButton asChild tooltip={t("login")}>
-            <Link href="/login">
-              <LogIn />
-              <span>{t("login")}</span>
-            </Link>
-          </SidebarMenuButton>
+        {!userName && (
+          <>
+            <div className="group-data-[collapsible=icon]:hidden">
+              <LoginButton />
+            </div>
+            <SidebarMenuButton
+              asChild
+              tooltip={t("login")}
+              className="hidden group-data-[collapsible=icon]:flex"
+            >
+              <Link href="/login">
+                <LogIn />
+                <span>{t("login")}</span>
+              </Link>
+            </SidebarMenuButton>
+            <SidebarPreferencesTrigger />
+          </>
         )}
-        {!userName && <SidebarPreferencesTrigger />}
-        {userName && (
-          <SidebarAccountMenu userName={userName} collapsed={collapsed} />
-        )}
+        {userName && <SidebarAccountMenu userName={userName} />}
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

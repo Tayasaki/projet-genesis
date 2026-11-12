@@ -19,10 +19,8 @@ const itemClass =
 
 export function SidebarAccountMenu({
   userName,
-  collapsed,
 }: {
   userName: string;
-  collapsed?: boolean;
 }) {
   const t = useTranslations("account");
   const tFooter = useTranslations("footer");
@@ -33,11 +31,13 @@ export function SidebarAccountMenu({
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          aria-label={collapsed ? userName : undefined}
-          className={cn(collapsed ? "size-8 p-0" : "w-full justify-start")}
+          aria-label={userName}
+          className="w-full justify-start overflow-hidden transition-[width,padding] duration-200 ease-linear group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:p-2"
         >
           <User2 className="size-4 shrink-0" />
-          {!collapsed && <span className="truncate">{userName}</span>}
+          <span className="truncate group-data-[collapsible=icon]:hidden">
+            {userName}
+          </span>
         </Button>
       </PopoverTrigger>
       <PopoverContent align="start" side="top" className="w-64 p-2">
