@@ -34,25 +34,27 @@ export function SidebarShell({
         collapsed ? "w-[68px]" : "w-64",
       )}
     >
-      <div
-        className={cn(
-          "flex h-14 items-center border-b px-5",
-          collapsed && "justify-center px-0",
-        )}
-      >
-        {!collapsed && (
-          <Link href="/" className="flex items-center gap-2.5">
-            <LogoMark className="size-7" />
-            <span className="text-sm font-semibold tracking-tight">
+      <div className="flex h-14 items-center justify-between border-b pr-2 pl-5">
+        <Link href="/" className="flex items-center gap-2.5 overflow-hidden">
+          <LogoMark className="size-7 shrink-0" />
+          {!collapsed && (
+            <span className="truncate text-sm font-semibold tracking-tight">
               {appName}
             </span>
-          </Link>
-        )}
-        {collapsed && (
-          <Link href="/">
-            <LogoMark className="size-7" />
-          </Link>
-        )}
+          )}
+        </Link>
+        <button
+          type="button"
+          onClick={toggle}
+          aria-label={collapsed ? t("expandSidebar") : t("collapseSidebar")}
+          className="text-muted-foreground hover:bg-accent hover:text-foreground flex size-8 shrink-0 items-center justify-center rounded-md transition-colors"
+        >
+          {collapsed ? (
+            <ChevronRight className="size-4" />
+          ) : (
+            <ChevronLeft className="size-4" />
+          )}
+        </button>
       </div>
 
       <div className="flex-1 overflow-y-auto p-3">
@@ -70,30 +72,10 @@ export function SidebarShell({
             <LogIn className="size-4" />
           </Link>
         )}
-        <div
-          className={cn(
-            "flex items-center gap-2",
-            collapsed ? "flex-col" : "justify-between",
-          )}
-        >
-          {userName ? (
-            <SidebarAccountMenu userName={userName} collapsed={collapsed} />
-          ) : (
-            <SidebarPreferencesTrigger />
-          )}
-          <button
-            type="button"
-            onClick={toggle}
-            aria-label={collapsed ? t("expandSidebar") : t("collapseSidebar")}
-            className="text-muted-foreground hover:bg-accent hover:text-foreground flex size-9 shrink-0 items-center justify-center rounded-md transition-colors"
-          >
-            {collapsed ? (
-              <ChevronRight className="size-4" />
-            ) : (
-              <ChevronLeft className="size-4" />
-            )}
-          </button>
-        </div>
+        {!userName && <SidebarPreferencesTrigger />}
+        {userName && (
+          <SidebarAccountMenu userName={userName} collapsed={collapsed} />
+        )}
       </div>
     </aside>
   );
