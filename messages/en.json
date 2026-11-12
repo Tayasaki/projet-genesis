@@ -42,7 +42,8 @@
     "home": "Scenarios",
     "suggestions": "Suggestions",
     "manage": "Manage",
-    "myCharacters": "My characters"
+    "myCharacters": "My characters",
+    "profile": "Profile"
   },
   "footer": {
     "tos": "Terms of Service",
