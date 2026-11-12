@@ -10,7 +10,7 @@ import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { cache } from "react";
-import { MyCharactersTable } from "./characterColumns";
+import { MyCharactersGrid } from "./MyCharactersGrid";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("metadata");
@@ -20,6 +20,15 @@ export async function generateMetadata(): Promise<Metadata> {
 const getUserCharacters = cache((userId: string) =>
   prisma.character.findMany({
     where: charactersOwnedBy(userId),
+    include: {
+      temperment: true,
+      alignment: true,
+      strength: true,
+      weakness: true,
+      fortune: true,
+      skillSet: true,
+      weapon: true,
+    },
   }),
 );
 
@@ -44,7 +53,7 @@ export default async function MyCharacters() {
         }
       />
       {characters.length > 0 ? (
-        <MyCharactersTable data={characters} />
+        <MyCharactersGrid characters={characters} />
       ) : (
         <EmptyState
           icon={Users}

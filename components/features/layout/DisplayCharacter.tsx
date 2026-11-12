@@ -15,8 +15,10 @@ import { Character } from "./Character";
 
 export const DisplayCharacter = ({
   characterList,
+  renderActions,
 }: {
   characterList: CharacterScenario[];
+  renderActions?: (character: CharacterScenario) => React.ReactNode;
 }) => {
   const t = useTranslations("characterCard");
   const [displayArgument, setDisplayArgument] = useState<{
@@ -76,7 +78,7 @@ export const DisplayCharacter = ({
       </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {filteredCharacters.map((c) => (
-          <Character key={c.id} character={c} />
+          <Character key={c.id} character={c} actions={renderActions?.(c)} />
         ))}
       </div>
     </div>

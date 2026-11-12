@@ -29,10 +29,17 @@ const TraitBadge = ({ trait, title }: { trait: Trait; title: string }) => {
   );
 };
 
-export const Character = ({ character }: { character: CharacterScenario }) => {
+export const Character = ({
+  character,
+  actions,
+}: {
+  character: CharacterScenario;
+  actions?: React.ReactNode;
+}) => {
   const t = useTranslations("characterCard");
   return (
     <div className="bg-card hover:border-primary/40 focus-within:border-primary/40 relative flex h-full flex-col gap-4 rounded-xl border p-5 transition-colors">
+      {actions && <div className="absolute top-3 right-3 z-10">{actions}</div>}
       <div className="flex items-start gap-3">
         <Avatar className="size-11">
           {character.image ? (
