@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/ui/page-header";
 import { ScenarioList } from "@/components/features/layout/ScenarioList";
 import { CreateScenarioDialog } from "@/components/form/CreateScenarioDialog";
 import { getAuthSession } from "@/lib/auth";
@@ -20,17 +21,11 @@ export default async function Home() {
   const t = await getTranslations("home");
   return (
     <div className="flex flex-col gap-8">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div className="flex flex-col gap-2">
-          <h1 className="text-3xl font-semibold tracking-tight">
-            {t("title")}
-          </h1>
-          <p className="text-muted-foreground max-w-2xl text-sm leading-6">
-            {t("description")}
-          </p>
-        </div>
-        <CreateScenarioDialog />
-      </div>
+      <PageHeader
+        title={t("title")}
+        description={t("description")}
+        actions={<CreateScenarioDialog />}
+      />
       <ScenarioList scenario={scenarios} />
     </div>
   );

@@ -1,6 +1,8 @@
+import { PageHeader } from "@/components/ui/page-header";
 import { getAuthSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getSuggestions } from "@/src/query/suggestion.query";
+import { getTranslations } from "next-intl/server";
 import { notFound, redirect } from "next/navigation";
 import { SuggestionsTable } from "./suggestionsColumns";
 
@@ -13,5 +15,11 @@ export default async function Suggestion() {
   if (user.role !== "ADMIN" && user.role !== "SUPERUSER") notFound();
 
   const suggestion = await getSuggestions();
-  return <SuggestionsTable data={suggestion} />;
+  const t = await getTranslations("suggestions");
+  return (
+    <div className="flex flex-col gap-8">
+      <PageHeader title={t("heading")} description={t("description")} />
+      <SuggestionsTable data={suggestion} />
+    </div>
+  );
 }

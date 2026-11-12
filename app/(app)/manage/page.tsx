@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/ui/page-header";
 import {
   CharacterAttributeForms,
   WeaponAttributeForms,
@@ -93,59 +94,64 @@ export default async function Manage() {
   weaponSkill.map((w) => weaponAttributes.push({ ...w, type: "skill" }));
 
   return (
-    <Tabs defaultValue="characters">
-      <TabsList>
-        <TabsTrigger value="characters">{t("personnages")}</TabsTrigger>
-        <TabsTrigger value="weapons">{t("armes")}</TabsTrigger>
-      </TabsList>
+    <div className="flex flex-col gap-8">
+      <PageHeader title={t("title")} description={t("description")} />
+      <Tabs defaultValue="characters">
+        <TabsList>
+          <TabsTrigger value="characters">{t("personnages")}</TabsTrigger>
+          <TabsTrigger value="weapons">{t("armes")}</TabsTrigger>
+        </TabsList>
 
-      <TabsContent value="characters" className={panelTabsClass}>
-        <div className="grid gap-8 lg:grid-cols-2">
-          <CharacterAttributesTable
-            data={characterAttributes}
-            title={t("characterAttributes")}
-          />
-          <div>
-            <h3 className="mb-4 text-lg font-semibold">
-              {t("createAttribute")}
-            </h3>
-            <CharacterAttributeForms isAuthorized={isAuthorized} />
-          </div>
-        </div>
-      </TabsContent>
-
-      <TabsContent value="weapons" className={panelTabsClass}>
-        <div className="flex flex-col gap-8">
+        <TabsContent value="characters" className={panelTabsClass}>
           <div className="grid gap-8 lg:grid-cols-2">
-            <WeaponsTable data={weapons} title={t("weapons")} />
-            <div>
-              <h3 className="mb-4 text-lg font-semibold">{t("createWeapon")}</h3>
-              <FormPanel>
-                <WeaponForm
-                  ammos={ammo}
-                  damages={damage}
-                  ranges={range}
-                  weights={weight}
-                  skills={weaponSkill}
-                />
-              </FormPanel>
-            </div>
-          </div>
-          <Separator />
-          <div className="grid gap-8 lg:grid-cols-2">
-            <WeaponAttributesTable
-              data={weaponAttributes}
-              title={t("weaponAttributes")}
+            <CharacterAttributesTable
+              data={characterAttributes}
+              title={t("characterAttributes")}
             />
             <div>
               <h3 className="mb-4 text-lg font-semibold">
-                {t("createWeaponAttribute")}
+                {t("createAttribute")}
               </h3>
-              <WeaponAttributeForms isAuthorized={isAuthorized} />
+              <CharacterAttributeForms isAuthorized={isAuthorized} />
             </div>
           </div>
-        </div>
-      </TabsContent>
-    </Tabs>
+        </TabsContent>
+
+        <TabsContent value="weapons" className={panelTabsClass}>
+          <div className="flex flex-col gap-8">
+            <div className="grid gap-8 lg:grid-cols-2">
+              <WeaponsTable data={weapons} title={t("weapons")} />
+              <div>
+                <h3 className="mb-4 text-lg font-semibold">
+                  {t("createWeapon")}
+                </h3>
+                <FormPanel>
+                  <WeaponForm
+                    ammos={ammo}
+                    damages={damage}
+                    ranges={range}
+                    weights={weight}
+                    skills={weaponSkill}
+                  />
+                </FormPanel>
+              </div>
+            </div>
+            <Separator />
+            <div className="grid gap-8 lg:grid-cols-2">
+              <WeaponAttributesTable
+                data={weaponAttributes}
+                title={t("weaponAttributes")}
+              />
+              <div>
+                <h3 className="mb-4 text-lg font-semibold">
+                  {t("createWeaponAttribute")}
+                </h3>
+                <WeaponAttributeForms isAuthorized={isAuthorized} />
+              </div>
+            </div>
+          </div>
+        </TabsContent>
+      </Tabs>
+    </div>
   );
 }

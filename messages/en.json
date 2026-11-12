@@ -127,7 +127,8 @@
     "deleteError": "Error while deleting",
     "deletedSuccess": "{name} deleted",
     "rateLimited": "Too many suggestions, try again later.",
-    "alreadyExists": "This suggestion already exists."
+    "alreadyExists": "This suggestion already exists.",
+    "description": "Review attributes suggested by users and accept the ones to add."
   },
   "profile": {
     "profilePictureAlt": "Profile picture",
@@ -179,7 +180,9 @@
     "modifiedSuccess": "Character updated",
     "createdSuccess": "Character created successfully",
     "modifySubmit": "Update your character",
-    "createSubmit": "Create your character"
+    "createSubmit": "Create your character",
+    "generationPageDescription": "Fill in the sheet by hand or let the AI generate it for you.",
+    "editPageDescription": "Update the details of this character."
   },
   "weaponForm": {
     "nameDescribe": "Weapon name",
@@ -332,7 +335,9 @@
     "damage": "Damage",
     "ammo": "Ammo",
     "range": "Range",
-    "weight": "Weight"
+    "weight": "Weight",
+    "title": "Manage",
+    "description": "Create and organise the weapons and attributes you use to build characters."
   },
   "tos": {
     "title": "Projet-Genesis Terms of Service",

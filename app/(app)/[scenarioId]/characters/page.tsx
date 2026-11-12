@@ -1,5 +1,7 @@
+import { PageHeader } from "@/components/ui/page-header";
 import { Character } from "@/components/features/layout/Character";
 import { ImportCharacter } from "@/components/features/layout/ImportCharacter";
+import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Dialog,
@@ -35,7 +37,10 @@ export default async function ScenarioManage(props: {
 
   if (!scenario) notFound();
   const t = await getTranslations("characters");
-  const scenarioCharacter = await getCharacters(params.scenarioId, session.user.id);
+  const scenarioCharacter = await getCharacters(
+    params.scenarioId,
+    session.user.id,
+  );
   const userCharacter = (
     await prisma.character.findMany({
       where: charactersOwnedBy(session.user.id),
@@ -46,52 +51,48 @@ export default async function ScenarioManage(props: {
 
   return (
     <div className="flex h-full flex-col gap-8">
-      <div className="flex flex-col gap-1.5">
-        <h1 className="text-2xl font-semibold tracking-tight">
-          {scenario.name} ({scenario.universe})
-        </h1>
-        <span className="text-muted-foreground text-sm">
-          {scenario.description}
-        </span>
-      </div>
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold">{t("heading")}</h2>
-        <div className="flex items-center gap-2">
-          <Dialog>
-            <DialogTrigger
-              className={cn(
-                buttonVariants({ variant: "outline" }),
-                "flex items-center gap-2",
-              )}
+      <PageHeader
+        title={scenario.name}
+        badge={<Badge variant="secondary">{scenario.universe}</Badge>}
+        description={scenario.description}
+        actions={
+          <>
+            <Dialog>
+              <DialogTrigger
+                className={cn(
+                  buttonVariants({ variant: "outline" }),
+                  "flex items-center gap-2",
+                )}
+              >
+                <Plus size={16} className="mr-2" />
+                {t("import")}
+              </DialogTrigger>
+              <DialogContent className="max-w-5xl">
+                <DialogHeader>
+                  <DialogTitle>{t("importDialogTitle")}</DialogTitle>
+                </DialogHeader>
+                <DialogDescription>
+                  {t("importDialogDescription")}
+                </DialogDescription>
+                <ImportCharacter
+                  characterList={userCharacter}
+                  scenarioId={params.scenarioId}
+                />
+              </DialogContent>
+            </Dialog>
+            <Link
+              className={cn(buttonVariants(), "group")}
+              href={`/${params.scenarioId}/character-generation`}
             >
-              <Plus size={16} className="mr-2" />
-              {t("import")}
-            </DialogTrigger>
-            <DialogContent className="max-w-5xl">
-              <DialogHeader>
-                <DialogTitle>{t("importDialogTitle")}</DialogTitle>
-              </DialogHeader>
-              <DialogDescription>
-                {t("importDialogDescription")}
-              </DialogDescription>
-              <ImportCharacter
-                characterList={userCharacter}
-                scenarioId={params.scenarioId}
+              {t("createCharacter")}
+              <ArrowRight
+                className="ml-2 transition group-hover:translate-x-2"
+                size={16}
               />
-            </DialogContent>
-          </Dialog>
-          <Link
-            className={cn(buttonVariants(), "group")}
-            href={`/${params.scenarioId}/character-generation`}
-          >
-            {t("createCharacter")}
-            <ArrowRight
-              className="ml-2 transition group-hover:translate-x-2"
-              size={16}
-            />
-          </Link>
-        </div>
-      </div>
+            </Link>
+          </>
+        }
+      />
       {scenarioCharacter.length > 0 ? (
         <DisplayCharacter characterList={scenarioCharacter} />
       ) : (

@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/ui/page-header";
 import { CharacterForm } from "@/components/form/character/CharacterForm";
 import { getAuthSession } from "@/lib/auth";
 import { env } from "@/lib/env";
@@ -37,11 +38,9 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   };
 }
 
-export default async function CharacterPage(
-  props: {
-    params: Promise<{ characterId: string; scenarioId: string }>;
-  }
-) {
+export default async function CharacterPage(props: {
+  params: Promise<{ characterId: string; scenarioId: string }>;
+}) {
   const params = await props.params;
   const session = await getAuthSession();
 
@@ -73,8 +72,11 @@ export default async function CharacterPage(
   const t = await getTranslations("characterForm");
 
   return (
-    <div className="space-y-2">
-      <h1 className="text-3xl font-semibold">{t("editPageTitle")}</h1>
+    <div className="flex flex-col gap-8">
+      <PageHeader
+        title={t("editPageTitle")}
+        description={t("editPageDescription")}
+      />
       <CharacterForm
         autoGeneration={false}
         temperments={temperments}

@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { getAuthSession } from "@/lib/auth";
@@ -30,22 +31,18 @@ export default async function MyCharacters() {
 
   return (
     <div className="flex flex-col gap-8">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div className="flex flex-col gap-2">
-          <h1 className="text-3xl font-semibold tracking-tight">
-            {t("heading")}
-          </h1>
-          <p className="text-muted-foreground max-w-2xl text-sm leading-6">
-            {t("description")}
-          </p>
-        </div>
-        <Button asChild>
-          <Link href="/characters/new">
-            <Plus className="mr-2 size-4" />
-            {t("createCharacter")}
-          </Link>
-        </Button>
-      </div>
+      <PageHeader
+        title={t("heading")}
+        description={t("description")}
+        actions={
+          <Button asChild>
+            <Link href="/characters/new">
+              <Plus className="mr-2 size-4" />
+              {t("createCharacter")}
+            </Link>
+          </Button>
+        }
+      />
       {characters.length > 0 ? (
         <MyCharactersTable data={characters} />
       ) : (

@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/ui/page-header";
 import { CharacterForm } from "@/components/form/character/CharacterForm";
 import { getAuthSession } from "@/lib/auth";
 import { env } from "@/lib/env";
@@ -35,8 +36,11 @@ export default async function NewCharacter() {
     env.OPENAI_API_KEY !== undefined && env.OPENAI_API_KEY !== "";
 
   return (
-    <div className="space-y-2">
-      <h1 className="text-3xl font-semibold">{t("generationPageTitle")}</h1>
+    <div className="flex flex-col gap-8">
+      <PageHeader
+        title={t("generationPageTitle")}
+        description={t("generationPageDescription")}
+      />
       <CharacterForm
         temperments={temperments}
         strengths={strengths}

@@ -127,7 +127,8 @@
     "deleteError": "Erreur lors de la suppression",
     "deletedSuccess": "{name} supprimé",
     "rateLimited": "Trop de suggestions, réessayez plus tard.",
-    "alreadyExists": "Cette suggestion existe déjà."
+    "alreadyExists": "Cette suggestion existe déjà.",
+    "description": "Examinez les attributs suggérés par les utilisateurs et acceptez ceux à ajouter."
   },
   "profile": {
     "profilePictureAlt": "Photo de profil",
@@ -179,7 +180,9 @@
     "modifiedSuccess": "Personnage modifié",
     "createdSuccess": "Personnage créé avec succès",
     "modifySubmit": "Modifier votre personnage",
-    "createSubmit": "Créer votre personnage"
+    "createSubmit": "Créer votre personnage",
+    "generationPageDescription": "Remplissez la fiche à la main ou laissez l'IA la générer pour vous.",
+    "editPageDescription": "Modifiez les détails de ce personnage."
   },
   "weaponForm": {
     "nameDescribe": "Nom de l'arme",
@@ -332,7 +335,9 @@
     "damage": "Dégât",
     "ammo": "Munition",
     "range": "Porté",
-    "weight": "Poids"
+    "weight": "Poids",
+    "title": "Gestion",
+    "description": "Créez et organisez les armes et attributs utilisés pour construire vos personnages."
   },
   "tos": {
     "title": "Conditions générales d'utilisation de Projet-Genesis",
