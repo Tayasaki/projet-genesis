@@ -34,7 +34,12 @@ export function SidebarShell({
         collapsed ? "w-[68px]" : "w-64",
       )}
     >
-      <div className="flex h-14 items-center justify-between border-b pr-2 pl-5">
+      <div
+        className={cn(
+          "flex h-14 items-center border-b",
+          collapsed ? "justify-center gap-1 px-2" : "justify-between pr-2 pl-5",
+        )}
+      >
         <Link href="/" className="flex shrink-0 items-center gap-2.5">
           <LogoMark className="size-7 shrink-0" />
           {!collapsed && (
