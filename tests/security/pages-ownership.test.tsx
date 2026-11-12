@@ -27,10 +27,12 @@ vi.mock("next/navigation", () => ({
     throw new Error(`NEXT_REDIRECT:${to}`);
   },
 }));
-vi.mock("@/src/query/character.query", () => ({
+vi.mock("@/src/query/character.query", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/src/query/character.query")>()),
   getCharacters: async () => [],
 }));
-vi.mock("../../src/query/character.query", () => ({
+vi.mock("../../src/query/character.query", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/src/query/character.query")>()),
   getCharacters: async () => [],
 }));
 vi.mock("@/components/features/layout/CharacterModal", () => ({

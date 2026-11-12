@@ -109,7 +109,14 @@
     "searchPlaceholder": "Character name...",
     "sortByPlaceholder": "Sort by",
     "sortByName": "Name",
-    "sortByPj": "PC"
+    "sortByPj": "PC",
+    "edit": "Edit",
+    "extra": "Extra: {extra}",
+    "weapons": "Weapons",
+    "skills": "Skills",
+    "strengths": "Strengths",
+    "weaknesses": "Weaknesses",
+    "detail": "Character"
   },
   "myCharacters": {
     "heading": "Characters",

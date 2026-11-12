@@ -27,6 +27,7 @@ export function AppHeader({
   const tNav = useTranslations("nav");
   const tForm = useTranslations("characterForm");
   const pathname = usePathname();
+  const tCard = useTranslations("characterCard");
   const [first, second, third] = pathname.split("/").filter(Boolean);
 
   const crumbs = ((): Crumb[] => {
@@ -39,12 +40,14 @@ export function AppHeader({
         if (!second) return [{ label: mine.label }];
         return [
           mine,
-          {
-            label:
-              second === "new"
-                ? tForm("generationPageTitle")
-                : tForm("editPageTitle"),
-          },
+          ...(second === "new"
+            ? [{ label: tForm("generationPageTitle") }]
+            : third === "edit"
+              ? [
+                  { label: tCard("detail"), href: `/characters/${second}` },
+                  { label: tForm("editPageTitle") },
+                ]
+              : [{ label: tCard("detail") }]),
         ];
       case "manage":
         return [{ label: tNav("manage") }];

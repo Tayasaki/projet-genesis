@@ -109,7 +109,14 @@
     "searchPlaceholder": "Nom du personnage...",
     "sortByPlaceholder": "Trier par",
     "sortByName": "Nom",
-    "sortByPj": "PJ"
+    "sortByPj": "PJ",
+    "edit": "Modifier",
+    "extra": "Extra : {extra}",
+    "weapons": "Armes",
+    "skills": "Compétences",
+    "strengths": "Forces",
+    "weaknesses": "Faiblesses",
+    "detail": "Personnage"
   },
   "myCharacters": {
     "heading": "Personnages",

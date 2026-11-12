@@ -1,20 +1,14 @@
+import { CharacterDetails } from "@/components/features/layout/CharacterDetails";
+import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/page-header";
-import { CharacterForm } from "@/components/form/character/CharacterForm";
 import { getAuthSession } from "@/lib/auth";
-import { env } from "@/lib/env";
 import { characterOwnedBy } from "@/lib/ownership";
 import { prisma } from "@/lib/prisma";
-import {
-  getAlignments,
-  getCharacterSkills,
-  getFortunes,
-  getStrengths,
-  getTemperments,
-  getWeaknesses,
-} from "@/src/query/character.query";
-import { getWeapons } from "@/src/query/weapon.query";
+import { getCharacterDetails } from "@/src/query/character.query";
+import { PenLine } from "lucide-react";
 import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 type Props = {
@@ -38,57 +32,32 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   };
 }
 
-export default async function CharacterPage(props: {
-  params: Promise<{ characterId: string; scenarioId: string }>;
-}) {
+export default async function CharacterPage(props: Props) {
   const params = await props.params;
   const session = await getAuthSession();
-
   if (!session?.user?.id) redirect("/login");
 
-  const character = await prisma.character.findUnique({
-    where: characterOwnedBy(params.characterId, session.user.id),
-    include: {
-      temperment: true,
-      alignment: true,
-      fortune: true,
-      skillSet: true,
-      strength: true,
-      weakness: true,
-      weapon: true,
-      scenario: { select: { id: true } },
-    },
-  });
-
-  if (!character) return notFound();
-
-  const temperments = await getTemperments();
-  const alignments = await getAlignments();
-  const fortunes = await getFortunes();
-  const strengths = await getStrengths();
-  const weaknesses = await getWeaknesses();
-  const weapons = await getWeapons(session.user.id);
-  const characterSkills = await getCharacterSkills();
-  const t = await getTranslations("characterForm");
+  const character = await getCharacterDetails(
+    params.characterId,
+    session.user.id,
+  );
+  if (!character) notFound();
+  const t = await getTranslations("characterCard");
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="mx-auto flex w-full max-w-2xl flex-col gap-8">
       <PageHeader
-        title={t("editPageTitle")}
-        description={t("editPageDescription")}
+        title={character.name}
+        actions={
+          <Button asChild variant="outline">
+            <Link href={`/characters/${character.id}/edit`}>
+              <PenLine />
+              {t("edit")}
+            </Link>
+          </Button>
+        }
       />
-      <CharacterForm
-        autoGeneration={false}
-        temperments={temperments}
-        alignements={alignments}
-        fortunes={fortunes}
-        strengths={strengths}
-        weaknesses={weaknesses}
-        weapons={weapons}
-        characterSkills={characterSkills}
-        character={character}
-        modify
-      />
+      <CharacterDetails character={character} titleAs="h2" />
     </div>
   );
 }

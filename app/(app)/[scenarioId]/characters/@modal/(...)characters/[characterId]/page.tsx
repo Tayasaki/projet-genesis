@@ -1,7 +1,6 @@
 import { CharacterModal } from "@/components/features/layout/CharacterModal";
 import { getAuthSession } from "@/lib/auth";
-import { characterOwnedBy } from "@/lib/ownership";
-import { prisma } from "@/lib/prisma";
+import { getCharacterDetails } from "@/src/query/character.query";
 import { notFound, redirect } from "next/navigation";
 
 export default async function ModalCharacter(props: {
@@ -11,18 +10,10 @@ export default async function ModalCharacter(props: {
   const session = await getAuthSession();
   if (!session?.user?.id) redirect("/login");
 
-  const character = await prisma.character.findUnique({
-    where: characterOwnedBy(params.characterId, session.user.id),
-    include: {
-      temperment: true,
-      alignment: true,
-      strength: true,
-      weakness: true,
-      fortune: true,
-      skillSet: true,
-      weapon: true,
-    },
-  });
+  const character = await getCharacterDetails(
+    params.characterId,
+    session.user.id,
+  );
   if (!character) notFound();
   return <CharacterModal character={character} />;
 }
