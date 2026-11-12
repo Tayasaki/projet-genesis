@@ -1,5 +1,6 @@
 "use client";
 
+import { Check } from "lucide-react";
 import { DeleteDialog } from "@/components/features/layout/DeleteDialog";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "../manage/data-table";
@@ -81,7 +82,13 @@ function AcceptButton({ suggestion }: { suggestion: Suggestion }) {
   }
 
   return (
-    <Button onClick={accept} disabled={pending}>
+    <Button
+      variant="outline"
+      size="sm"
+      onClick={accept}
+      disabled={pending}
+    >
+      <Check />
       {t("accept")}
     </Button>
   );
