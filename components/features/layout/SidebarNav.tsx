@@ -18,7 +18,13 @@ export type SidebarNavItem = {
   icon: keyof typeof ICONS;
 };
 
-export function SidebarNav({ items }: { items: SidebarNavItem[] }) {
+export function SidebarNav({
+  items,
+  collapsed,
+}: {
+  items: SidebarNavItem[];
+  collapsed?: boolean;
+}) {
   const pathname = usePathname();
 
   return (
@@ -33,15 +39,17 @@ export function SidebarNav({ items }: { items: SidebarNavItem[] }) {
           <Link
             key={item.href}
             href={item.href}
+            title={collapsed ? item.label : undefined}
             className={cn(
               "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+              collapsed && "justify-center px-0",
               active
                 ? "bg-primary/10 text-primary"
                 : "text-muted-foreground hover:bg-accent hover:text-foreground",
             )}
           >
-            <Icon className="size-4" />
-            {item.label}
+            <Icon className="size-4 shrink-0" />
+            {!collapsed && item.label}
           </Link>
         );
       })}

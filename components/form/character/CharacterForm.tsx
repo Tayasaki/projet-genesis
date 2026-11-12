@@ -336,7 +336,7 @@ export const CharacterForm = ({
             router.push(`/characters`);
           } else {
             toast.success(t("createdSuccess"));
-            router.push(`/${scenarioId}/characters`);
+            router.push(scenarioId ? `/${scenarioId}/characters` : "/characters");
           }
           return values;
         }}

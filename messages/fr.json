@@ -32,7 +32,12 @@
     "suggestionSentSuccess": "Votre suggestion a été envoyée",
     "undo": "Annuler",
     "suggest": "Suggérer",
-    "requiredField": "Ce champ est requis"
+    "requiredField": "Ce champ est requis",
+    "language": "Langue",
+    "theme": "Thème",
+    "collapseSidebar": "Réduire la barre latérale",
+    "expandSidebar": "Déplier la barre latérale",
+    "preferences": "Préférences"
   },
   "nav": {
     "home": "Scénarios",
@@ -71,6 +76,7 @@
     "deletedSuccess": "{name} supprimé"
   },
   "account": {
+    "viewProfile": "Voir le profil",
     "logOut": "Se déconnecter",
     "deleteAccount": "Supprimer mon compte",
     "deleteAccountTitle": "Supprimer définitivement votre compte ?",
@@ -99,6 +105,10 @@
   },
   "myCharacters": {
     "heading": "Personnages",
+    "description": "Vos personnages jouables dans n'importe quel scénario.",
+    "createCharacter": "Créer un personnage",
+    "empty": "Pas encore de personnage",
+    "emptyDescription": "Créez-en un pour commencer.",
     "pj": "PJ",
     "role": "Rôle",
     "noRole": "Pas de rôle",

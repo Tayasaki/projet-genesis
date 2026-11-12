@@ -32,7 +32,12 @@
     "suggestionSentSuccess": "Your suggestion was sent",
     "undo": "Undo",
     "suggest": "Suggest",
-    "requiredField": "This field is required"
+    "requiredField": "This field is required",
+    "language": "Language",
+    "theme": "Theme",
+    "collapseSidebar": "Collapse sidebar",
+    "expandSidebar": "Expand sidebar",
+    "preferences": "Preferences"
   },
   "nav": {
     "home": "Scenarios",
@@ -71,6 +76,7 @@
     "deletedSuccess": "{name} deleted"
   },
   "account": {
+    "viewProfile": "View profile",
     "logOut": "Log out",
     "deleteAccount": "Delete my account",
     "deleteAccountTitle": "Permanently delete your account?",
@@ -99,6 +105,10 @@
   },
   "myCharacters": {
     "heading": "Characters",
+    "description": "Characters you can play across any scenario.",
+    "createCharacter": "Create a character",
+    "empty": "No characters yet",
+    "emptyDescription": "Create one to get started.",
     "pj": "PC",
     "role": "Role",
     "noRole": "No role",
