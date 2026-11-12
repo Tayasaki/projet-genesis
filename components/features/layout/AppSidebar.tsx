@@ -10,7 +10,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
-  SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { BookOpen, LayoutGrid, Lightbulb, LogIn, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -49,21 +48,12 @@ export function AppSidebar({
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
-        <div className="group/header relative flex h-8 items-center justify-between gap-2 px-1 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0">
-          <Link
-            href="/"
-            className="flex items-center gap-2.5 overflow-hidden group-data-[collapsible=icon]:group-hover/header:invisible"
-          >
-            <LogoMark className="size-7 shrink-0" />
-            <span className="text-sm font-semibold tracking-tight whitespace-nowrap group-data-[collapsible=icon]:hidden">
-              {appName}
-            </span>
-          </Link>
-          <SidebarTrigger
-            aria-label={t("toggleSidebar")}
-            className="group-data-[collapsible=icon]:absolute group-data-[collapsible=icon]:opacity-0 group-data-[collapsible=icon]:group-hover/header:opacity-100 group-data-[collapsible=icon]:focus-visible:opacity-100"
-          />
-        </div>
+        <Link href="/" className="flex h-8 items-center gap-2.5 overflow-hidden px-0.5">
+          <LogoMark className="size-7 shrink-0" />
+          <span className="text-sm font-semibold tracking-tight whitespace-nowrap">
+            {appName}
+          </span>
+        </Link>
       </SidebarHeader>
 
       <SidebarContent>
