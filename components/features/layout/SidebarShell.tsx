@@ -35,10 +35,10 @@ export function SidebarShell({
       )}
     >
       <div className="flex h-14 items-center justify-between border-b pr-2 pl-5">
-        <Link href="/" className="flex items-center gap-2.5 overflow-hidden">
+        <Link href="/" className="flex shrink-0 items-center gap-2.5">
           <LogoMark className="size-7 shrink-0" />
           {!collapsed && (
-            <span className="truncate text-sm font-semibold tracking-tight">
+            <span className="text-sm font-semibold tracking-tight whitespace-nowrap">
               {appName}
             </span>
           )}
