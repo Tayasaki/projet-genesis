@@ -7,7 +7,10 @@ import { redirect } from "next/navigation";
 import { cache } from "react";
 
 const getScenarios = cache((userId: string) =>
-  prisma.scenario.findMany({ where: { userId } }),
+  prisma.scenario.findMany({
+    where: { userId },
+    include: { _count: { select: { character: true } } },
+  }),
 );
 
 export default async function Home() {

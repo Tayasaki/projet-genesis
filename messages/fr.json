@@ -70,6 +70,7 @@
     "createdSuccess": "Scénario créé avec succès"
   },
   "scenario": {
+    "characterCount": "{count, plural, one {# personnage} other {# personnages}}",
     "empty": "Aucun scénario",
     "emptyDescription": "Créez-en un pour commencer.",
     "deletedSuccess": "{name} supprimé"

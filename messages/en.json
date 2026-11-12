@@ -70,6 +70,7 @@
     "createdSuccess": "Scenario created successfully"
   },
   "scenario": {
+    "characterCount": "{count, plural, one {# character} other {# characters}}",
     "empty": "No scenarios yet",
     "emptyDescription": "Create one to get started.",
     "deletedSuccess": "{name} deleted"
