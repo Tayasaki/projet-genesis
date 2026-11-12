@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/ui/page-header";
 import { getAuthSession } from "@/lib/auth";
 import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
@@ -15,34 +16,51 @@ export default async function PrivacyPolicy() {
   }[];
 
   return (
-    <div className="flex flex-col gap-4">
-      <h1 className="text-3xl font-bold">{t("title")}</h1>
+    <div className="mx-auto flex w-full max-w-3xl flex-col gap-8">
+      <PageHeader title={t("title")} />
       {sections.map((section) => (
-        <div key={section.heading} className="flex flex-col gap-2">
-          <h2 className="text-xl font-semibold">{section.heading}</h2>
+        <section
+          key={section.heading}
+          className="flex flex-col gap-3 text-sm leading-7"
+        >
+          <h2 className="text-lg font-semibold tracking-tight">
+            {section.heading}
+          </h2>
           {section.body.map((paragraph) => (
-            <p key={paragraph}>{paragraph}</p>
+            <p key={paragraph} className="text-muted-foreground">
+              {paragraph}
+            </p>
           ))}
           {section.list1 && (
             <ul role="list">
               {section.list1.map((item) => (
-                <li key={item} className="before:mr-2 before:ml-6 before:content-['•']">
+                <li
+                  key={item}
+                  className="text-muted-foreground before:mr-2 before:ml-4 before:content-['•']"
+                >
                   {item}
                 </li>
               ))}
             </ul>
           )}
-          {section.body2?.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+          {section.body2?.map((paragraph) => (
+            <p key={paragraph} className="text-muted-foreground">
+              {paragraph}
+            </p>
+          ))}
           {section.list2 && (
             <ul role="list">
               {section.list2.map((item) => (
-                <li key={item} className="before:mr-2 before:ml-6 before:content-['•']">
+                <li
+                  key={item}
+                  className="text-muted-foreground before:mr-2 before:ml-4 before:content-['•']"
+                >
                   {item}
                 </li>
               ))}
             </ul>
           )}
-        </div>
+        </section>
       ))}
     </div>
   );

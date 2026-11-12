@@ -2,6 +2,7 @@ import { AppHeader } from "@/components/features/layout/AppHeader";
 import { Sidebar } from "@/components/features/layout/Sidebar";
 import { getAuthSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { cookies } from "next/headers";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 export default async function AppLayout({
@@ -9,6 +10,7 @@ export default async function AppLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const defaultOpen = (await cookies()).get("sidebar_state")?.value !== "false";
   const session = await getAuthSession();
   const scenarios = session?.user?.id
     ? await prisma.scenario.findMany({
@@ -17,7 +19,7 @@ export default async function AppLayout({
       })
     : [];
   return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={defaultOpen}>
       <Sidebar />
       <SidebarInset>
         <AppHeader scenarios={scenarios} />

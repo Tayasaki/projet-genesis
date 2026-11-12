@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/ui/page-header";
 import { getAuthSession } from "@/lib/auth";
 import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
@@ -12,15 +13,22 @@ export default async function TOS() {
   }[];
 
   return (
-    <div className="flex flex-col gap-4">
-      <h1 className="text-3xl font-bold">{t("title")}</h1>
+    <div className="mx-auto flex w-full max-w-3xl flex-col gap-8">
+      <PageHeader title={t("title")} />
       {sections.map((section) => (
-        <div key={section.heading} className="flex flex-col gap-2">
-          <h2 className="text-xl font-semibold">{section.heading}</h2>
+        <section
+          key={section.heading}
+          className="flex flex-col gap-3 text-sm leading-7"
+        >
+          <h2 className="text-lg font-semibold tracking-tight">
+            {section.heading}
+          </h2>
           {section.body.map((paragraph) => (
-            <p key={paragraph}>{paragraph}</p>
+            <p key={paragraph} className="text-muted-foreground">
+              {paragraph}
+            </p>
           ))}
-        </div>
+        </section>
       ))}
     </div>
   );
