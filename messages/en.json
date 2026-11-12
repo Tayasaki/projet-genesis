@@ -35,8 +35,7 @@
     "requiredField": "This field is required",
     "language": "Language",
     "theme": "Theme",
-    "collapseSidebar": "Collapse sidebar",
-    "expandSidebar": "Expand sidebar",
+    "toggleSidebar": "Toggle sidebar",
     "preferences": "Preferences"
   },
   "nav": {

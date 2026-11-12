@@ -1,8 +1,7 @@
 import { getAuthSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getTranslations } from "next-intl/server";
-import { SidebarShell } from "./SidebarShell";
-import { type SidebarNavItem } from "./SidebarNav";
+import { AppSidebar, type SidebarNavItem } from "./AppSidebar";
 
 export const Sidebar = async () => {
   const session = await getAuthSession();
@@ -27,7 +26,7 @@ export const Sidebar = async () => {
     : [];
 
   return (
-    <SidebarShell
+    <AppSidebar
       items={items}
       appName={tCommon("appName")}
       userName={session?.user?.name ?? null}

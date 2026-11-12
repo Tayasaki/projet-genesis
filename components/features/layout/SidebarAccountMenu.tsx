@@ -34,7 +34,7 @@ export function SidebarAccountMenu({
         <Button
           variant="outline"
           aria-label={collapsed ? userName : undefined}
-          className={cn(collapsed ? "size-9 p-0" : "w-full justify-start")}
+          className={cn(collapsed ? "size-8 p-0" : "w-full justify-start")}
         >
           <User2 className="size-4 shrink-0" />
           {!collapsed && <span className="truncate">{userName}</span>}

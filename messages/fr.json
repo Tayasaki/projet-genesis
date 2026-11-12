@@ -35,8 +35,7 @@
     "requiredField": "Ce champ est requis",
     "language": "Langue",
     "theme": "Thème",
-    "collapseSidebar": "Réduire la barre latérale",
-    "expandSidebar": "Déplier la barre latérale",
+    "toggleSidebar": "Afficher/masquer la barre latérale",
     "preferences": "Préférences"
   },
   "nav": {
