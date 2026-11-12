@@ -130,6 +130,7 @@
   },
   "characterForm": {
     "generationPageTitle": "Generate your character",
+    "editPageTitle": "Edit your character",
     "nameDescribe": "Character name",
     "namePlaceholder": "Eric Tournlavis",
     "pjDescribe": "Player character",

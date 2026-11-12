@@ -13,6 +13,7 @@ import {
 } from "@/src/query/character.query";
 import { getWeapons } from "@/src/query/weapon.query";
 import { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { notFound, redirect } from "next/navigation";
 
 type Props = {
@@ -69,10 +70,11 @@ export default async function CharacterPage(
   const weaknesses = await getWeaknesses();
   const weapons = await getWeapons(session.user.id);
   const characterSkills = await getCharacterSkills();
+  const t = await getTranslations("characterForm");
 
   return (
-    <div className="-mx-96 space-y-2">
-      <h1 className="text-3xl font-semibold">Modifier votre personnage</h1>
+    <div className="space-y-2">
+      <h1 className="text-3xl font-semibold">{t("editPageTitle")}</h1>
       <CharacterForm
         autoGeneration={false}
         temperments={temperments}
