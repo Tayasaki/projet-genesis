@@ -86,10 +86,14 @@ function useWeaponColumns(): ColumnDef<Weapon>[] {
 export function WeaponsTable({
   data,
   title,
+  actions,
 }: {
   data: Weapon[];
   title: string;
+  actions?: React.ReactNode;
 }) {
   const columns = useWeaponColumns();
-  return <DataTable columns={columns} data={data} title={title} />;
+  return (
+    <DataTable columns={columns} data={data} title={title} actions={actions} />
+  );
 }

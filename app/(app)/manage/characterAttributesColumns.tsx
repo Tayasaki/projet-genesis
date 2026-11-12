@@ -20,7 +20,13 @@ import { toast } from "sonner";
 const CHARACTER_ATTRIBUTE_CONFIG: Record<
   string,
   {
-    labelKey: "temperament" | "alignment" | "fortune" | "strength" | "weakness" | "skill";
+    labelKey:
+      | "temperament"
+      | "alignment"
+      | "fortune"
+      | "strength"
+      | "weakness"
+      | "skill";
     delete: (name: string) => Promise<{ serverError?: unknown } | void>;
   }
 > = {
@@ -33,8 +39,14 @@ const CHARACTER_ATTRIBUTE_CONFIG: Record<
     delete: (name) => deleteAlignment({ name }),
   },
   fortune: { labelKey: "fortune", delete: (name) => deleteFortune({ name }) },
-  strength: { labelKey: "strength", delete: (name) => deleteStrength({ name }) },
-  weakness: { labelKey: "weakness", delete: (name) => deleteWeakness({ name }) },
+  strength: {
+    labelKey: "strength",
+    delete: (name) => deleteStrength({ name }),
+  },
+  weakness: {
+    labelKey: "weakness",
+    delete: (name) => deleteWeakness({ name }),
+  },
   skill: {
     labelKey: "skill",
     delete: (name) => deleteCharacterSkill({ name }),
@@ -59,8 +71,13 @@ function useCharacterAttributesColumns(): ColumnDef<CharacterAttributes>[] {
         );
       },
       cell: ({ row }) => {
-        const labelKey = CHARACTER_ATTRIBUTE_CONFIG[row.original.type]?.labelKey;
-        return <span className="capitalize">{labelKey ? tManage(labelKey) : ""}</span>;
+        const labelKey =
+          CHARACTER_ATTRIBUTE_CONFIG[row.original.type]?.labelKey;
+        return (
+          <span className="capitalize">
+            {labelKey ? tManage(labelKey) : ""}
+          </span>
+        );
       },
     },
     {
@@ -106,10 +123,14 @@ function useCharacterAttributesColumns(): ColumnDef<CharacterAttributes>[] {
 export function CharacterAttributesTable({
   data,
   title,
+  actions,
 }: {
   data: CharacterAttributes[];
   title: string;
+  actions?: React.ReactNode;
 }) {
   const columns = useCharacterAttributesColumns();
-  return <DataTable columns={columns} data={data} title={title} />;
+  return (
+    <DataTable columns={columns} data={data} title={title} actions={actions} />
+  );
 }

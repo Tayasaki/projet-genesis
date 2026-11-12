@@ -3,9 +3,9 @@ import {
   CharacterAttributeForms,
   WeaponAttributeForms,
 } from "@/components/features/layout/TabsManagement";
+import { CreateSheet } from "@/components/features/layout/CreateSheet";
 import { WeaponForm } from "@/components/form/weapon/WeaponForm";
 import { FormPanel } from "@/components/ui/form-panel";
-import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getAuthSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -121,52 +121,45 @@ export default async function Manage(props: {
         </TabsList>
 
         <TabsContent value="characters" className={panelTabsClass}>
-          <div className="grid gap-8 lg:grid-cols-2">
-            <CharacterAttributesTable
-              data={characterAttributes}
-              title={t("characterAttributes")}
-            />
-            <div>
-              <h3 className="mb-4 text-lg font-semibold">
-                {t("createAttribute")}
-              </h3>
-              <CharacterAttributeForms isAuthorized={isAuthorized} />
-            </div>
-          </div>
+          <CharacterAttributesTable
+            data={characterAttributes}
+            title={t("characterAttributes")}
+            actions={
+              <CreateSheet label={t("createAttribute")}>
+                <CharacterAttributeForms isAuthorized={isAuthorized} />
+              </CreateSheet>
+            }
+          />
         </TabsContent>
 
         <TabsContent value="weapons" className={panelTabsClass}>
-          <div className="flex flex-col gap-8">
-            <div className="grid gap-8 lg:grid-cols-2">
-              <WeaponsTable data={weapons} title={t("weapons")} />
-              <div>
-                <h3 className="mb-4 text-lg font-semibold">
-                  {t("createWeapon")}
-                </h3>
-                <FormPanel>
-                  <WeaponForm
-                    ammos={ammo}
-                    damages={damage}
-                    ranges={range}
-                    weights={weight}
-                    skills={weaponSkill}
-                  />
-                </FormPanel>
-              </div>
-            </div>
-            <Separator />
-            <div className="grid gap-8 lg:grid-cols-2">
-              <WeaponAttributesTable
-                data={weaponAttributes}
-                title={t("weaponAttributes")}
-              />
-              <div>
-                <h3 className="mb-4 text-lg font-semibold">
-                  {t("createWeaponAttribute")}
-                </h3>
-                <WeaponAttributeForms isAuthorized={isAuthorized} />
-              </div>
-            </div>
+          <div className="flex flex-col gap-10">
+            <WeaponsTable
+              data={weapons}
+              title={t("weapons")}
+              actions={
+                <CreateSheet label={t("createWeapon")}>
+                  <FormPanel>
+                    <WeaponForm
+                      ammos={ammo}
+                      damages={damage}
+                      ranges={range}
+                      weights={weight}
+                      skills={weaponSkill}
+                    />
+                  </FormPanel>
+                </CreateSheet>
+              }
+            />
+            <WeaponAttributesTable
+              data={weaponAttributes}
+              title={t("weaponAttributes")}
+              actions={
+                <CreateSheet label={t("createWeaponAttribute")}>
+                  <WeaponAttributeForms isAuthorized={isAuthorized} />
+                </CreateSheet>
+              }
+            />
           </div>
         </TabsContent>
 

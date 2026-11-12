@@ -49,7 +49,11 @@ function useWeaponAttributesColumns(): ColumnDef<CharacterAttributes>[] {
       },
       cell: ({ row }) => {
         const labelKey = WEAPON_ATTRIBUTE_CONFIG[row.original.type]?.labelKey;
-        return <span className="capitalize">{labelKey ? tManage(labelKey) : ""}</span>;
+        return (
+          <span className="capitalize">
+            {labelKey ? tManage(labelKey) : ""}
+          </span>
+        );
       },
     },
     {
@@ -65,7 +69,9 @@ function useWeaponAttributesColumns(): ColumnDef<CharacterAttributes>[] {
           <DeleteDialog
             item={row.original.name}
             deleteItem={async () => {
-              const value = await WEAPON_ATTRIBUTE_CONFIG[r.type]?.delete(r.name);
+              const value = await WEAPON_ATTRIBUTE_CONFIG[r.type]?.delete(
+                r.name,
+              );
               if (hasActionError(value)) {
                 toast.error(t("notAuthorizedDeleteAttribute"));
               }
@@ -80,10 +86,14 @@ function useWeaponAttributesColumns(): ColumnDef<CharacterAttributes>[] {
 export function WeaponAttributesTable({
   data,
   title,
+  actions,
 }: {
   data: CharacterAttributes[];
   title: string;
+  actions?: React.ReactNode;
 }) {
   const columns = useWeaponAttributesColumns();
-  return <DataTable columns={columns} data={data} title={title} />;
+  return (
+    <DataTable columns={columns} data={data} title={title} actions={actions} />
+  );
 }
