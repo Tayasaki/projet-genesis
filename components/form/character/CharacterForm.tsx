@@ -33,7 +33,7 @@ import { Weapon } from "@/src/query/weapon.query";
 import { Sparkles } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { requiredString } from "@/components/form/required-string";
 import { z } from "zod";
@@ -51,6 +51,10 @@ function requiredChoice(
   const schema = z.enum(names, requiredChoiceMessage).describe(label);
   return current ? schema.default(current) : schema;
 }
+
+const FullWidthField = ({ children }: { children: React.ReactNode }) => (
+  <div className="md:col-span-2">{children}</div>
+);
 
 export const CharacterForm = ({
   temperments,
@@ -83,6 +87,27 @@ export const CharacterForm = ({
   const [values, setValues] =
     useState<Partial<z.infer<typeof characterFormSchema>>>();
   const [message, setMessage] = useState("");
+  // Stable component identity: an inline renderParent would remount the
+  // input on every keystroke and drop focus.
+  const AgeField = useMemo(
+    () =>
+      function AgeField({ children }: { children: React.ReactNode }) {
+        return (
+          <div className="flex items-end gap-2 [&>*:first-child]:flex-1">
+            {children}
+            <RandomButton
+              randomize={() =>
+                setValues((prev) => ({
+                  ...prev,
+                  age: Math.floor(Math.random() * 100).toString(),
+                }))
+              }
+            />
+          </div>
+        );
+      },
+    [],
+  );
   const router = useRouter();
 
   const tempermentsNames = temperments.map((t) => t.name) as [
@@ -352,18 +377,14 @@ export const CharacterForm = ({
         }}
         fieldConfig={{
           name: {
-            renderParent: ({ children }) => (
-              <div className="md:col-span-2">{children}</div>
-            ),
+            renderParent: FullWidthField,
             inputProps: {
               placeholder: t("namePlaceholder"),
             },
           },
           pj: {
             fieldType: "switch",
-            renderParent: ({ children }) => (
-              <div className="md:col-span-2">{children}</div>
-            ),
+            renderParent: FullWidthField,
           },
           origin: {
             inputProps: {
@@ -376,19 +397,7 @@ export const CharacterForm = ({
             },
           },
           age: {
-            renderParent: ({ children }) => (
-              <div className="flex items-end gap-2 [&>*:first-child]:flex-1">
-                {children}
-                <RandomButton
-                  randomize={() => {
-                    setValues({
-                      ...values,
-                      age: Math.floor(Math.random() * 100).toString(),
-                    });
-                  }}
-                />
-              </div>
-            ),
+            renderParent: AgeField,
             inputProps: {
               placeholder: t("agePlaceholder"),
             },
