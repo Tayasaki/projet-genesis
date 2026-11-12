@@ -138,7 +138,9 @@
     "weapons": "Armes",
     "accountSection": "Compte",
     "dangerZone": "Zone de danger",
-    "dangerZoneDescription": "Supprimer votre compte est irréversible et effacera toutes vos données."
+    "dangerZoneDescription": "Supprimer votre compte est irréversible et effacera toutes vos données.",
+    "title": "Profil",
+    "description": "Votre compte et ce que vous avez créé jusqu'ici."
   },
   "characterForm": {
     "generationPageTitle": "Générer votre personnage",

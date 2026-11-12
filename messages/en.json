@@ -138,7 +138,9 @@
     "weapons": "Weapons",
     "accountSection": "Account",
     "dangerZone": "Danger zone",
-    "dangerZoneDescription": "Deleting your account is irreversible and will erase all your data."
+    "dangerZoneDescription": "Deleting your account is irreversible and will erase all your data.",
+    "title": "Profile",
+    "description": "Your account and what you have created so far."
   },
   "characterForm": {
     "generationPageTitle": "Generate your character",
