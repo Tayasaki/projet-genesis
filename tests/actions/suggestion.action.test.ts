@@ -71,7 +71,7 @@ import {
 } from "@/src/actions/suggestion.action";
 
 describe("createSuggestion", () => {
-  it("stores the suggestion and revalidates /suggestions", async () => {
+  it("stores the suggestion and revalidates /manage", async () => {
     await createSuggestion({
       type: "Ammo",
       name: "Arrow",
@@ -86,7 +86,7 @@ describe("createSuggestion", () => {
         userId: TEST_USER_ID,
       },
     });
-    expect(revalidatePath).toHaveBeenCalledWith("/suggestions");
+    expect(revalidatePath).toHaveBeenCalledWith("/manage");
   });
 
   it.each([
@@ -297,7 +297,7 @@ describe("deleteSuggestion", () => {
     expect(prisma.suggestion.delete).toHaveBeenCalledWith({
       where: { name: "Arrow" },
     });
-    expect(revalidatePath).toHaveBeenCalledWith("/suggestions");
+    expect(revalidatePath).toHaveBeenCalledWith("/manage");
   });
 
   it("rejects an empty name", async () => {

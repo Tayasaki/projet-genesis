@@ -55,12 +55,6 @@ export function AppHeader({
       default: {
         const scenario = scenarios.find((s) => s.id === first);
         const name = scenario?.name ?? tNav("home");
-        if (second === "character-generation")
-          return [
-            home,
-            { label: name, href: `/${first}/characters` },
-            { label: tForm("generationPageTitle") },
-          ];
         return third
           ? [home, { label: name, href: `/${first}/characters` }]
           : [home, { label: name }];

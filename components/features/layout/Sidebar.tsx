@@ -17,9 +17,6 @@ export const Sidebar = async () => {
   const items: SidebarNavItem[] = session?.user
     ? [
         { href: "/", label: t("home"), icon: "home" },
-        ...(role === "ADMIN" || role === "SUPERUSER"
-          ? [{ href: "/suggestions", label: t("suggestions"), icon: "suggestions" as const }]
-          : []),
         { href: "/manage", label: t("manage"), icon: "manage" },
         { href: "/characters", label: t("myCharacters"), icon: "characters" },
       ]

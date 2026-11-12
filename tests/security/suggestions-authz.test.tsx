@@ -161,9 +161,14 @@ describe("/suggestions page gate", () => {
     await expect(SuggestionsPage()).rejects.toThrow("NEXT_NOT_FOUND");
   });
 
-  it.each(["ADMIN", "SUPERUSER"] as const)("renders for %s", async (role) => {
-    actAs(role);
+  it.each(["ADMIN", "SUPERUSER"] as const)(
+    "redirects %s to the Manage suggestions tab",
+    async (role) => {
+      actAs(role);
 
-    await expect(SuggestionsPage()).resolves.toBeDefined();
-  });
+      await expect(SuggestionsPage()).rejects.toThrow(
+        "NEXT_REDIRECT:/manage?tab=suggestions",
+      );
+    },
+  );
 });

@@ -79,7 +79,7 @@ export const createSuggestion = authenticatedAction
       }
       throw error;
     }
-    revalidatePath("/suggestions");
+    revalidatePath("/manage");
   });
 
 export const deleteSuggestion = authorizedAction
@@ -90,5 +90,5 @@ export const deleteSuggestion = authorizedAction
         name: parsedInput.name,
       },
     });
-    revalidatePath("/suggestions");
+    revalidatePath("/manage");
   });

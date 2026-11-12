@@ -28,6 +28,8 @@ import {
 import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
+import { getSuggestions } from "@/src/query/suggestion.query";
+import { SuggestionsTable } from "../suggestions/suggestionsColumns";
 import { CharacterAttributesTable } from "./characterAttributesColumns";
 import { WeaponAttributesTable } from "./weaponAttributesColumns";
 import { WeaponsTable } from "./weaponColumns";
@@ -52,7 +54,10 @@ export async function generateMetadata(): Promise<Metadata> {
 
 const panelTabsClass = "mt-6 border-0 bg-transparent p-0";
 
-export default async function Manage() {
+export default async function Manage(props: {
+  searchParams: Promise<{ tab?: string }>;
+}) {
+  const { tab } = await props.searchParams;
   const session = await getAuthSession();
   if (!session?.user?.id) redirect("/login");
   const user = await prisma.user.findUniqueOrThrow({
@@ -60,6 +65,8 @@ export default async function Manage() {
   });
   const isAuthorized = user.role === "ADMIN" || user.role === "SUPERUSER";
   const t = await getTranslations("manage");
+  const tSuggestions = await getTranslations("suggestions");
+  const suggestions = isAuthorized ? await getSuggestions() : [];
 
   const characterAttributes: CharacterAttributes[] = [];
   const weaponAttributes: WeaponAttributes[] = [];
@@ -96,10 +103,21 @@ export default async function Manage() {
   return (
     <div className="flex flex-col gap-8">
       <PageHeader title={t("title")} description={t("description")} />
-      <Tabs defaultValue="characters">
+      <Tabs
+        defaultValue={
+          tab === "weapons" || (tab === "suggestions" && isAuthorized)
+            ? tab
+            : "characters"
+        }
+      >
         <TabsList>
           <TabsTrigger value="characters">{t("personnages")}</TabsTrigger>
           <TabsTrigger value="weapons">{t("armes")}</TabsTrigger>
+          {isAuthorized && (
+            <TabsTrigger value="suggestions">
+              {tSuggestions("heading")}
+            </TabsTrigger>
+          )}
         </TabsList>
 
         <TabsContent value="characters" className={panelTabsClass}>
@@ -151,6 +169,12 @@ export default async function Manage() {
             </div>
           </div>
         </TabsContent>
+
+        {isAuthorized && (
+          <TabsContent value="suggestions" className={panelTabsClass}>
+            <SuggestionsTable data={suggestions} />
+          </TabsContent>
+        )}
       </Tabs>
     </div>
   );

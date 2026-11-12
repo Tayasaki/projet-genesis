@@ -2,6 +2,8 @@ import { PageHeader } from "@/components/ui/page-header";
 import { CharacterForm } from "@/components/form/character/CharacterForm";
 import { getAuthSession } from "@/lib/auth";
 import { env } from "@/lib/env";
+import { scenarioOwnedBy } from "@/lib/ownership";
+import { prisma } from "@/lib/prisma";
 import {
   getAlignments,
   getCharacterSkills,
@@ -20,7 +22,10 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t("characterGeneration"), description: t("appDescription") };
 }
 
-export default async function NewCharacter() {
+export default async function NewCharacter(props: {
+  searchParams: Promise<{ scenario?: string }>;
+}) {
+  const { scenario } = await props.searchParams;
   const session = await getAuthSession();
   if (!session?.user?.id) redirect("/login");
   const t = await getTranslations("characterForm");
@@ -49,6 +54,15 @@ export default async function NewCharacter() {
         weapons={weapons}
         alignements={alignments}
         fortunes={fortunes}
+        scenarioId={
+          scenario &&
+          (await prisma.scenario.findFirst({
+            where: scenarioOwnedBy(scenario, session.user.id),
+            select: { id: true },
+          }))
+            ? scenario
+            : undefined
+        }
         autoGeneration={isAIAllowed}
       />
     </div>

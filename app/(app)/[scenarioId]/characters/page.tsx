@@ -82,7 +82,7 @@ export default async function ScenarioManage(props: {
             </Dialog>
             <Link
               className={cn(buttonVariants(), "group")}
-              href={`/${params.scenarioId}/character-generation`}
+              href={`/characters/new?scenario=${params.scenarioId}`}
             >
               {t("createCharacter")}
               <ArrowRight
