@@ -4,6 +4,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { cn } from "@/lib/utils";
 import { FormField } from "@/components/ui/form";
 import { useForm, useFormContext } from "react-hook-form";
 import * as z from "zod";
@@ -31,12 +32,14 @@ export default function AutoFormObject<
   fieldConfig,
   path = [],
   dependencies = [],
+  className,
 }: {
   schema: SchemaType | z.ZodType;
   form: ReturnType<typeof useForm>;
   fieldConfig?: FieldConfig<z.infer<SchemaType>>;
   path?: string[];
   dependencies?: Dependency<z.infer<SchemaType>>[];
+  className?: string;
 }) {
   const { watch } = useFormContext(); // Use useFormContext to access the watch function
 
@@ -50,7 +53,10 @@ export default function AutoFormObject<
   }
 
   return (
-    <Accordion type="multiple" className="space-y-5 border-none">
+    <Accordion
+      type="multiple"
+      className={cn("space-y-5 border-none", className)}
+    >
       {Object.keys(shape).map((name) => {
         let item = shape[name] as z.ZodAny;
         const zodBaseType = getBaseType(item);

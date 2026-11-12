@@ -1,6 +1,20 @@
-import { charactersOwnedBy } from "@/lib/ownership";
+import { characterOwnedBy, charactersOwnedBy } from "@/lib/ownership";
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
+
+export const getCharacterDetails = (id: string, userId: string) =>
+  prisma.character.findUnique({
+    where: characterOwnedBy(id, userId),
+    include: {
+      temperment: true,
+      alignment: true,
+      strength: true,
+      weakness: true,
+      fortune: true,
+      skillSet: true,
+      weapon: true,
+    },
+  });
 
 export const getCharacters = (scenarioId: string, userId: string) =>
   prisma.character.findMany({

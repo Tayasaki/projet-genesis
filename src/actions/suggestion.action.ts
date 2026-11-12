@@ -7,6 +7,7 @@ import {
   authorizedAction,
 } from "@/lib/safe-action";
 import { SuggestionType } from "@prisma/client";
+import { getTranslations } from "next-intl/server";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
@@ -53,6 +54,7 @@ export const createSuggestion = authenticatedAction
       description: parsedInput.description,
       userId,
     };
+    const t = await getTranslations("suggestions");
     try {
       await prisma.$transaction(async (tx) => {
         if (!exempt) {
@@ -66,18 +68,18 @@ export const createSuggestion = authenticatedAction
             },
           });
           if (recent >= SUGGESTION_RATE_LIMIT.max) {
-            throw new ActionError("Trop de suggestions, réessayez plus tard.");
+            throw new ActionError(t("rateLimited"));
           }
         }
         await tx.suggestion.create({ data });
       });
     } catch (error) {
       if ((error as { code?: string })?.code === UNIQUE_VIOLATION) {
-        throw new ActionError("Cette suggestion existe déjà.");
+        throw new ActionError(t("alreadyExists"));
       }
       throw error;
     }
-    revalidatePath("/suggestions");
+    revalidatePath("/manage");
   });
 
 export const deleteSuggestion = authorizedAction
@@ -88,5 +90,5 @@ export const deleteSuggestion = authorizedAction
         name: parsedInput.name,
       },
     });
-    revalidatePath("/suggestions");
+    revalidatePath("/manage");
   });

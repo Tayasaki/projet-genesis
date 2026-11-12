@@ -7,37 +7,42 @@ import {
 } from "@/src/actions/weapon/weaponSkill.action";
 import { SuggestionType } from "@prisma/client";
 import { requiredString } from "@/components/form/required-string";
+import { useTranslations } from "next-intl";
 import { z } from "zod";
 import { useAttributeSubmit } from "../attribute/use-attribute-submit";
 
 export const WeaponSkillForm = ({ suggest }: { suggest: boolean }) => {
+  const t = useTranslations("attributes.weaponSkill");
+  const tCommon = useTranslations("common");
   const { isLoading, handleSubmit } = useAttributeSubmit({
     suggest,
     suggestionType: SuggestionType.WeaponSkill,
     createAction: createWeaponSkill,
     deleteAction: deleteWeaponSkill,
     labels: {
-      authError: "Vous devez être connecté pour créer une compétence",
-      created: "Compétence créé avec succès",
-      deleted: "Compétence supprimée avec succès",
+      authError: t("authError"),
+      created: t("created"),
+      deleted: t("deleted"),
     },
   });
   return (
     <AutoForm
       formSchema={z.object({
-        name: requiredString(50).describe("Nom de la compétence"),
+        name: requiredString(50, tCommon("requiredField")).describe(
+          t("nameDescribe"),
+        ),
       })}
       fieldConfig={{
         name: {
           inputProps: {
-            placeholder: "Perçant",
+            placeholder: t("namePlaceholder"),
           },
         },
       }}
       onSubmit={handleSubmit}
     >
       <AutoFormSubmit isLoading={isLoading}>
-        {suggest ? "Suggérer" : "Créer la compétence"}
+        {suggest ? tCommon("suggest") : t("createSubmit")}
       </AutoFormSubmit>
     </AutoForm>
   );

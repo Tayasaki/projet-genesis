@@ -42,6 +42,7 @@ function AutoForm<SchemaType extends ZodObjectOrWrapped>({
   fieldConfig,
   children,
   className,
+  fieldsClassName,
   dependencies,
 }: {
   formSchema: SchemaType;
@@ -53,6 +54,7 @@ function AutoForm<SchemaType extends ZodObjectOrWrapped>({
   fieldConfig?: FieldConfig<any>;
   children?: React.ReactNode;
   className?: string;
+  fieldsClassName?: string;
   dependencies?: Dependency<any>[];
 }) {
   const objectFormSchema = getObjectFormSchema(formSchema);
@@ -118,6 +120,7 @@ function AutoForm<SchemaType extends ZodObjectOrWrapped>({
             form={form as any}
             dependencies={dependencies as any}
             fieldConfig={fieldConfig as any}
+            className={fieldsClassName}
           />
 
           {children}

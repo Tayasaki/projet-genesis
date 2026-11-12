@@ -10,6 +10,7 @@ import {
   WeaponSkill,
   Weights,
 } from "@/src/query/weapon.query";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
 import { requiredString } from "@/components/form/required-string";
@@ -28,6 +29,8 @@ export const WeaponForm = ({
   damages: Damages;
   skills: WeaponSkill;
 }) => {
+  const t = useTranslations("weaponForm");
+  const tCommon = useTranslations("common");
   const [isLoading, setIsLoading] = useState(false);
   const ammoNames = ammos.map((a) => a.name) as [string, ...string[]];
   const weightNames = weights.map((w) => w.name) as [string, ...string[]];
@@ -36,24 +39,26 @@ export const WeaponForm = ({
   const skillNames = skills.map((s) => s.name) as [string, ...string[]];
 
   const weaponFormSchema = z.object({
-    name: requiredString(50).describe("Nom de l'arme"),
-    melee: z.boolean().describe("Arme de mélée").default(true).optional(),
+    name: requiredString(50, tCommon("requiredField")).describe(
+      t("nameDescribe"),
+    ),
+    melee: z.boolean().describe(t("meleeDescribe")).default(true).optional(),
     description: z
       .string()
       .max(200)
-      .describe("Description de l'arme")
+      .describe(t("descriptionDescribe"))
       .optional(),
-    ammo: z.enum(ammoNames).describe("Munition de l'arme").optional(),
-    weight: z.enum(weightNames).describe("Poids de l'arme"),
-    range: z.enum(rangeNames).describe("Portée de l'arme"),
-    damage: z.enum(damageNames).describe("Dégât de l'arme"),
+    ammo: z.enum(ammoNames).describe(t("ammoDescribe")).optional(),
+    weight: z.enum(weightNames).describe(t("weightDescribe")),
+    range: z.enum(rangeNames).describe(t("rangeDescribe")),
+    damage: z.enum(damageNames).describe(t("damageDescribe")),
     skillSet: z
       .array(
         z.object({
-          name: z.enum(skillNames).describe("Compétence").optional(),
+          name: z.enum(skillNames).describe(t("skillDescribe")).optional(),
         }),
       )
-      .describe("Compétences"),
+      .describe(t("skillSetDescribe")),
   });
 
   return (
@@ -69,16 +74,16 @@ export const WeaponForm = ({
 
         if (values?.validationErrors || values?.serverError) {
           if (values?.validationErrors) {
-            toast.error("Veuillez remplir tous les champs");
+            toast.error(tCommon("requiredFieldsError"));
           }
           if (values?.serverError) {
-            toast.error("Vous devez être connecté pour créer une arme");
+            toast.error(t("authError"));
           }
           setIsLoading(false);
           return values;
         }
         setIsLoading(false);
-        toast.success("Arme créé avec succès");
+        toast.success(t("createdSuccess"));
         return values;
       }}
       fieldConfig={{
@@ -95,7 +100,7 @@ export const WeaponForm = ({
         },
       ]}
     >
-      <AutoFormSubmit isLoading={isLoading}>Créer l&apos;arme</AutoFormSubmit>
+      <AutoFormSubmit isLoading={isLoading}>{t("createSubmit")}</AutoFormSubmit>
     </AutoForm>
   );
 };

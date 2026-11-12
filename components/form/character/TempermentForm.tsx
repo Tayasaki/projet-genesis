@@ -6,49 +6,53 @@ import {
 } from "@/src/actions/character/temperment.action";
 import { SuggestionType } from "@prisma/client";
 import { requiredString } from "@/components/form/required-string";
+import { useTranslations } from "next-intl";
 import { z } from "zod";
 import AutoForm, { AutoFormSubmit } from "../../ui/auto-form";
 import { useAttributeSubmit } from "../attribute/use-attribute-submit";
 
 export const TempermentForm = ({ suggest }: { suggest: boolean }) => {
+  const t = useTranslations("attributes.temperment");
+  const tCommon = useTranslations("common");
   const { isLoading, handleSubmit } = useAttributeSubmit({
     suggest,
     suggestionType: SuggestionType.Temperment,
     createAction: createTemperment,
     deleteAction: deleteTemperment,
     labels: {
-      authError: "Vous devez être connecté pour créer un tempérament",
-      created: "Tempérament créé avec succès",
-      deleted: "Tempérament supprimé avec succès",
+      authError: t("authError"),
+      created: t("created"),
+      deleted: t("deleted"),
     },
   });
   return (
     <AutoForm
       formSchema={z.object({
-        name: requiredString(50).describe("Nom du tempérament"),
+        name: requiredString(50, tCommon("requiredField")).describe(
+          t("nameDescribe"),
+        ),
         description: z
           .string()
           .max(200)
           .optional()
-          .describe("Description du tempérament"),
+          .describe(t("descriptionDescribe")),
       })}
       fieldConfig={{
         name: {
           inputProps: {
-            placeholder: "Colérique",
+            placeholder: t("namePlaceholder"),
           },
         },
         description: {
           inputProps: {
-            placeholder:
-              "Le colérique est une personne qui s'énerve facilement",
+            placeholder: t("descriptionPlaceholder"),
           },
         },
       }}
       onSubmit={handleSubmit}
     >
       <AutoFormSubmit isLoading={isLoading}>
-        {suggest ? "Suggérer" : "Créer le tempérament"}
+        {suggest ? tCommon("suggest") : t("createSubmit")}
       </AutoFormSubmit>
     </AutoForm>
   );

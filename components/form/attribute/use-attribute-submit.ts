@@ -3,6 +3,7 @@
 import { createSuggestion } from "@/src/actions/suggestion.action";
 import { SuggestionType } from "@prisma/client";
 import { DEFAULT_SERVER_ERROR_MESSAGE } from "next-safe-action";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -28,6 +29,7 @@ export function useAttributeSubmit<TInput extends AttributeInput>({
   deleteAction: (input: { name: string }) => Promise<SafeActionResult>;
   labels: { authError: string; created: string; deleted: string };
 }) {
+  const t = useTranslations("common");
   const [isLoading, setIsLoading] = useState(false);
 
   // Returns the action result so AutoForm keeps the typed values on rejection.
@@ -40,16 +42,16 @@ export function useAttributeSubmit<TInput extends AttributeInput>({
         description: data.description,
       });
       if (suggested?.validationErrors) {
-        toast.error("Veuillez remplir tous les champs");
+        toast.error(t("requiredFieldsError"));
       } else if (suggested?.serverError) {
         toast.error(
           typeof suggested.serverError === "string" &&
             suggested.serverError !== DEFAULT_SERVER_ERROR_MESSAGE
             ? suggested.serverError
-            : "Votre suggestion n'a pas pu être envoyée",
+            : t("suggestionFailedError"),
         );
       } else {
-        toast.info("Votre suggestion a été envoyée");
+        toast.info(t("suggestionSentSuccess"));
       }
       setIsLoading(false);
       return suggested;
@@ -58,7 +60,7 @@ export function useAttributeSubmit<TInput extends AttributeInput>({
     const result = await createAction(data);
     if (result?.validationErrors || result?.serverError) {
       if (result.validationErrors) {
-        toast.error("Veuillez remplir tous les champs");
+        toast.error(t("requiredFieldsError"));
       }
       if (result.serverError) {
         toast.error(labels.authError);
@@ -69,7 +71,7 @@ export function useAttributeSubmit<TInput extends AttributeInput>({
 
     toast.success(labels.created, {
       action: {
-        label: "Annuler",
+        label: t("undo"),
         onClick: async () => {
           await deleteAction({ name: data.name });
           toast.success(labels.deleted);

@@ -20,8 +20,8 @@ vi.mock("@/src/query/character.query", () => ({}));
 vi.mock("@/src/query/weapon.query", () => ({}));
 vi.mock("@/lib/env", () => ({ env: {} }));
 
-import { generateMetadata as layoutMetadata } from "@/app/[scenarioId]/characters/layout";
-import { generateMetadata as characterMetadata } from "@/app/characters/[characterId]/page";
+import { generateMetadata as layoutMetadata } from "@/app/(app)/[scenarioId]/characters/layout";
+import { generateMetadata as characterMetadata } from "@/app/(app)/characters/[characterId]/page";
 
 const GENERIC = "Projet Genesis";
 

@@ -27,10 +27,12 @@ vi.mock("next/navigation", () => ({
     throw new Error(`NEXT_REDIRECT:${to}`);
   },
 }));
-vi.mock("@/src/query/character.query", () => ({
+vi.mock("@/src/query/character.query", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/src/query/character.query")>()),
   getCharacters: async () => [],
 }));
-vi.mock("../../src/query/character.query", () => ({
+vi.mock("../../src/query/character.query", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/src/query/character.query")>()),
   getCharacters: async () => [],
 }));
 vi.mock("@/components/features/layout/CharacterModal", () => ({
@@ -46,8 +48,8 @@ vi.mock("@/components/features/layout/DisplayCharacter", () => ({
   DisplayCharacter: () => null,
 }));
 
-import ScenarioManage from "@/app/[scenarioId]/characters/page";
-import ModalCharacter from "@/app/[scenarioId]/characters/@modal/(...)characters/[characterId]/page";
+import ScenarioManage from "@/app/(app)/[scenarioId]/characters/page";
+import ModalCharacter from "@/app/(app)/[scenarioId]/characters/@modal/(...)characters/[characterId]/page";
 
 function actAs(userId: string) {
   h.session = { user: { id: userId } };

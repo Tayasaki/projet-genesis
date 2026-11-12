@@ -8,16 +8,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
 import { CharacterScenario } from "@/src/query/character.query";
+import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import { Character } from "./Character";
 
 export const DisplayCharacter = ({
   characterList,
+  renderActions,
 }: {
   characterList: CharacterScenario[];
+  renderActions?: (character: CharacterScenario) => React.ReactNode;
 }) => {
+  const t = useTranslations("characterCard");
   const [displayArgument, setDisplayArgument] = useState<{
     search: string;
     sort: "name" | "pj" | "";
@@ -43,10 +46,11 @@ export const DisplayCharacter = ({
   }, [characterList, displayArgument.search, displayArgument.sort]);
 
   return (
-    <div>
-      <div className="mb-8 flex items-center gap-2">
+    <div className="flex flex-col gap-6">
+      <div className="flex items-center gap-2">
         <Input
-          placeholder="Nom du personnage..."
+          className="flex-1"
+          placeholder={t("searchPlaceholder")}
           onChange={(e) =>
             setDisplayArgument((prev) => ({
               ...prev,
@@ -63,21 +67,18 @@ export const DisplayCharacter = ({
             }))
           }
         >
-          <SelectTrigger>
-            <SelectValue placeholder="Trier par" />
+          <SelectTrigger className="w-44 shrink-0">
+            <SelectValue placeholder={t("sortByPlaceholder")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="name">Nom</SelectItem>
-            <SelectItem value="pj">PJ</SelectItem>
+            <SelectItem value="name">{t("sortByName")}</SelectItem>
+            <SelectItem value="pj">{t("sortByPj")}</SelectItem>
           </SelectContent>
         </Select>
       </div>
-      <Separator orientation="horizontal" />
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {filteredCharacters.map((c) => (
-          <div key={c.id}>
-            <Character character={c} />
-          </div>
+          <Character key={c.id} character={c} actions={renderActions?.(c)} />
         ))}
       </div>
     </div>

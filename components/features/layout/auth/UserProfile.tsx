@@ -9,10 +9,13 @@ export const UserProfile = async () => {
   return (
     <Link
       href="/profile"
-      className={clsx(buttonVariants({ variant: "outline" }))}
+      className={clsx(
+        buttonVariants({ variant: "outline" }),
+        "w-full justify-start",
+      )}
     >
-      <User2 className="mr-2 size-4" />
-      {session?.user.name ?? ""}
+      <User2 className="mr-2 size-4 shrink-0" />
+      <span className="truncate">{session?.user.name ?? ""}</span>
     </Link>
   );
 };
