@@ -1,4 +1,13 @@
 {
+  "metadata": {
+    "appDescription": "Création de scénarios pour jeux de rôle | Générateur de fiche de personnage",
+    "home": "Projet Genesis",
+    "myCharacters": "Projet Genesis - Mes personnages",
+    "profile": "Projet Genesis - Profil",
+    "characterGeneration": "Projet Genesis - Générer votre personnage",
+    "manage": "Projet Genesis - Armes | Attributs",
+    "login": "Projet Genesis - Login"
+  },
   "common": {
     "appName": "Projet Genesis",
     "login": "Connexion",
@@ -67,6 +76,10 @@
     "deleteAccountDescription": "Cette action est irréversible. Seront supprimés : votre compte, vos sessions, vos scénarios, vos personnages et vos armes. Les suggestions que vous avez déjà soumises sont conservées de façon anonyme.",
     "deleteAccountFailed": "La suppression du compte a échoué. Votre compte n'a pas été supprimé."
   },
+  "safeAction": {
+    "mustBeLoggedIn": "Vous devez être connecté pour effectuer cette action",
+    "notAuthorized": "Vous n'êtes pas autorisé à effectuer cette action"
+  },
   "characterCard": {
     "imageAlt": "Image du personnage",
     "pj": "PJ",
@@ -101,7 +114,9 @@
     "accepted": "Suggestion acceptée",
     "unknownError": "Erreur inconnu",
     "deleteError": "Erreur lors de la suppression",
-    "deletedSuccess": "{name} supprimé"
+    "deletedSuccess": "{name} supprimé",
+    "rateLimited": "Trop de suggestions, réessayez plus tard.",
+    "alreadyExists": "Cette suggestion existe déjà."
   },
   "profile": {
     "profilePictureAlt": "Photo de profil",

@@ -3,6 +3,7 @@ import {
   createSafeActionClient,
   DEFAULT_SERVER_ERROR_MESSAGE,
 } from "next-safe-action";
+import { getTranslations } from "next-intl/server";
 import { getAuthSession } from "./auth";
 
 /**
@@ -36,7 +37,8 @@ export const action = createSafeActionClient({
 export const authenticatedAction = action.use(async ({ next }) => {
   const session = await getAuthSession();
   if (!session?.user?.id) {
-    throw new ActionError("You must be logged in to perform this action");
+    const t = await getTranslations("safeAction");
+    throw new ActionError(t("mustBeLoggedIn"));
   }
   return next({ ctx: { userId: session.user.id } });
 });
@@ -48,8 +50,9 @@ export const authenticatedAction = action.use(async ({ next }) => {
  */
 export const authorizedAction = action.use(async ({ next }) => {
   const session = await getAuthSession();
+  const t = await getTranslations("safeAction");
   if (!session?.user?.id) {
-    throw new ActionError("You must be logged in to perform this action");
+    throw new ActionError(t("mustBeLoggedIn"));
   }
   const user = await prisma.user.findUniqueOrThrow({
     where: {
@@ -57,7 +60,7 @@ export const authorizedAction = action.use(async ({ next }) => {
     },
   });
   if (user.role !== "SUPERUSER" && user.role !== "ADMIN") {
-    throw new ActionError("You are not authorized to perform this action");
+    throw new ActionError(t("notAuthorized"));
   }
   return next({ ctx: { userId: session.user.id } });
 });

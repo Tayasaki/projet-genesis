@@ -2,15 +2,15 @@ import { getAuthSession } from "@/lib/auth";
 import { charactersOwnedBy } from "@/lib/ownership";
 import { prisma } from "@/lib/prisma";
 import { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
 import { cache } from "react";
 import { MyCharactersTable } from "./characterColumns";
 
-export const metadata: Metadata = {
-  title: "Projet Genesis - Mes personnages",
-  description:
-    "Création de scénarios pour jeux de rôle | Générateur de fiche de personnage",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("metadata");
+  return { title: t("myCharacters"), description: t("appDescription") };
+}
 
 const getUserCharacters = cache((userId: string) =>
   prisma.character.findMany({

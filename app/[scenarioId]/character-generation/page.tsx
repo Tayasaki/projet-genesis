@@ -14,11 +14,10 @@ import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
 
-export const metadata: Metadata = {
-  title: "Projet Genesis - Générer votre personnage",
-  description:
-    "Création de scénarios pour jeux de rôle | Générateur de fiche de personnage",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("metadata");
+  return { title: t("characterGeneration"), description: t("appDescription") };
+}
 
 export default async function CharacterGeneration(
   props: {

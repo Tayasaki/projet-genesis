@@ -44,11 +44,10 @@ export type WeaponAttributes = {
   type: string;
 };
 
-export const metadata: Metadata = {
-  title: "Projet Genesis - Armes | Attributs",
-  description:
-    "Création de scénarios pour jeux de rôle | Générateur de fiche de personnage",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("metadata");
+  return { title: t("manage"), description: t("appDescription") };
+}
 
 const panelTabsClass = "mt-6 border-0 bg-transparent p-0";
 

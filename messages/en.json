@@ -1,4 +1,13 @@
 {
+  "metadata": {
+    "appDescription": "Create scenarios and generate character sheets for your tabletop RPG sessions",
+    "home": "Projet Genesis",
+    "myCharacters": "Projet Genesis - My characters",
+    "profile": "Projet Genesis - Profile",
+    "characterGeneration": "Projet Genesis - Generate your character",
+    "manage": "Projet Genesis - Weapons | Attributes",
+    "login": "Projet Genesis - Login"
+  },
   "common": {
     "appName": "Projet Genesis",
     "login": "Log in",
@@ -67,6 +76,10 @@
     "deleteAccountDescription": "This action is irreversible. The following will be deleted: your account, your sessions, your scenarios, your characters and your weapons. Suggestions you have already submitted are kept anonymously.",
     "deleteAccountFailed": "Account deletion failed. Your account was not deleted."
   },
+  "safeAction": {
+    "mustBeLoggedIn": "You must be logged in to perform this action",
+    "notAuthorized": "You are not authorized to perform this action"
+  },
   "characterCard": {
     "imageAlt": "Character image",
     "pj": "PC",
@@ -101,7 +114,9 @@
     "accepted": "Suggestion accepted",
     "unknownError": "Unknown error",
     "deleteError": "Error while deleting",
-    "deletedSuccess": "{name} deleted"
+    "deletedSuccess": "{name} deleted",
+    "rateLimited": "Too many suggestions, try again later.",
+    "alreadyExists": "This suggestion already exists."
   },
   "profile": {
     "profilePictureAlt": "Profile picture",
