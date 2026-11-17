@@ -109,7 +109,7 @@ Pages under `app/` call `getAuthSession()` and then:
 | Route | Auth | Ownership scoping |
 |---|---|---|
 | `app/api/auth/[...all]/route.ts` | better-auth handler | n/a |
-| `app/(app)/layout.tsx` | none; not an auth gate (no redirect). Reads the session to list the caller's scenarios for the header and sidebar (nav is empty for anonymous visitors) | scenarios by `userId` |
+| `app/(app)/layout.tsx` | none; not an auth gate (no redirect). Reads the session to load the caller's scenarios for the header breadcrumb only; the sidebar builds its nav from the session itself (empty for anonymous visitors) | scenarios by `userId` |
 | `app/(app)/page.tsx` | login required | scenarios by `userId` |
 | `app/(auth)/login/page.tsx` | redirects logged-in users away | n/a |
 | `app/(app)/profile/page.tsx` | login required (redirect) | counts by `userId` (`charactersOwnedBy` for characters) |
