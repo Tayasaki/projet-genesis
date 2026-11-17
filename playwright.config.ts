@@ -39,7 +39,7 @@ export default defineConfig({
     command: `pnpm exec next dev --turbopack --port ${PORT}`,
     url: baseURL,
     reuseExistingServer: !process.env.CI,
-    timeout: 60_000,
+    timeout: 180_000,
     stdout: "pipe",
     stderr: "pipe",
     env: {
