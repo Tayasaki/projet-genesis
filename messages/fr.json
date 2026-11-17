@@ -60,7 +60,8 @@
     "featureScenarios": "Créez des scénarios pour n'importe quel univers",
     "featureCharacters": "Générez des personnages à la main ou avec l'IA",
     "featureWeapons": "Gardez vos armes et attributs organisés",
-    "signInTitle": "Connexion"
+    "signInTitle": "Connexion",
+    "consent": "En vous connectant, vous acceptez les <tos>CGU</tos> et la <privacy>politique de confidentialité</privacy>."
   },
   "home": {
     "title": "Bienvenue sur Projet Genesis",

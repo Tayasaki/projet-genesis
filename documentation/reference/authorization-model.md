@@ -56,6 +56,7 @@ Caveats on Character ownership:
 Pages under `app/` call `getAuthSession()` and then:
 
 1. No session: `redirect("/login")` (`app/(auth)/login/page.tsx` does the inverse and redirects authenticated users to `/`).
+   Exception: `app/(auth)/tos/page.tsx` and `app/(auth)/privacy-policy/page.tsx` are deliberately public and read no session, so visitors can read them before signing in; `app/(auth)/login/page.tsx` links to both from its sign-in consent notice.
 2. Owner-scoped lookup using the same predicates as section 3.
 3. Not found or not owned: `notFound()`. Using `notFound()` rather than a distinct "forbidden" avoids revealing that the id exists.
 
@@ -78,6 +79,7 @@ Pages under `app/` call `getAuthSession()` and then:
 - `tests/security/actions-ownership.test.ts` and `tests/security/pages-ownership.test.tsx`: exercise the real action clients and pages against an in-memory Prisma fake (`tests/security/ownership-fake.ts`) for owner, attacker and anonymous callers.
 - `tests/security/metadata-ownership.test.tsx`: `generateMetadata` titles for owner, non-owner and anonymous callers.
 - `tests/security/suggestions-authz.test.tsx`: `deleteSuggestion` staff gate and the `app/(app)/suggestions/page.tsx` anonymous (redirect to `/login`) / non-staff (`notFound()`) / staff (redirect to the manage suggestions tab) paths.
+- `tests/components/tos-page.test.tsx` and `tests/components/privacy-policy.test.tsx`: the legal pages render for anonymous visitors without reading the session; `tests/components/login-consent.test.tsx`: the login consent notice links to both.
 - `tests/actions/*.test.ts`: per-action behaviour and validation. They replace `@/lib/safe-action` with `createSafeActionMock()` and a Prisma spy from `createPrismaMock()` in `tests/helpers/action-mocks.ts` (fixed `TEST_USER_ID`); auth and ownership are deliberately not covered there.
 - Run with `pnpm test`.
 
@@ -122,7 +124,7 @@ Pages under `app/` call `getAuthSession()` and then:
 | `app/(app)/[scenarioId]/character-generation/page.tsx` | none itself: a bare redirect to `/characters/new?scenario=<id>`, which requires login | n/a here; no session read, no weapons loaded. Scenario ownership is checked by the destination (`app/(app)/characters/new/page.tsx`) |
 | `app/(app)/manage/page.tsx` | login required; role read for UI (the Suggestions tab and its data are staff-only) | weapons by `userId`; mutations enforced by the action clients |
 | `app/(app)/suggestions/page.tsx` | login required (redirect to `/login`); role read, non-staff get `notFound()` | none; staff-only gate that redirects staff to `/manage?tab=suggestions`, where the global suggestions listing lives |
-| `app/(auth)/tos/page.tsx`, `app/(auth)/privacy-policy/page.tsx` | login required (redirect) | n/a |
+| `app/(auth)/tos/page.tsx`, `app/(auth)/privacy-policy/page.tsx` | none (public); reads no session; static i18n copy (must stay readable before sign-in so consent is informed) | n/a |
 | `app/(app)/[scenarioId]/characters/layout.tsx` | none in the layout itself (the pages it wraps redirect); `generateMetadata` looks up the scenario with `{ id, userId }` when a session exists and falls back to the generic title "Projet Genesis" otherwise or for non-owners; wraps `/[scenarioId]/characters` and its `@modal` route | scenario by `{ id, userId }` (metadata only) |
 
 ## 8. Known gaps (open issues, not fixed by this document)
