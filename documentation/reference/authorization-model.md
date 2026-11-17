@@ -28,7 +28,7 @@ Neither client scopes data to an owner. Every handler that touches user-owned ro
 - `enum Role { USER, SUPERUSER, ADMIN }` in `prisma/schema.prisma`; `User.role` defaults to `USER`.
 - No code path assigns `SUPERUSER` or `ADMIN`: roles are changed directly in the database. Treat promotion as an operator task.
 - `ADMIN` and `SUPERUSER` are treated identically in every role check: `authorizedAction` in `lib/safe-action.ts`, `app/(app)/manage/page.tsx` (`isAuthorized`), `app/(app)/suggestions/page.tsx`, and the quota exemptions in `src/actions/suggestion.action.ts` and `generateCharacter` in `src/actions/character/character.action.ts`.
-- Navigation is not role-gated: `components/features/layout/Sidebar.tsx` reads the role but does not use it, and `AppHeader.tsx` / `AppSidebar.tsx` do not check it. The pages and actions above are the enforcement.
+- Navigation is not role-gated: `components/features/layout/Sidebar.tsx`, `AppHeader.tsx` and `AppSidebar.tsx` contain no role check. The pages and actions above are the enforcement.
 - `app/(app)/manage/page.tsx` computes `isAuthorized` from the role to decide which management UI to show: the suggestions data is loaded, and the Suggestions tab is shown, only for staff. That is presentation only; the server actions enforce the real check.
 
 ## 3. Ownership model
