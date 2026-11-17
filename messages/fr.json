@@ -26,6 +26,7 @@
     "description": "Description",
     "noDescription": "Pas de description",
     "notAuthorizedDeleteAttribute": "Vous n'êtes pas autorisé à supprimer ce type d'attribut",
+    "deleteFailed": "La suppression a échoué",
     "deletedSuccess": "{name} supprimé",
     "requiredFieldsError": "Veuillez remplir tous les champs",
     "suggestionFailedError": "Votre suggestion n'a pas pu être envoyée",

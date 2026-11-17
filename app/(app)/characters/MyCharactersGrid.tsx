@@ -2,6 +2,7 @@
 
 import { DeleteDialog } from "@/components/features/layout/DeleteDialog";
 import { DisplayCharacter } from "@/components/features/layout/DisplayCharacter";
+import { hasActionError } from "@/lib/action-result";
 import { deleteCharacter } from "@/src/actions/character/character.action";
 import { CharacterScenario } from "@/src/query/character.query";
 import { useTranslations } from "next-intl";
@@ -13,6 +14,7 @@ export function MyCharactersGrid({
   characters: CharacterScenario[];
 }) {
   const t = useTranslations("myCharacters");
+  const tCommon = useTranslations("common");
   return (
     <DisplayCharacter
       characterList={characters}
@@ -20,7 +22,11 @@ export function MyCharactersGrid({
         <DeleteDialog
           item={c.name}
           deleteItem={async () => {
-            await deleteCharacter({ id: c.id });
+            const value = await deleteCharacter({ id: c.id });
+            if (hasActionError(value)) {
+              toast.error(tCommon("deleteFailed"));
+              return;
+            }
             toast.success(t("deletedSuccess", { name: c.name }));
           }}
         />

@@ -26,6 +26,7 @@
     "description": "Description",
     "noDescription": "No description",
     "notAuthorizedDeleteAttribute": "You are not authorized to delete this attribute type",
+    "deleteFailed": "Deletion failed",
     "deletedSuccess": "{name} deleted",
     "requiredFieldsError": "Please fill in all fields",
     "suggestionFailedError": "Your suggestion could not be sent",
