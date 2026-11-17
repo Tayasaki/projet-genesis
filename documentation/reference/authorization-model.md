@@ -2,7 +2,7 @@
 type: reference
 status: active
 created: 2026-10-27
-last_updated: 2026-10-27
+last_updated: 2026-11-17
 review_trigger: "Any change to lib/safe-action.ts, lib/ownership.ts, the Role enum, an ownership column or relation in prisma/schema.prisma, or a server action / page that reads or writes user data; or when the NULL-owner Character rows are resolved."
 ---
 
@@ -27,8 +27,9 @@ Neither client scopes data to an owner. Every handler that touches user-owned ro
 
 - `enum Role { USER, SUPERUSER, ADMIN }` in `prisma/schema.prisma`; `User.role` defaults to `USER`.
 - No code path assigns `SUPERUSER` or `ADMIN`: roles are changed directly in the database. Treat promotion as an operator task.
-- `ADMIN` and `SUPERUSER` are treated identically in all three role checks (`lib/safe-action.ts`, `app/manage/page.tsx`, `components/features/layout/Header.tsx`).
-- `app/manage/page.tsx` also computes `isAuthorized` from the role to decide which management UI to show. That is presentation only; the server actions enforce the real check.
+- `ADMIN` and `SUPERUSER` are treated identically in every role check: `authorizedAction` in `lib/safe-action.ts`, `app/(app)/manage/page.tsx` (`isAuthorized`), `app/(app)/suggestions/page.tsx`, and the quota exemptions in `src/actions/suggestion.action.ts` and `generateCharacter` in `src/actions/character/character.action.ts`.
+- Navigation is not role-gated: `components/features/layout/Sidebar.tsx` reads the role but does not use it, and `AppHeader.tsx` / `AppSidebar.tsx` do not check it. The pages and actions above are the enforcement.
+- `app/(app)/manage/page.tsx` computes `isAuthorized` from the role to decide which management UI to show: the suggestions data is loaded, and the Suggestions tab is shown, only for staff. That is presentation only; the server actions enforce the real check.
 
 ## 3. Ownership model
 
@@ -40,7 +41,7 @@ Every predicate and ownership assertion lives in `lib/ownership.ts` (`scenarioOw
 | `Weapon` | `Weapon.userId` | `weaponOwnedBy(id, userId)` = `{ id, userId }` |
 | `Character` | `Character.userId` (nullable, `onDelete: Cascade`, indexed) | `characterOwnedBy(id, userId)` = `{ id, userId }`; lists use `charactersOwnedBy(userId)` = `{ userId }` |
 | Reference data (Temperment, Alignment, Fortune, Strength, Weakness, CharacterSkill, WeaponSkill, Ammo, Damage, Range, Weight) | global, not user-owned | none; writes are staff-only via `authorizedAction` |
-| `Suggestion` | global; `Suggestion.userId` records the author | creation is login-only and rate-limited; deletion and the listing page are staff-only |
+| `Suggestion` | global; `Suggestion.userId` records the author | creation is login-only and rate-limited; deletion and the listing (the Suggestions tab of `app/(app)/manage/page.tsx`) are staff-only |
 
 Caveats on Character ownership:
 
@@ -54,11 +55,13 @@ Caveats on Character ownership:
 
 Pages under `app/` call `getAuthSession()` and then:
 
-1. No session: `redirect("/login")` (`app/login/page.tsx` does the inverse and redirects authenticated users to `/`).
+1. No session: `redirect("/login")` (`app/(auth)/login/page.tsx` does the inverse and redirects authenticated users to `/`).
 2. Owner-scoped lookup using the same predicates as section 3.
 3. Not found or not owned: `notFound()`. Using `notFound()` rather than a distinct "forbidden" avoids revealing that the id exists.
 
-Staff-only pages (`app/manage/page.tsx`, `app/suggestions/page.tsx`) additionally load the user and check the role. `app/suggestions/page.tsx` redirects anonymous callers to `/login` and calls `notFound()` for non-staff.
+`app/(app)/layout.tsx` (with `components/features/layout/Sidebar.tsx`) is not an auth gate: it reads the session only to list the caller's own scenarios and navigation, never redirects, and renders an empty navigation for anonymous visitors. Each page does its own redirect.
+
+`app/(app)/manage/page.tsx` is login-only: non-staff reach it, and only its Suggestions tab and data are staff-gated. `app/(app)/suggestions/page.tsx` is the staff-only gate: it redirects anonymous callers to `/login`, calls `notFound()` for non-staff, and redirects staff to `/manage?tab=suggestions`; it renders no listing itself.
 
 ## 5. Writing a new action safely (checklist)
 
@@ -74,7 +77,7 @@ Staff-only pages (`app/manage/page.tsx`, `app/suggestions/page.tsx`) additionall
 
 - `tests/security/actions-ownership.test.ts` and `tests/security/pages-ownership.test.tsx`: exercise the real action clients and pages against an in-memory Prisma fake (`tests/security/ownership-fake.ts`) for owner, attacker and anonymous callers.
 - `tests/security/metadata-ownership.test.tsx`: `generateMetadata` titles for owner, non-owner and anonymous callers.
-- `tests/security/suggestions-authz.test.tsx`: `deleteSuggestion` staff gate and the `app/suggestions/page.tsx` anonymous / non-staff / staff paths.
+- `tests/security/suggestions-authz.test.tsx`: `deleteSuggestion` staff gate and the `app/(app)/suggestions/page.tsx` anonymous (redirect to `/login`) / non-staff (`notFound()`) / staff (redirect to the manage suggestions tab) paths.
 - `tests/actions/*.test.ts`: per-action behaviour and validation. They replace `@/lib/safe-action` with `createSafeActionMock()` and a Prisma spy from `createPrismaMock()` in `tests/helpers/action-mocks.ts` (fixed `TEST_USER_ID`); auth and ownership are deliberately not covered there.
 - Run with `pnpm test`.
 
@@ -106,18 +109,21 @@ Staff-only pages (`app/manage/page.tsx`, `app/suggestions/page.tsx`) additionall
 | Route | Auth | Ownership scoping |
 |---|---|---|
 | `app/api/auth/[...all]/route.ts` | better-auth handler | n/a |
-| `app/page.tsx` | login required | scenarios by `userId` |
-| `app/login/page.tsx` | redirects logged-in users away | n/a |
-| `app/profile/page.tsx` | login required (redirect) | counts by `userId` (`charactersOwnedBy` for characters) |
-| `app/characters/page.tsx` | login required | `charactersOwnedBy` |
-| `app/characters/[characterId]/page.tsx` | login required | page body uses `characterOwnedBy` and `notFound()`; `generateMetadata` also looks up the character with `characterOwnedBy` when a session exists and falls back to the generic title "Projet Genesis" otherwise or for non-owners |
-| `app/[scenarioId]/characters/page.tsx` | login required | scenario via `scenarioOwnedBy` then `notFound()`; importable characters via `charactersOwnedBy` |
-| `app/[scenarioId]/characters/@modal/(...)characters/[characterId]/page.tsx` | login required | `characterOwnedBy`, `notFound()` |
-| `app/[scenarioId]/character-generation/page.tsx` | login required | does not verify `scenarioId` ownership on render; `createCharacter` verifies it on submit; weapons by `userId` |
-| `app/manage/page.tsx` | login required; role read for UI | weapons by `userId`; mutations enforced by the action clients |
-| `app/suggestions/page.tsx` | login required (redirect to `/login`); role read, non-staff get `notFound()` | global data; staff-only listing |
-| `app/tos/page.tsx`, `app/privacy-policy/page.tsx` | login required (redirect) | n/a |
-| `app/[scenarioId]/characters/layout.tsx` | none in the layout itself (the pages it wraps redirect); `generateMetadata` looks up the scenario with `{ id, userId }` when a session exists and falls back to the generic title "Projet Genesis" otherwise or for non-owners; wraps `/[scenarioId]/characters` and its `@modal` route | scenario by `{ id, userId }` (metadata only) |
+| `app/(app)/layout.tsx` | none; not an auth gate (no redirect). Reads the session to load the caller's scenarios for the header breadcrumb only; the sidebar builds its nav from the session itself (empty for anonymous visitors) | scenarios by `userId` |
+| `app/(app)/page.tsx` | login required | scenarios by `userId` |
+| `app/(auth)/login/page.tsx` | redirects logged-in users away | n/a |
+| `app/(app)/profile/page.tsx` | login required (redirect) | counts by `userId` (`charactersOwnedBy` for characters) |
+| `app/(app)/characters/page.tsx` | login required | `charactersOwnedBy` |
+| `app/(app)/characters/new/page.tsx` | login required (redirect) | optional `?scenario=` is pre-filled only when `scenarioOwnedBy` matches (an unowned id is silently dropped); weapons by `userId`; `createCharacter` still verifies the scenario on submit |
+| `app/(app)/characters/[characterId]/page.tsx` | login required | page body goes through `getCharacterDetails` (`src/query/character.query.ts`), which applies `characterOwnedBy`, then `notFound()`; `generateMetadata` also looks up the character with `characterOwnedBy` when a session exists and falls back to the generic title "Projet Genesis" otherwise or for non-owners |
+| `app/(app)/characters/[characterId]/edit/page.tsx` | login required (redirect) | `findUnique` with `characterOwnedBy`, `notFound()` when absent; weapons by `userId`; `generateMetadata` uses `characterOwnedBy` and falls back to the generic title "Projet Genesis" |
+| `app/(app)/[scenarioId]/characters/page.tsx` | login required | scenario via `scenarioOwnedBy` then `notFound()`; importable characters via `charactersOwnedBy` |
+| `app/(app)/[scenarioId]/characters/@modal/(...)characters/[characterId]/page.tsx` | login required | `getCharacterDetails` (applies `characterOwnedBy`), `notFound()` when absent |
+| `app/(app)/[scenarioId]/character-generation/page.tsx` | none itself: a bare redirect to `/characters/new?scenario=<id>`, which requires login | n/a here; no session read, no weapons loaded. Scenario ownership is checked by the destination (`app/(app)/characters/new/page.tsx`) |
+| `app/(app)/manage/page.tsx` | login required; role read for UI (the Suggestions tab and its data are staff-only) | weapons by `userId`; mutations enforced by the action clients |
+| `app/(app)/suggestions/page.tsx` | login required (redirect to `/login`); role read, non-staff get `notFound()` | none; staff-only gate that redirects staff to `/manage?tab=suggestions`, where the global suggestions listing lives |
+| `app/(auth)/tos/page.tsx`, `app/(auth)/privacy-policy/page.tsx` | login required (redirect) | n/a |
+| `app/(app)/[scenarioId]/characters/layout.tsx` | none in the layout itself (the pages it wraps redirect); `generateMetadata` looks up the scenario with `{ id, userId }` when a session exists and falls back to the generic title "Projet Genesis" otherwise or for non-owners; wraps `/[scenarioId]/characters` and its `@modal` route | scenario by `{ id, userId }` (metadata only) |
 
 ## 8. Known gaps (open issues, not fixed by this document)
 
