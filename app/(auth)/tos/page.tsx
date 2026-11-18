@@ -1,11 +1,7 @@
 import { PageHeader } from "@/components/ui/page-header";
-import { getAuthSession } from "@/lib/auth";
 import { getTranslations } from "next-intl/server";
-import { redirect } from "next/navigation";
 
 export default async function TOS() {
-  const session = await getAuthSession();
-  if (!session?.user?.id) redirect("/login");
   const t = await getTranslations("tos");
   const sections = t.raw("sections") as {
     heading: string;

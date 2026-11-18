@@ -61,7 +61,8 @@
     "featureScenarios": "Create scenarios for any universe",
     "featureCharacters": "Generate characters by hand or with AI",
     "featureWeapons": "Keep your weapons and attributes organised",
-    "signInTitle": "Sign in"
+    "signInTitle": "Sign in",
+    "consent": "By signing in, you agree to the <tos>Terms of Service</tos> and the <privacy>Privacy Policy</privacy>."
   },
   "home": {
     "title": "Welcome to Projet Genesis",

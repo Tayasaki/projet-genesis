@@ -53,3 +53,70 @@ test.describe("login page", () => {
     });
   }
 });
+
+test.describe("legal pages for anonymous visitors", () => {
+  test("login page shows the consent notice linking to both legal pages", async ({
+    page,
+  }) => {
+    await page.goto("/login");
+
+    await expect(
+      page.getByText(
+        "En vous connectant, vous acceptez les CGU et la politique de confidentialité.",
+      ),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: "CGU", exact: true }),
+    ).toHaveAttribute("href", "/tos");
+    await expect(
+      page.getByRole("link", {
+        name: "politique de confidentialité",
+        exact: true,
+      }),
+    ).toHaveAttribute("href", "/privacy-policy");
+  });
+
+  test("the consent notice's CGU link opens the terms, not /login", async ({
+    page,
+  }) => {
+    await page.goto("/login");
+    await page.getByRole("link", { name: "CGU", exact: true }).click();
+
+    await expect(page).toHaveURL(/\/tos$/);
+    await expect(
+      page.getByRole("heading", {
+        level: 1,
+        name: "Conditions générales d'utilisation de Projet-Genesis",
+      }),
+    ).toBeVisible();
+  });
+
+  test("the consent notice's privacy link opens the policy, not /login", async ({
+    page,
+  }) => {
+    await page.goto("/login");
+    await page
+      .getByRole("link", { name: "politique de confidentialité", exact: true })
+      .click();
+
+    await expect(page).toHaveURL(/\/privacy-policy$/);
+    await expect(
+      page.getByRole("heading", {
+        level: 1,
+        name: "Politique de Confidentialité de Projet-Genesis",
+      }),
+    ).toBeVisible();
+  });
+
+  test("the footer terms link reaches /tos for an anonymous visitor", async ({
+    page,
+  }) => {
+    await page.goto("/login");
+    await page
+      .getByRole("contentinfo")
+      .getByRole("link", { name: "Conditions d'utilisation" })
+      .click();
+
+    await expect(page).toHaveURL(/\/tos$/);
+  });
+});

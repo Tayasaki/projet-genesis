@@ -2,15 +2,10 @@ import { render } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const h = vi.hoisted(() => ({
-  session: null as { user: { id: string } } | null,
+  getAuthSession: vi.fn(async () => null),
 }));
 
-vi.mock("@/lib/auth", () => ({ getAuthSession: async () => h.session }));
-vi.mock("next/navigation", () => ({
-  redirect: (to: string) => {
-    throw new Error(`NEXT_REDIRECT:${to}`);
-  },
-}));
+vi.mock("@/lib/auth", () => ({ getAuthSession: h.getAuthSession }));
 
 import PrivacyPolicy from "@/app/(auth)/privacy-policy/page";
 
@@ -21,12 +16,14 @@ const text = async () => {
 
 describe("privacy policy", () => {
   beforeEach(() => {
-    h.session = { user: { id: "u1" } };
+    h.getAuthSession.mockClear();
   });
 
-  it("redirects anonymous visitors to /login", async () => {
-    h.session = null;
-    await expect(PrivacyPolicy()).rejects.toThrow("NEXT_REDIRECT:/login");
+  it("renders for an anonymous visitor without reading the session", async () => {
+    const content = await text();
+    expect(content).toContain("Politique de Confidentialité de Projet-Genesis");
+    expect(content).toContain("1. Introduction");
+    expect(h.getAuthSession).not.toHaveBeenCalled();
   });
 
   it("no longer claims that OAuth tokens are encrypted", async () => {

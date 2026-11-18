@@ -9,7 +9,11 @@ import { getAuthSession } from "@/lib/auth";
 import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { BookOpen, Swords, Users } from "lucide-react";
+import Link from "next/link";
 import { redirect } from "next/navigation";
+
+const legalLinkClass =
+  "hover:text-foreground underline underline-offset-4 transition-colors";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("metadata");
@@ -60,6 +64,20 @@ export default async function Login() {
           <LoginGithubButton />
           <LoginDiscordButton />
         </div>
+        <p className="text-muted-foreground text-xs leading-5">
+          {t.rich("consent", {
+            tos: (chunks) => (
+              <Link href="/tos" className={legalLinkClass}>
+                {chunks}
+              </Link>
+            ),
+            privacy: (chunks) => (
+              <Link href="/privacy-policy" className={legalLinkClass}>
+                {chunks}
+              </Link>
+            ),
+          })}
+        </p>
       </FormPanel>
     </div>
   );
