@@ -10,6 +10,8 @@ const extraDevHosts = parseOriginList(process.env.TRUSTED_ORIGINS)
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: "standalone",
+  // The repo-root AGENTS.md is hand-maintained; keep `next dev` from generating or editing it.
+  agentRules: false,
   allowedDevOrigins: [...new Set(["localhost", ...extraDevHosts])],
 };
 
