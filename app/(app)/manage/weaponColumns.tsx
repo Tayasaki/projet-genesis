@@ -3,6 +3,7 @@
 import { DeleteDialog } from "@/components/features/layout/DeleteDialog";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "./data-table";
+import { hasActionError } from "@/lib/action-result";
 import { deleteWeapon } from "@/src/actions/weapon/weapon.action";
 import { Weapon } from "@/src/query/weapon.query";
 import { ColumnDef } from "@tanstack/react-table";
@@ -73,7 +74,11 @@ function useWeaponColumns(): ColumnDef<Weapon>[] {
           <DeleteDialog
             item={row.original.name}
             deleteItem={async () => {
-              await deleteWeapon({ id: row.original.id });
+              const value = await deleteWeapon({ id: row.original.id });
+              if (hasActionError(value)) {
+                toast.error(t("deleteFailed"));
+                return;
+              }
               toast.success(t("deletedSuccess", { name: row.original.name }));
             }}
           />
