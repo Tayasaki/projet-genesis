@@ -51,8 +51,9 @@ services:
     environment:
       DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:-dev-only-change-me}@db:5432/projet-genesis
       BETTER_AUTH_URL: ${BETTER_AUTH_URL:-http://localhost:${APP_PORT:-3000}}
-      # Dev-only placeholder. Generate a real one with: openssl rand -base64 32
-      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-dev-only-change-me-openssl-rand-base64-32}
+      # Required: no default, so a deploy without .env fails instead of running
+      # with a publicly known secret. Generate one with: openssl rand -base64 32
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?set BETTER_AUTH_SECRET in .env (openssl rand -base64 32)}
       TRUSTED_ORIGINS: ${TRUSTED_ORIGINS:-}
       # OAuth providers: a provider is only enabled when both its id and secret are set.
       AUTH_GITHUB_ID: ${AUTH_GITHUB_ID:-}

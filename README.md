@@ -100,7 +100,7 @@ cp .env.example .env
 
 Compose lit automatiquement `.env`. Renseigner au minimum :
 
-- `BETTER_AUTH_SECRET` : générer avec `openssl rand -base64 32` (une valeur de développement par défaut est utilisée sinon, à ne jamais réutiliser ailleurs)
+- `BETTER_AUTH_SECRET` : générer avec `openssl rand -base64 32` (obligatoire avec `docker compose` : le démarrage échoue s'il est absent)
 - les identifiants OAuth (`AUTH_GITHUB_ID` / `AUTH_GITHUB_SECRET`, `AUTH_DISCORD_ID` / `AUTH_DISCORD_SECRET`, `AUTH_GOOGLE_ID` / `AUTH_GOOGLE_SECRET`) : l'application n'a pas de connexion par email, il faut donc configurer au moins un fournisseur (avec `http://localhost:3000/api/auth/callback/<fournisseur>` comme URL de callback) pour pouvoir se connecter
 
 `DATABASE_URL` est ignorée par Compose : la base est jointe via l'hôte `db`. Le mot de passe PostgreSQL de développement se change avec `POSTGRES_PASSWORD` (avant le premier démarrage, voir « Réinitialiser » ci-dessous). Si vous changez le port avec `APP_PORT`, adaptez aussi `BETTER_AUTH_URL`.
