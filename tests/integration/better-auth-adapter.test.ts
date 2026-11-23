@@ -30,7 +30,7 @@ describe.skipIf(!databaseUrl)("Better Auth adapter against Postgres", () => {
           accountId: `gh-${Date.now()}`,
           accessToken: "access",
           refreshToken: "refresh",
-          idToken: null,
+          idToken: "eyJ.id-token.sig",
           accessTokenExpiresAt: new Date(Date.now() + 3_600_000),
           refreshTokenExpiresAt: new Date(Date.now() + 86_400_000),
           scope: "read:user,user:email",
@@ -38,6 +38,13 @@ describe.skipIf(!databaseUrl)("Better Auth adapter against Postgres", () => {
       );
       expect(user.email).toBe(email);
       expect(account?.userId).toBe(user.id);
+
+      // The id_token hook drops the token before the row is written.
+      const storedAccount = await prisma.account.findFirstOrThrow({
+        where: { userId: user.id },
+        select: { id_token: true },
+      });
+      expect(storedAccount.id_token).toBeNull();
 
       const session = await ctx.internalAdapter.createSession(user.id);
       expect(session.userId).toBe(user.id);
