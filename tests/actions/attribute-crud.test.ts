@@ -7,6 +7,12 @@ import {
 } from "@/src/actions/attribute-crud";
 
 vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));
+vi.mock("next-intl/server", () => ({
+  getTranslations: async () => (key: string) => key,
+}));
+vi.mock("@/lib/safe-action", () => ({
+  ActionError: class ActionError extends Error {},
+}));
 
 function makeDelegate() {
   return {
@@ -63,5 +69,24 @@ describe("attribute-crud", () => {
       createNameAttribute(delegate, { name: "x" }),
     ).rejects.toThrow("db down");
     expect(revalidatePath).not.toHaveBeenCalled();
+  });
+
+  it("deleteNameAttribute turns a foreign-key violation (P2003) into a user-safe ActionError", async () => {
+    const delegate = makeDelegate();
+    delegate.delete.mockRejectedValueOnce(
+      Object.assign(new Error("FK failed"), { code: "P2003" }),
+    );
+
+    await expect(deleteNameAttribute(delegate, "Pistol")).rejects.toMatchObject(
+      { message: "attributeInUse" },
+    );
+    expect(revalidatePath).not.toHaveBeenCalled();
+  });
+
+  it("deleteNameAttribute rethrows other errors untouched", async () => {
+    const delegate = makeDelegate();
+    delegate.delete.mockRejectedValueOnce(new Error("db down"));
+
+    await expect(deleteNameAttribute(delegate, "x")).rejects.toThrow("db down");
   });
 });

@@ -336,6 +336,7 @@
     "noOptionsForDescription": "Aucun élément créé pour « {label} » pour l'instant."
   },
   "manage": {
+    "attributeInUse": "Cette entrée est encore utilisée par des armes et ne peut pas être supprimée. Supprimez ou modifiez ces armes d'abord.",
     "personnages": "Personnages",
     "armes": "Armes",
     "characterAttributes": "Attributs de personnage",

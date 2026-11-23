@@ -1,4 +1,7 @@
-import { vi } from "vitest";
+import { render, screen, waitFor, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { toast } from "sonner";
+import { describe, expect, it, vi } from "vitest";
 
 const h = vi.hoisted(() => ({
   deleteAmmo: vi.fn(),
@@ -51,4 +54,25 @@ describeAttributeDelete({
     skill: "compétence",
   },
   expectedPageTypeCount: 5,
+});
+
+describe("WeaponAttributesTable delete of an entry still used by a weapon", () => {
+  it("toasts the specific server message instead of the generic one", async () => {
+    const message = "Still used by weapons";
+    h.deleteDamage.mockResolvedValue({ serverError: message });
+    render(
+      <WeaponAttributesTable
+        title="weapon attributes"
+        data={[{ id: "1", name: "Slash", type: "damage", description: null }]}
+      />,
+    );
+
+    await userEvent.click(
+      screen.getByRole("button", { name: "Supprimer Slash" }),
+    );
+    const dialog = within(await screen.findByRole("alertdialog"));
+    await userEvent.click(dialog.getByRole("button", { name: "Supprimer" }));
+
+    await waitFor(() => expect(toast.error).toHaveBeenCalledWith(message));
+  });
 });

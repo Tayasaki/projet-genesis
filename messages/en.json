@@ -336,6 +336,7 @@
     "noOptionsForDescription": "No \"{label}\" created yet."
   },
   "manage": {
+    "attributeInUse": "This entry is still used by weapons and cannot be deleted. Remove or change those weapons first.",
     "personnages": "Characters",
     "armes": "Weapons",
     "characterAttributes": "Character attributes",

@@ -3,6 +3,7 @@ import path from "node:path";
 
 import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { DEFAULT_SERVER_ERROR_MESSAGE } from "next-safe-action";
 import { toast } from "sonner";
 import { beforeEach, describe, expect, it, vi, type Mock } from "vitest";
 
@@ -105,7 +106,8 @@ export function describeAttributeDelete({
     });
 
     it.each([
-      ["serverError", { serverError: "boom" }],
+      // A masked (unexpected) server error carries the default message.
+      ["serverError", { serverError: DEFAULT_SERVER_ERROR_MESSAGE }],
       ["validationErrors", { validationErrors: { name: ["bad"] } }],
     ])(
       "toasts an error when the action returns %s",
