@@ -5,7 +5,12 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
-const connectionString = `${process.env.DATABASE_URL}`;
+// Fail fast: interpolating an unset variable would yield the string "undefined"
+// and only fail later, on the first query, with a misleading connection error.
+const connectionString = process.env.DATABASE_URL;
+if (!connectionString) {
+  throw new Error("DATABASE_URL is not set");
+}
 const adapter = new PrismaPg({ connectionString });
 
 export const prisma = globalForPrisma.prisma ?? new PrismaClient({ adapter });
