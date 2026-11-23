@@ -173,6 +173,8 @@ model Weakness {
 	character   Character[]
 }
 
+// Catalog relations are Restrict: deleting a Damage/Weight/Range/Ammo that a
+// weapon still uses must fail, never delete users' weapons (issue #104).
 model Weapon {
 	id          String   @id @default(cuid())
 	name        String
@@ -185,16 +187,16 @@ model Weapon {
 	user			User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
 	damageId    String
-	damage      Damage @relation(fields: [damageId], references: [id], onDelete: Cascade)
+	damage      Damage @relation(fields: [damageId], references: [id], onDelete: Restrict)
 
 	weightId    String
-	weight      Weight @relation(fields: [weightId], references: [id], onDelete: Cascade)
+	weight      Weight @relation(fields: [weightId], references: [id], onDelete: Restrict)
 
 	rangeId     String
-	range       Range @relation(fields: [rangeId], references: [id], onDelete: Cascade)
+	range       Range @relation(fields: [rangeId], references: [id], onDelete: Restrict)
 
 	ammoId      String?
-	ammo        Ammo? @relation(fields: [ammoId], references: [id], onDelete: Cascade)
+	ammo        Ammo? @relation(fields: [ammoId], references: [id], onDelete: Restrict)
 }
 
 model WeaponSkill {

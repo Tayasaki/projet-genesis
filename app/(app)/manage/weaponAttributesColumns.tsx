@@ -12,6 +12,7 @@ import { deleteWeight } from "@/src/actions/weapon/weight.action";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { DEFAULT_SERVER_ERROR_MESSAGE } from "next-safe-action";
 import { toast } from "sonner";
 import { CharacterAttributes } from "./page";
 
@@ -73,7 +74,16 @@ function useWeaponAttributesColumns(): ColumnDef<CharacterAttributes>[] {
                 r.name,
               );
               if (hasActionError(value)) {
-                toast.error(t("notAuthorizedDeleteAttribute"));
+                // Surface the specific message (e.g. entry still used by a
+                // weapon); fall back to the generic one for masked errors.
+                const serverError = (value as { serverError?: unknown })
+                  ?.serverError;
+                toast.error(
+                  typeof serverError === "string" &&
+                    serverError !== DEFAULT_SERVER_ERROR_MESSAGE
+                    ? serverError
+                    : t("notAuthorizedDeleteAttribute"),
+                );
               }
             }}
           />
