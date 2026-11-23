@@ -22,6 +22,15 @@ export async function withoutClientInfo<T extends object>(session: T) {
   return { data: { ...session, ipAddress: null, userAgent: null } };
 }
 
+/**
+ * The app never reads provider tokens back, so the OIDC id_token is not kept.
+ * Better Auth's `encryptOAuthTokens` covers access and refresh tokens only; it
+ * leaves id_token in clear text, so it is dropped before the row is written.
+ */
+export async function withoutIdToken<T extends object>(account: T) {
+  return { data: { ...account, idToken: null } };
+}
+
 export const auth = betterAuth({
   baseURL: env.BETTER_AUTH_URL,
   trustedOrigins,
@@ -33,6 +42,10 @@ export const auth = betterAuth({
   },
   socialProviders,
   databaseHooks: {
+    account: {
+      create: { before: withoutIdToken },
+      update: { before: withoutIdToken },
+    },
     session: {
       create: { before: withoutClientInfo },
     },
@@ -44,6 +57,10 @@ export const auth = betterAuth({
     },
   },
   account: {
+    // Encrypts access_token and refresh_token at rest (key derived from
+    // BETTER_AUTH_SECRET: rotating the secret invalidates stored tokens, which
+    // the app never uses).
+    encryptOAuthTokens: true,
     fields: {
       accountId: "providerAccountId",
       refreshToken: "refresh_token",
