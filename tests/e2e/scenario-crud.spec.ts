@@ -8,9 +8,12 @@ test("creates a scenario and sees it in the list, then deletes it", async ({
 
   const name = `E2E Scenario ${Date.now()}`;
 
-  await page.getByLabel("Nom du scénario").fill(name);
-  await page.getByLabel("Univers du scénario").fill("E2E Universe");
-  await page.getByRole("button", { name: "Créer mon scénario" }).click();
+  // The form lives in a dialog opened from the page header.
+  await page.getByRole("button", { name: "Créer un scénario" }).click();
+  const dialog = page.getByRole("dialog");
+  await dialog.getByLabel("Nom du scénario").fill(name);
+  await dialog.getByLabel("Univers du scénario").fill("E2E Universe");
+  await dialog.getByRole("button", { name: "Créer mon scénario" }).click();
 
   const link = page.getByRole("link", { name });
   await expect(link).toBeVisible();
